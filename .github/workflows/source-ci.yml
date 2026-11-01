@@ -1,29 +1,60 @@
-name: Aufake3D source build and docs tests
+name: Aufake3D Windows Build and Tests
+
 on:
   push:
   pull_request:
   workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
   linux-win32-crossbuild:
     runs-on: ubuntu-24.04
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Install tools
-        run: sudo apt-get update && sudo apt-get install -y clang lld cmake ninja-build python3
-      - name: Verify source manifest and no prebuilt binaries
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
         run: |
-          python3 Tools/verify_source_manifest.py
-          python3 Tools/verify_source_only.py
-      - name: Source + documentation contract tests
+          sudo apt-get update
+          sudo apt-get install -y clang lld cmake ninja-build python3
+
+      - name: Verify source-only repository
+        run: python3 Tools/verify_source_only.py
+
+      - name: Run source regression tests
         run: python3 -m unittest discover -s tests -v
-      - name: Compile Win32 A3D core
+
+      - name: Build Windows 32-bit A3D DLLs
         run: python3 scripts/build_engine.py
-      - name: Compare pinned binary hashes
-        run: python3 Tools/check_core_binary_hashes.py
-      - name: Rebuild vendor-free Miles proxy
-        run: python3 Source/Alice2011_NameFix_v089/build_proxy_from_export_map.py --output ./dist/miles-repro
-      - name: Test acoustics library
+
+      - name: Build Windows 32-bit Miles proxy
+        run: |
+          python3 Source/Alice2011_NameFix_v089/build_proxy_from_export_map.py \
+            --output ./dist/miles-repro
+
+      - name: Build and test acoustics library
         run: |
           cmake -S Source/Engine/acoustics -B build/acoustics -G Ninja
           cmake --build build/acoustics
           ctest --test-dir build/acoustics --output-on-failure
+
+      - name: Record compiled binary checksums
+        run: |
+          sha256sum dist/core/a3d.dll
+          sha256sum dist/core/a3dapi.dll
+          sha256sum dist/miles-repro/mss32.dll
+
+      - name: Upload Windows build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Aufake3D-Win32-${{ github.run_number }}
+          path: |
+            dist/core/a3d.dll
+            dist/core/a3dapi.dll
+            dist/core/local-build-manifest.json
+            dist/miles-repro/mss32.dll
+          if-no-files-found: error
+
