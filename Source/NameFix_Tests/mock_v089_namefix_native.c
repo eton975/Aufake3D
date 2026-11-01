@@ -1,10 +1,36 @@
 /* Native A3D v0.7.4e harness: real hook C, mocked Miles/Win32 only.
  * Build under ASAN+UBSAN; never runs the proprietary game or A3D DSP. */
 #define A3D_TEST_NATIVE 1
-#include "../Alice2011_NameFix_v089/miles_selection_v089.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/* Keep the test doubles separate from real Windows API exports.  A native
+ * Windows C runtime imports kernel32 functions such as GetLastError and
+ * WriteFile; defining those names here causes LNK2005 duplicate symbols.
+ * Renaming applies to the included provider source AND the mocks below, but
+ * not to the CRT headers (included above).  Production source is unchanged.
+ */
+#define GetModuleHandleExA      a3d_mock_GetModuleHandleExA
+#define GetModuleHandleA        a3d_mock_GetModuleHandleA
+#define GetModuleFileNameA      a3d_mock_GetModuleFileNameA
+#define GetEnvironmentVariableA a3d_mock_GetEnvironmentVariableA
+#define GetCommandLineA        a3d_mock_GetCommandLineA
+#define CreateFileA            a3d_mock_CreateFileA
+#define SetFilePointer         a3d_mock_SetFilePointer
+#define WriteFile              a3d_mock_WriteFile
+#define CloseHandle            a3d_mock_CloseHandle
+#define CreateActCtxA          a3d_mock_CreateActCtxA
+#define ActivateActCtx         a3d_mock_ActivateActCtx
+#define DeactivateActCtx       a3d_mock_DeactivateActCtx
+#define ReleaseActCtx          a3d_mock_ReleaseActCtx
+#define GetLastError           a3d_mock_GetLastError
+#define FindActCtxSectionGuid  a3d_mock_FindActCtxSectionGuid
+#define CoInitialize          a3d_mock_CoInitialize
+#define CoUninitialize        a3d_mock_CoUninitialize
+#define CoCreateInstance      a3d_mock_CoCreateInstance
+
+#include "../Alice2011_NameFix_v089/miles_selection_v089.c"
 
 static const char *cli="alice.exe +set s_milesdriver a3d2";
 static int display_flag=0;

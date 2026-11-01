@@ -256,5 +256,11 @@ def compile_native_mock(source: Path, output: Path) -> subprocess.CompletedProce
             cmd.extend(['-isystem', str(directory)])
         for directory in windows_crt_library_dirs('x64'):
             cmd.extend(['-Xlinker', '/LIBPATH:' + str(directory)])
+        # Clang's /MD-compatible declarations import UCRT entrypoints such as
+        # __imp_puts.  Never mix them with the static libucrt.lib: selecting
+        # that library can leave __imp_puts unresolved and trigger LNK4098.
+        # Keep the dynamic UCRT import library alongside the dynamic MSVC CRT.
+        cmd.extend(['-Xlinker', '/NODEFAULTLIB:libucrt.lib',
+                    '-Xlinker', '/DEFAULTLIB:ucrt.lib'])
     cmd.extend([str(source), '-o', str(output)])
     return subprocess.run(cmd, capture_output=True, text=True)

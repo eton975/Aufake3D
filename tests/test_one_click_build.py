@@ -174,6 +174,23 @@ class OneClickBuild(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError,'complete MSVC x64 compiler'):
                 build.acoustic_tests(require=True)
 
+    def test_windows_native_mock_does_not_mix_ucrt_linkage(self):
+        """Prevent reintroducing the GitHub Actions LNK2019 __imp_puts fault."""
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from scripts import host_toolchain as host
+        fake = SimpleNamespace(name='nt')
+        with patch.object(host, 'os', fake), \
+             patch.object(host, 'program', return_value='clang'), \
+             patch.object(host, 'windows_crt_include_dirs', return_value=[]), \
+             patch.object(host, 'windows_crt_library_dirs', return_value=[]), \
+             patch.object(host.subprocess, 'run', return_value=SimpleNamespace(returncode=0)) as run:
+            host.compile_native_mock(Path('mock.c'), Path('mock.exe'))
+        args = run.call_args.args[0]
+        self.assertIn('-fms-runtime-lib=dll', args)
+        self.assertIn('/NODEFAULTLIB:libucrt.lib', args)
+        self.assertIn('/DEFAULTLIB:ucrt.lib', args)
+
     def test_native_mock_autodiscovery_documented(self):
         script=(ROOT/'scripts/host_toolchain.py').read_text()
         self.assertIn('vswhere',script)
