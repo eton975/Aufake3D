@@ -1,8 +1,10 @@
-# v0.8.14-RC1 reproducibility and scope
+# v0.8.16 reproducibility and scope
 
-This RC preserves the successfully tested v0.8.12 RC1/v0.8.13 A3D core and
-v0.8.9 Miles proxy **byte-for-byte**. Source changes are commentary and
-documentation, not renderer logic or ABI edits.
+The v0.8.16 source preserves the v0.8.13 core implementation and the
+previous Miles proxy implementation without C rendering or COM ABI edits.
+With the original tested Clang/LLD toolchain these components reproduce the
+known-good binary hashes below. Other toolchains may legitimately output
+different bytes and therefore need independent runtime validation.
 
 | Core | SHA-256 |
 |---|---|

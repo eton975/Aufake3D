@@ -14,7 +14,7 @@ from build_miles_adapter_v074 import exports
 def run(argv):
     subprocess.run(argv,check=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 
-def build(export_json:pathlib.Path, output:pathlib.Path, strict_hash:bool=False):
+def build(export_json:pathlib.Path,output:pathlib.Path,strict_hash:bool=False):
     j=json.loads(export_json.read_text())
     records=j['exports']
     e=[(x[0],int(x[1])) for x in records]
@@ -24,7 +24,15 @@ def build(export_json:pathlib.Path, output:pathlib.Path, strict_hash:bool=False)
         raise ValueError('export name validation failed')
     cc=shutil.which('clang');ld=shutil.which('lld-link')
     if not cc or not ld:raise RuntimeError('clang and lld-link required')
-    output.mkdir(parents=True,exist_ok=False)
+    # A previous successful build leaves only mss32.dll. Allow rebuilding into
+    # that same directory, but never erase unrelated user files there.
+    output.mkdir(parents=True, exist_ok=True)
+    reserved = {'mss32.dll', 'mss32.lib', 'thunks.s', 'thunks.obj', 'mss32.def',
+                'resolver.obj', 'hooks.obj', 'kernel32.def', 'kernel32.lib',
+                'kernel32-stub.dll', 'ole32.def', 'ole32.lib', 'ole32-stub.dll'}
+    unknown = {p.name for p in output.iterdir()} - reserved
+    if unknown:
+        raise RuntimeError(f'Build directory contains unrelated files: {sorted(unknown)}')
     (output/'thunks.s').write_text(assembler(e),encoding='ascii')
     targets={'_AIL_enumerate_3D_providers@12':'_a3d_hook_enumerate@12',
              '_AIL_open_3D_provider@4':'_a3d_hook_open@4',
@@ -67,31 +75,27 @@ def build(export_json:pathlib.Path, output:pathlib.Path, strict_hash:bool=False)
     cmd += [f'/alternatename:__imp__{n}@{sz}=__imp__{n}' for n,sz in apis.items()]
     run(cmd)
     if exports(output/'mss32.dll')!=e:raise RuntimeError('ABI changed')
-    digest = hashlib.sha256((output/'mss32.dll').read_bytes()).hexdigest()
-    expected = j['frozen_proxy_sha256']
-
+    digest=hashlib.sha256((output/'mss32.dll').read_bytes()).hexdigest()
+    expected=j['frozen_proxy_sha256']
     if digest != expected:
-        message = f'Proxy hash differs: {digest} vs frozen {expected}'
+        message = f'build hash differs from frozen reference: {digest} vs {expected}'
         if strict_hash:
             raise RuntimeError(message)
+        # A matching export table is a necessary ABI check, not proof of
+        # behavioral equivalence. Do not mark this local binary as tested.
         print('WARNING:', message, file=sys.stderr)
-        print('331-export ABI verified; runtime behaviour not yet verified.',
-              file=sys.stderr)
-
+        print('331 exports verified; gameplay behavior NOT verified.', file=sys.stderr)
     for p in output.iterdir():
-        if p.name != 'mss32.dll':
+        if p.name in reserved and p.name != 'mss32.dll':
             p.unlink()
-
-    print('Miles proxy build completed:', digest, 'exports', len(e))
+    print('Miles proxy built:', digest, 'exports', len(e),
+          '(frozen hash match)' if digest == expected else '(unverified toolchain output)')
 
 if __name__=='__main__':
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--exports',type=pathlib.Path,default=PROXY_SRC/'MILES_EXPORT_SURFACE_331.json')
     ap.add_argument('--output',required=True,type=pathlib.Path)
-    ap.add_argument(
-        '--strict-frozen-hash',
-        action='store_true',
-        help='Require exact binary identity with the tested reference'
-    )
-    args = ap.parse_args()
+    ap.add_argument('--strict-frozen-hash', action='store_true',
+                    help='Fail if output bytes differ from the historical tested DLL')
+    args=ap.parse_args()
     build(args.exports.resolve(), args.output.resolve(), args.strict_frozen_hash)

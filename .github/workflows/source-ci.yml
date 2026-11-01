@@ -1,4 +1,4 @@
-name: Aufake3D Windows Build and Tests
+name: Aufake3D local-equivalent Win32 build
 
 on:
   push:
@@ -9,52 +9,48 @@ permissions:
   contents: read
 
 jobs:
-  linux-win32-crossbuild:
-    runs-on: ubuntu-24.04
-
+  windows-and-linux:
+    name: Build Win32 PE on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2022]
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
-
-      - name: Install build dependencies
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install LLVM and CMake/Ninja (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y clang lld cmake ninja-build g++
+      - name: Install/verify LLVM (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
         run: |
-          sudo apt-get update
-          sudo apt-get install -y clang lld cmake ninja-build python3
-
-      - name: Verify source-only repository
-        run: python3 Tools/verify_source_only.py
-
-      - name: Run source regression tests
-        run: python3 -m unittest discover -s tests -v
-
-      - name: Build Windows 32-bit A3D DLLs
-        run: python3 scripts/build_engine.py
-
-      - name: Build Windows 32-bit Miles proxy
-        run: |
-          python3 Source/Alice2011_NameFix_v089/build_proxy_from_export_map.py \
-            --output ./dist/miles-repro
-
-      - name: Build and test acoustics library
-        run: |
-          cmake -S Source/Engine/acoustics -B build/acoustics -G Ninja
-          cmake --build build/acoustics
-          ctest --test-dir build/acoustics --output-on-failure
-
-      - name: Record compiled binary checksums
-        run: |
-          sha256sum dist/core/a3d.dll
-          sha256sum dist/core/a3dapi.dll
-          sha256sum dist/miles-repro/mss32.dll
-
-      - name: Upload Windows build artifacts
+          if (-not (Get-Command clang -ErrorAction SilentlyContinue) -or -not (Get-Command lld-link -ErrorAction SilentlyContinue)) {
+            choco install llvm --no-progress -y
+            "C:\Program Files\LLVM\bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+          }
+      - name: Check prerequisites
+        run: python scripts/build.py --doctor
+      - name: Reject tracked prebuilt files
+        run: python Tools/verify_source_only.py
+      - name: Build all Win32 components, run tests, assemble game kits
+        run: python scripts/build.py --require-native-mock --require-acoustics
+      - name: Upload compiled Windows runtime
         uses: actions/upload-artifact@v4
         with:
-          name: Aufake3D-Win32-${{ github.run_number }}
+          name: Aufake3D-Win32-${{ runner.os }}-${{ github.run_number }}
+          path: dist/Aufake3D_v0.8.16_Local_Runtime.zip
+          if-no-files-found: error
+      - name: Upload individual DLLs for inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: Aufake3D-DLLs-${{ runner.os }}-${{ github.run_number }}
           path: |
             dist/core/a3d.dll
             dist/core/a3dapi.dll
+            dist/miles-local/mss32.dll
             dist/core/local-build-manifest.json
-            dist/miles-repro/mss32.dll
           if-no-files-found: error
-

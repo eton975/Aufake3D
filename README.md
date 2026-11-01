@@ -1,9 +1,19 @@
-# Aufake3D v0.8.14-RC1 — GitHub source edition
+# Aufake3D v0.8.16 — GitHub source edition
 
-**Source-only package**, with no precompiled PE32 EXEs or DLLs. This source
-matches the v0.8.14-RC1 full-binary candidate; comments and documentation
-were expanded, but the audio core and Miles proxy behavior is unchanged from
-the user-tested v0.8.13 baseline. No original Miles DLL or game assets included.
+**Source-only package**, with no precompiled PE32 EXEs or DLLs. This source tree merges the latest uploaded GitHub snapshot (commit `0d74797`)
+with the one-click build system. It does **not** represent a newly tested full
+binary release. The A3D engine and Miles proxy C code are unchanged from the
+known-good v0.8.13 baseline. No original Miles DLL or game assets are included.
+
+## Build locally — Windows 10/11 or Linux
+
+Run **`BUILD_WINDOWS.cmd`** (double-click) or **`./BUILD_LINUX.sh`**.
+The scripts compile the PE32 core, game bridges, Miles proxy and helpers,
+run applicable tests, and assemble a local ZIP with four ready-to-copy game kits.
+See [the one-click build guide](Docs/ONE_CLICK_BUILD.md). No old binary ZIP is needed.
+
+See [v0.8.16 release notes](RELEASE_NOTES_V0816.md) and
+[GitHub merge provenance](Docs/GITHUB_SOURCE_INTEGRATION_V0816.md).
 
 ## Entry points
 

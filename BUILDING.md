@@ -1,29 +1,27 @@
-# Build Aufake3D v0.8.14-RC1 from source
+# Build Aufake3D on Windows or Linux
 
-From the repository root on a Unix-like system with Python 3, Clang/LLD
-supporting `i686-pc-windows-msvc`, plus CMake/Ninja for acoustic tests:
+**One-click build:** `BUILD_WINDOWS.cmd` on Windows 10/11, or
+`./BUILD_LINUX.sh` on Linux. Both call the documented cross-platform
+orchestrator `scripts/build.py` and assemble the four game kits and all
+redistributable auxiliary Win32 EXEs from source. The output is Windows x86
+PE32 (not a Linux `.so`). Full instructions: **[Docs/ONE_CLICK_BUILD.md](Docs/ONE_CLICK_BUILD.md)**.
+
+Quick checks:
 
 ```bash
-python3 -m unittest discover -s tests -v
-python3 scripts/build_engine.py
-python3 Source/Alice2011_NameFix_v089/build_proxy_from_export_map.py --output ./dist/miles-repro
-cmake -S Source/Engine/acoustics -B build/acoustics -G Ninja
-cmake --build build/acoustics
-ctest --test-dir build/acoustics --output-on-failure
+python3 scripts/build.py --doctor
+python3 scripts/build.py
 ```
 
-Core outputs: `dist/core/a3d.dll` and `dist/core/a3dapi.dll` (Win32 PE32).
-The Miles proxy builder outputs `mss32.dll` from the published 331-export
-interface map, without copying a vendor implementation. To run Alice 2011,
-you still need the original, legally owned compatible Miles DLL as described
-in the separate full-runtime manual; it is not included here.
+The A3D core needs Python 3.10+, Clang and LLD. Visual Studio Build Tools
+are optional for Windows-only native CRT tests; the engine itself does not
+use the Microsoft CRT. The build uses source-owned templates and does not
+require an older compiled release, original Aureal SDK, game EXE, or vendor
+Miles DLL. The latter must still be supplied separately **at game runtime**.
 
-Compare built core hashes to `CORE_BINARY_HASHES.json` using the included
-source verifier: `python3 Tools/check_core_binary_hashes.py` (after the
-build). This RC's source comments must not change the byte-for-byte output.
-Run the CMake tests and preserve original KEMAR attribution; see
-`Docs/BUILD_AND_RELEASE.md` and `Docs/REPRODUCIBILITY.md`.
-
-The source-only archive does **not** contain `Game_Kits/` or proprietary game
-files. For actual installation use the separately reviewed full binary asset.
-Reproducibility is not proof of security clearance or game support.
+For historical byte-for-byte verification only, add
+`--strict-frozen-hashes`. A normal local development build verifies the
+331-export Miles ABI but merely warns on a frozen binary SHA mismatch, since
+upgrading the LLVM toolchain can change PE output bytes. Passing compile
+and unit tests does **not** mean the software was verified in gameplay or
+cleared by antivirus. See `Docs/BUILD_AND_RELEASE.md` and licensing notices.

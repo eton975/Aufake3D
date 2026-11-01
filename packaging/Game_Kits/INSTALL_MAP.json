@@ -1,0 +1,58 @@
+{
+  "version": "0.8.16",
+  "format_revision": "layout1-doc-polish-v0814rc1",
+  "profiles": {
+    "alice2000": {
+      "folder": "Alice_2000",
+      "exe": "alice.exe",
+      "files": [
+        "RUN_AUFAKE3D_WINDOWS.cmd",
+        "RUN_AUFAKE3D_WINE.sh",
+        "a3d.dll",
+        "a3dapi.dll",
+        "alice-a3d-bridge.exe",
+        "alice-a3d-bridge.exe.manifest",
+        "alice.exe.manifest"
+      ]
+    },
+    "alice2011": {
+      "folder": "Alice_2011_VorpalFix",
+      "exe": "alice.exe",
+      "files": [
+        "RUN_AUFAKE3D_WINDOWS.cmd",
+        "RUN_AUFAKE3D_WINE.sh",
+        "SndDrivers/a3d-miles-local.manifest",
+        "SndDrivers/a3d.dll",
+        "SndDrivers/a3dapi.dll",
+        "SndDrivers/mss32.dll",
+        "a3d-miles-local.manifest",
+        "a3d.dll",
+        "a3dapi.dll",
+        "mss32.dll"
+      ]
+    },
+    "quake3": {
+      "folder": "Quake_III_117",
+      "exe": "quake3.exe",
+      "files": [
+        "RUN_AUFAKE3D_WINDOWS.cmd",
+        "RUN_AUFAKE3D_WINE.sh",
+        "a3d.dll",
+        "a3dapi.dll",
+        "quake3.exe.manifest"
+      ]
+    },
+    "halflife": {
+      "folder": "Half_Life_1011",
+      "exe": "hl.exe",
+      "files": [
+        "RUN_AUFAKE3D_WINDOWS.cmd",
+        "RUN_AUFAKE3D_WINE.sh",
+        "a3d.dll",
+        "a3dapi.dll",
+        "halflife-a3d-alpha.exe",
+        "hl.exe.manifest"
+      ]
+    }
+  }
+}

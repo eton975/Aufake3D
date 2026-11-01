@@ -5,6 +5,8 @@ import shutil
 import subprocess
 import sys
 import tempfile
+
+from scripts.host_toolchain import native_mock_ready, compile_native_mock
 import unittest
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -38,15 +40,23 @@ class SourceSmoke(unittest.TestCase):
         self.assertFalse(mod.trace_evidence(trace.replace('AIL_OPEN_BEGIN_PROVIDER 0x00000004','AIL_OPEN_BEGIN_PROVIDER 0x00000009'))['provider_verified'])
 
     def test_original_proxy_source_native_mock(self):
-        clang=shutil.which('clang')
-        if not clang:self.skipTest('clang not installed')
-        source=ROOT/'Source/NameFix_Tests/mock_v089_namefix_native.c'
-        with tempfile.TemporaryDirectory() as tmp:
-            exe=Path(tmp)/'namefix_mock'
-            build=subprocess.run([clang,'-std=c11','-O1','-Wno-ignored-attributes',str(source),'-o',str(exe)],capture_output=True,text=True)
-            self.assertEqual(build.returncode,0,build.stderr)
-            r=subprocess.run([str(exe)],capture_output=True,text=True)
-            self.assertEqual(r.returncode,0,r.stderr)
-            self.assertIn('PASS v089',r.stdout)
+        """Exercise the real C provider-selection implementation on the host.
 
+        Unlike the freestanding Win32 A3D DLL build, this test uses stdio and
+        the host C runtime. On Windows, discover MSVC/SDK libraries explicitly
+        so users need not launch a specially configured Developer PowerShell.
+        """
+        ready, explanation = native_mock_ready()
+        if not ready:
+            self.skipTest('Optional native mock: ' + explanation)
+        source = ROOT/'Source/NameFix_Tests/mock_v089_namefix_native.c'
+        with tempfile.TemporaryDirectory() as tmp:
+            exe = Path(tmp)/('namefix_mock.exe' if sys.platform == 'win32' else 'namefix_mock')
+            build = compile_native_mock(source, exe)
+            self.assertEqual(build.returncode, 0,
+                             'Native mock compile/link failed:\n' + build.stderr +
+                             '\nSee Docs/ONE_CLICK_BUILD.md for compiler prerequisites.')
+            r = subprocess.run([str(exe)], capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stderr)
+            self.assertIn('PASS v089', r.stdout)
 if __name__=='__main__':unittest.main()

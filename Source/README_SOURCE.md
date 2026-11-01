@@ -1,4 +1,4 @@
-# Aufake3D v0.8.14-RC1 — source guide
+# Aufake3D v0.8.16 — source guide
 
 The current code is under `Engine/` (COM/WaveOut/mixer/HRTF/geometry),
 `Alice2011_NameFix_v089/` (pinned Miles proxy), `NameFix_Tests/` and
