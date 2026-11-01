@@ -53,9 +53,17 @@ class SourceSmoke(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             exe = Path(tmp)/('namefix_mock.exe' if sys.platform == 'win32' else 'namefix_mock')
             build = compile_native_mock(source, exe)
-            self.assertEqual(build.returncode, 0,
-                             'Native mock compile/link failed:\n' + build.stderr +
-                             '\nSee Docs/ONE_CLICK_BUILD.md for compiler prerequisites.')
+            self.assertEqual(
+                build.returncode, 0,
+                'Native mock compile/link failed (exit {}):\n'
+                'Command: {}\n'
+                '--- Compiler/linker stdout ---\n{}\n'
+                '--- Compiler/linker stderr ---\n{}\n'
+                'See Docs/ONE_CLICK_BUILD.md for compiler prerequisites.'.format(
+                    build.returncode,
+                    ' '.join(map(str, build.args)),
+                    build.stdout or '<empty>',
+                    build.stderr or '<empty>'))
             r = subprocess.run([str(exe)], capture_output=True, text=True)
             self.assertEqual(r.returncode, 0, r.stderr)
             self.assertIn('PASS v089', r.stdout)
