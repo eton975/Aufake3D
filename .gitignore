@@ -1,0 +1,26 @@
+# No prebuilt PE binaries or compiled tools in this source repository.
+/build/
+/dist/
+**/build/
+**/__pycache__/
+*.py[cod]
+*.exe
+*.dll
+*.obj
+*.o
+*.lib
+*.exp
+*.pdb
+*.a
+*.so
+*.dylib
+*.wav
+*.bsp
+*.zip
+*.log
+*.sofa
+*.pk3
+*.pak
+.DS_Store
+.idea/
+.vscode/

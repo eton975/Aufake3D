@@ -1,0 +1,1 @@
+Read docs/v070/HALFLIFE_PROGRESS.md and docs/v070/SETUP_CANDIDATES.md. Current payload: deploy-v070-alpha. Generic staging: docs/v070/GENERIC_CANDIDATE_SETUP.md. Logs and the Half-Life splash workaround default off.

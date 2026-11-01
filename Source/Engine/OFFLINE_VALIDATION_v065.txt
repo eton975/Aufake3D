@@ -1,0 +1,13 @@
+A3D v0.6.5 validation, 2026-10-31
+- Clang/LLD 32-bit PE DLL build: PASS
+- Python source regressions: 85/85 PASS
+- Drop-in install/safety tests: 9/9 PASS
+- Portable installer tests: 15/15 PASS
+- Queue governor and playback-position native C tests: PASS (part of 85)
+- Snapshot PCM parity: 192 cases PASS
+- Alice adaptive capture parity: 864 cases PASS; multivoice hash 212511dd6f7a1eef
+- 16-voice limiter test: peak 31128/32768, no clipping
+- 128-voice allocation/recycling tests: PASS
+- Windows + Wine launcher shell syntax and profile contract: PASS
+Not verified: actual Windows audio latency, Alice tower2 dialogue on new build,
+Wine sound on Debian/Ubuntu/Mint/Fedora, real-device underflow recovery.

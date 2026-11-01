@@ -1,0 +1,163 @@
+{
+  "wrapper_version": "0.7.0-alpha",
+  "gameplay_verified": false,
+  "scan_depth": 0,
+  "interpretation": "Static ABI clues; no support certification. An A3D3 client may have an A3D2 fallback which requires separate analysis.",
+  "files": [
+    {
+      "file": "cgamex86.dll",
+      "size": 536576,
+      "sha256": "6c3c1260db46e92be5c6734f0d36966231fab1e1cabf60181e7a94e2c5b5fa41",
+      "machine": "0x14c",
+      "pe32_x86": true,
+      "imports": [
+        "KERNEL32.dll"
+      ],
+      "guid_evidence": {},
+      "a3d_markers": [],
+      "relative_path": "cgamex86.dll",
+      "route": "no_a3d_evidence_found"
+    },
+    {
+      "file": "GameuxInstallHelper.dll",
+      "size": 96264,
+      "sha256": "b07ffcd0af80f6b9fba09abe816ba2f0ff0d336639f1768fc317291bc635ece6",
+      "machine": "0x14c",
+      "pe32_x86": true,
+      "imports": [
+        "KERNEL32.dll",
+        "ole32.dll",
+        "msi.dll",
+        "OLEAUT32.dll",
+        "SHELL32.dll",
+        "SHLWAPI.dll",
+        "ADVAPI32.dll"
+      ],
+      "guid_evidence": {},
+      "a3d_markers": [],
+      "relative_path": "GameuxInstallHelper.dll",
+      "route": "no_a3d_evidence_found"
+    },
+    {
+      "file": "goggame-1441704976.dll",
+      "size": 339024,
+      "sha256": "9166c18a345f40d2a7b2c303d0c428d09e1df7b79dd5cb6c9c3b13fd5452da14",
+      "machine": "0x14c",
+      "pe32_x86": true,
+      "imports": [
+        "KERNEL32.dll"
+      ],
+      "guid_evidence": {},
+      "a3d_markers": [],
+      "relative_path": "goggame-1441704976.dll",
+      "route": "no_a3d_evidence_found"
+    },
+    {
+      "file": "qagamex86.dll",
+      "size": 704512,
+      "sha256": "085346769622cbf19c085accd055bf8b59f3c773aca503711ea0f95e5288e7d1",
+      "machine": "0x14c",
+      "pe32_x86": true,
+      "imports": [
+        "KERNEL32.dll"
+      ],
+      "guid_evidence": {},
+      "a3d_markers": [],
+      "relative_path": "qagamex86.dll",
+      "route": "no_a3d_evidence_found"
+    },
+    {
+      "file": "uix86.dll",
+      "size": 225280,
+      "sha256": "691f1f611d0354c11f4c73804d1c9d5feb83219d49fb5319d31e3989044b4ac7",
+      "machine": "0x14c",
+      "pe32_x86": true,
+      "imports": [
+        "KERNEL32.dll"
+      ],
+      "guid_evidence": {},
+      "a3d_markers": [],
+      "relative_path": "uix86.dll",
+      "route": "no_a3d_evidence_found"
+    },
+    {
+      "file": "unins000.exe",
+      "size": 1327184,
+      "sha256": "4d109d7c3ce03e728cfaed067d21f6199830f8d66c6a415714e447156a2e7536",
+      "machine": "0x14c",
+      "pe32_x86": true,
+      "imports": [
+        "oleaut32.dll",
+        "advapi32.dll",
+        "user32.dll",
+        "kernel32.dll",
+        "kernel32.dll",
+        "user32.dll",
+        "msimg32.dll",
+        "gdi32.dll",
+        "version.dll",
+        "mpr.dll",
+        "kernel32.dll",
+        "advapi32.dll",
+        "comctl32.dll",
+        "kernel32.dll",
+        "oleaut32.dll",
+        "ole32.dll",
+        "oleaut32.dll",
+        "comctl32.dll",
+        "shell32.dll",
+        "shell32.dll",
+        "comdlg32.dll",
+        "ole32.dll",
+        "oleaut32.dll",
+        "advapi32.dll"
+      ],
+      "guid_evidence": {},
+      "a3d_markers": [],
+      "relative_path": "unins000.exe",
+      "route": "no_a3d_evidence_found"
+    },
+    {
+      "file": "WolfMP.exe",
+      "size": 1077310,
+      "sha256": "f487b958916e49fc752e2ed2c2a1df0f717122f0cc424b5b5b8c2b2dd172b586",
+      "machine": "0x14c",
+      "pe32_x86": true,
+      "imports": [
+        "ADVAPI32.dll",
+        "WINMM.dll",
+        "WSOCK32.dll",
+        "KERNEL32.dll",
+        "USER32.dll",
+        "GDI32.dll",
+        "SHELL32.dll"
+      ],
+      "guid_evidence": {},
+      "a3d_markers": [],
+      "relative_path": "WolfMP.exe",
+      "route": "no_a3d_evidence_found"
+    },
+    {
+      "file": "WolfSP.exe",
+      "size": 1282095,
+      "sha256": "3bbd70d7ab2b80fe825909b878aadf92a585044d44c59b1e2e4e790241aa560f",
+      "machine": "0x14c",
+      "pe32_x86": true,
+      "imports": [
+        "ole32.dll",
+        "SHELL32.dll",
+        "ADVAPI32.dll",
+        "WINMM.dll",
+        "WSOCK32.dll",
+        "KERNEL32.dll",
+        "USER32.dll",
+        "GDI32.dll"
+      ],
+      "guid_evidence": {},
+      "a3d_markers": [],
+      "relative_path": "WolfSP.exe",
+      "route": "no_a3d_evidence_found"
+    }
+  ],
+  "errors": []
+}

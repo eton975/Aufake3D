@@ -1,0 +1,68 @@
+[
+  {
+    "file": "quake3.exe",
+    "size": 2209835,
+    "sha256": "22de3b93db454573a81169b795928ba86ff336547279f0afad93e4eb7fb11cc9",
+    "imports": [
+      "ADVAPI32.dll",
+      "WINMM.dll",
+      "WSOCK32.dll",
+      "KERNEL32.dll",
+      "USER32.dll",
+      "GDI32.dll"
+    ],
+    "a3d_clues": [
+      "Aureal A3D Interactive"
+    ]
+  },
+  {
+    "file": "mss32.dll",
+    "size": 352256,
+    "sha256": "14fb663762695a02e06b144c487254b08163185fa009efb32df733882cd570de",
+    "imports": [
+      "KERNEL32.dll",
+      "USER32.dll",
+      "WINMM.dll"
+    ],
+    "a3d_clues": []
+  },
+  {
+    "file": "mssa3d2.m3d",
+    "size": 61440,
+    "sha256": "bda3b0d3f698d5cd397642f93bbc7bd7c430d295b8af498847ddb4aeb143f078",
+    "imports": [
+      "KERNEL32.dll",
+      "mss32.dll",
+      "USER32.dll",
+      "WINMM.dll",
+      "ADVAPI32.dll",
+      "ole32.dll"
+    ],
+    "a3d_clues": [
+      "A3D error [%08lxh]",
+      "A3D technology interface",
+      "A3d Object",
+      "A3dApi",
+      "A3dApi Object",
+      "A3dApi\\CLSID",
+      "A3dDAL",
+      "A3dDAL Object",
+      "A3dDAL\\CLSID",
+      "A3d\\CLSID",
+      "Aureal A3D 2.0 (TM)",
+      "Could not create secondary A3D buffer",
+      "Failed to create A3D geometry object",
+      "Failed to create A3D listener object",
+      "Failed to create A3D wall material",
+      "Maximum reflection delay",
+      "Reflection delay scale",
+      "Reflection gain scale",
+      "Render first reflections",
+      "Software\\Aureal\\A3D",
+      "The A3D 2 library could not be loaded",
+      "Virtual geometry",
+      "a3d.dll",
+      "a3dapi.dll"
+    ]
+  }
+]

@@ -1,0 +1,2 @@
+Aufake3D v0.8.8: HRTF calibration passed: {"schema":"aufake3d-v088-hrtf-offline","source":"shared KEMAR HRTF code, not live Alice output","sample_rate":48000,"left_ear_advantage_db":9.47944,"right_ear_advantage_db":9.47944,"near_to_far_energy_ratio":6.25250,"front_hrir_index":260,"behind_hrir_index":296,"clipped":false,"failures":0}
+Windows actual execution pending. v0.8.7 renderer/proxy unchanged; no developer mode.

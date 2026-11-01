@@ -1,0 +1,9 @@
+{
+  "version": "0.6.12",
+  "release": "final",
+  "input_archive": "A3D_v0612_WeaponClarity_AllInOne.zip",
+  "input_sha256": "d7f27db0901f75807caa93af01db710981d6c0f5125de52553741cfb6672b529",
+  "linux_gameplay_verified": false,
+  "windows_gameplay_rerun": false,
+  "audio_algorithm_changed_for_final_packaging": false
+}

@@ -1,0 +1,16 @@
+LIBRARY kernel32.dll
+EXPORTS
+ LoadLibraryA
+ GetProcAddress
+ GetModuleFileNameA
+ GetModuleHandleA
+ GetEnvironmentVariableA
+ CreateFileA
+ SetFilePointer
+ WriteFile
+ CloseHandle
+ CreateActCtxA
+ ActivateActCtx
+ DeactivateActCtx
+ ReleaseActCtx
+ GetLastError

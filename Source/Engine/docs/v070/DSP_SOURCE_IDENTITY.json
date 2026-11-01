@@ -1,0 +1,68 @@
+[
+  {
+    "file": "win32/stream_core.h",
+    "previous_alpha_sha256": "ed9a25c3ee4288d837c53253990d494ee9e44a5c1d249035396344752672c64f",
+    "current_sha256": "ed9a25c3ee4288d837c53253990d494ee9e44a5c1d249035396344752672c64f",
+    "identical": true
+  },
+  {
+    "file": "win32/stream_winmm.inc",
+    "previous_alpha_sha256": "2a80e2094cda9af3d52d22022c0d4ff0e7b268e6ef4c5e3ea42e674a1b62798c",
+    "current_sha256": "2a80e2094cda9af3d52d22022c0d4ff0e7b268e6ef4c5e3ea42e674a1b62798c",
+    "identical": true
+  },
+  {
+    "file": "win32/source_probe.inc",
+    "previous_alpha_sha256": "5cf3fa890a929fd0c24c10387217a313beddbb23a8d2dd4b4f5dfaddb068b639",
+    "current_sha256": "5cf3fa890a929fd0c24c10387217a313beddbb23a8d2dd4b4f5dfaddb068b639",
+    "identical": true
+  },
+  {
+    "file": "win32/measured_hrtf.h",
+    "previous_alpha_sha256": "221181492c49ec50569282601b4d2c4b3c3c913abf3293ab102ebabb3a8f8849",
+    "current_sha256": "221181492c49ec50569282601b4d2c4b3c3c913abf3293ab102ebabb3a8f8849",
+    "identical": true
+  },
+  {
+    "file": "win32/measured_hrir_data.h",
+    "previous_alpha_sha256": "b6d53419c16e7927e01232c28d5185b9ed7686e320194a56b720975a41e3ac8a",
+    "current_sha256": "b6d53419c16e7927e01232c28d5185b9ed7686e320194a56b720975a41e3ac8a",
+    "identical": true
+  },
+  {
+    "file": "win32/weapon_signatures_v0612.inc",
+    "previous_alpha_sha256": "2fb3558e9438b0b2a23cdb1f924d98b1cfee3665bf41ca7863ecba419f6967ae",
+    "current_sha256": "2fb3558e9438b0b2a23cdb1f924d98b1cfee3665bf41ca7863ecba419f6967ae",
+    "identical": true
+  },
+  {
+    "file": "win32/acoustic_scene.h",
+    "previous_alpha_sha256": "762ed0c84a6ce6aaa87483ae716d9556afd02dd79338d718ce7c122d5578c469",
+    "current_sha256": "762ed0c84a6ce6aaa87483ae716d9556afd02dd79338d718ce7c122d5578c469",
+    "identical": true
+  },
+  {
+    "file": "win32/geom_trace.inc",
+    "previous_alpha_sha256": "e488bc32c0f28c84d48f000ecbb6f34c984d7c2b8bcb0fa46fae8ff39e44856f",
+    "current_sha256": "e488bc32c0f28c84d48f000ecbb6f34c984d7c2b8bcb0fa46fae8ff39e44856f",
+    "identical": true
+  },
+  {
+    "file": "win32/geometry_lists.inc",
+    "previous_alpha_sha256": "3dad56ae2f9b3879843876fa6babf14d327264f6a51be9b189a8a0bbc9fa53a7",
+    "current_sha256": "3dad56ae2f9b3879843876fa6babf14d327264f6a51be9b189a8a0bbc9fa53a7",
+    "identical": true
+  },
+  {
+    "file": "win32/listener_trace.inc",
+    "previous_alpha_sha256": "8bad17712ccfc15cbe0949e0ff1b3138946288d3fb6edde3cbab55b30ff2c2c8",
+    "current_sha256": "8bad17712ccfc15cbe0949e0ff1b3138946288d3fb6edde3cbab55b30ff2c2c8",
+    "identical": true
+  },
+  {
+    "file": "win32/a3d_legacy_bridge.c",
+    "previous_alpha_sha256": "4698e34db090f6b59eebfc43dce216f1e47a54c82dd3615e23bf1ea629fc7dcc",
+    "current_sha256": "4698e34db090f6b59eebfc43dce216f1e47a54c82dd3615e23bf1ea629fc7dcc",
+    "identical": true
+  }
+]

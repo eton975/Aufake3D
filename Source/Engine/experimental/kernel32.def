@@ -1,0 +1,30 @@
+LIBRARY KERNEL32.dll
+EXPORTS
+CreateProcessA
+GetCommandLineA
+GetModuleFileNameA
+ReadProcessMemory
+WriteProcessMemory
+VirtualAllocEx
+VirtualProtectEx
+FlushInstructionCache
+ResumeThread
+TerminateProcess
+CloseHandle
+WaitForSingleObject
+GetExitCodeProcess
+GetStdHandle
+WriteFile
+GetLastError
+ExitProcess
+
+ GetThreadContext
+ SetThreadContext
+ CreateActCtxA
+ ActivateActCtx
+
+CreateFileA
+ReadFile
+SetFilePointer
+
+GetEnvironmentVariableA

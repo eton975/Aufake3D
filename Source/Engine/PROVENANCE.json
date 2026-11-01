@@ -1,0 +1,12 @@
+{
+  "version": "0.7.0-alpha",
+  "status": "Half-Life progress development snapshot; game audio/gameplay unverified",
+  "baseline_archive": "A3D_v070_alpha_BroadCompatibility_AllInOne.zip",
+  "baseline_sha256": "3e8bfdd20b90cf384b3dde8d0ce441968f94d9f2e788827444eaae2b4eef5f93",
+  "half_life_gameplay_verified": false,
+  "unreal_gameplay_verified": false,
+  "wine_runtime_verified": false,
+  "production_half_life_workaround_game_runtime_verified": false,
+  "private_game_binaries_included": false,
+  "audio_algorithm_changed": false
+}

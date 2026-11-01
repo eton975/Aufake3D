@@ -1,0 +1,8 @@
+LIBRARY a3d.dll
+EXPORTS
+    _A3dCreate@12=_legacy_a3d_create@12 @6
+    A3dCreate=_legacy_a3d_create@12 @7
+    DllGetClassObject=_DllGetClassObject@12 @2
+    DllCanUnloadNow=_DllCanUnloadNow@0 @3
+    DllRegisterServer=_DllRegisterServer@0 @4
+    DllUnregisterServer=_DllUnregisterServer@0 @5

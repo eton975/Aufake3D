@@ -1,0 +1,807 @@
+{
+  "version": "0.6.11",
+  "origin": "User-supplied original Alice weapon sound archive; catalog only, no sound bytes included",
+  "count": 100,
+  "entries": [
+    {
+      "name": "altar.wav",
+      "rate": 11025,
+      "channels": 1,
+      "bits": 16,
+      "frames": 47907,
+      "sha256": "bbe0ded8dfa9fd271353ab773e02433d8310b5ac1fe526d47e3a039a3534f0e7"
+    },
+    {
+      "name": "blunderbuss_explode.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 53621,
+      "sha256": "671f639c0ac5dc8f981e636df6c9c4b463a142a95613d82bc89af34c59668c4b"
+    },
+    {
+      "name": "blunderbuss_fire.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 46172,
+      "sha256": "6fc105a7a80f465527fd2d32bcbe63b6190142aa6f08f348745f67dae34c79fd"
+    },
+    {
+      "name": "blunderbuss_loop.wav",
+      "rate": 11025,
+      "channels": 1,
+      "bits": 16,
+      "frames": 13131,
+      "sha256": "c9a618426dab742bce577df1793335d824808fb5aefcdc26cc7959de53f6a51b"
+    },
+    {
+      "name": "bullet_flesh1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 4599,
+      "sha256": "92f46df2453be9d2e3515a79fac02ea77fe8f27801779f2c0ad3ab79eb154eca"
+    },
+    {
+      "name": "bullet_flesh2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 3754,
+      "sha256": "c2e8cf11c1c91c966ba3fde091d716ff49036121fafd53d91cb10e476d9b13a4"
+    },
+    {
+      "name": "bullet_world1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 4841,
+      "sha256": "39450254b9af0b5b518570c8054158c4ee01993408dd324d1d61ce44efe5a824"
+    },
+    {
+      "name": "bullet_world2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 4014,
+      "sha256": "31e985743de174ceb326e5b51298affe76bc51cad7cccd7a06fd3beec4a4befb"
+    },
+    {
+      "name": "cards_hit_flesh1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 16753,
+      "sha256": "1ccef0a919511127a65b08a6ca6bdb98fec67b1aa73b35ffbcaf5fd32633d13b"
+    },
+    {
+      "name": "cards_hit_flesh2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 6399,
+      "sha256": "8fb1ef57de9afd64988c9a0c345b529731876c608c09721a79764f0f11381592"
+    },
+    {
+      "name": "cards_hit_world1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 14860,
+      "sha256": "172419e9c479db90dc78a4a9dbe2d2294aa65290f1ff87bae5d97cd4dc5075d8"
+    },
+    {
+      "name": "cards_hit_world2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 8628,
+      "sha256": "805098768fc83526c27c1553a078f586e50e0ed6575ac1d12c872a2b7f7629a6"
+    },
+    {
+      "name": "cards_loop1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 15501,
+      "sha256": "92b43cb164a612294529cc04385be16957ca269234b4c7a77fd5a0b746d4da0c"
+    },
+    {
+      "name": "cards_toss1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 8257,
+      "sha256": "94ff825762d5cf3b55b8f16cdc558d99d06afeaf94f0249c9879742465673211"
+    },
+    {
+      "name": "dice_rift_close.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 20429,
+      "sha256": "6dc5736439e4434056eb6bfd21b673445a3e8053b8910ab52b5d8984c85c4b30"
+    },
+    {
+      "name": "dice_rift_loop.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 49300,
+      "sha256": "123974034b0c52ee276ea5ca1fd90cd4d01db07f41f3a60ed7b327e147e75727"
+    },
+    {
+      "name": "dice_rift_open.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 29605,
+      "sha256": "ea33f40cde344b987d99f2421cd9cd58f94a8c5e32f94c33eb91f9c1f60d3a21"
+    },
+    {
+      "name": "dice_toss.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 11299,
+      "sha256": "038a2eb9f7903af0a81e62f9a31ed33f8a8c34764088aa556a78d38ebab7087c"
+    },
+    {
+      "name": "explode1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 38295,
+      "sha256": "5297425fbec356eb3a9ad64284947b40833e8a3b4c3729f226a1885db6a048b7"
+    },
+    {
+      "name": "icewand_fire.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 53554,
+      "sha256": "b43ec8d8b518621db300148eb226ca38b9a21641ca2c0c2d90c6ded186cd1e1b"
+    },
+    {
+      "name": "icewand_fire2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 50732,
+      "sha256": "a7faf1789b91686d88714968023c3af379eea601294522de5c4fe696ea7e4846"
+    },
+    {
+      "name": "icewand_flesh1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 25902,
+      "sha256": "f488d0d97b528b3b2edd3e06f7e089e5dccdc1061e31558078837eeaead12a18"
+    },
+    {
+      "name": "icewand_flesh2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 35720,
+      "sha256": "5bcb445656c87d8aa0320de5497fe2869d281f9592ce72466defbf95a29944b0"
+    },
+    {
+      "name": "icewand_flesh3.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 17577,
+      "sha256": "8ed348aad11799306a218dca8ecf04b3ad7664960a019c78908ec4142a44d23c"
+    },
+    {
+      "name": "icewand_icewall.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 33245,
+      "sha256": "d56f3a94efefcaac7818ce8c1db4885c5a389c1b7fbecb3146c33033d928810d"
+    },
+    {
+      "name": "icewand_icewall_death.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 26286,
+      "sha256": "f77faf43ba9f86ba4cfe7c6e1168a64a5fc068b7d816a51a1b22bea5d44cee27"
+    },
+    {
+      "name": "icewand_idle.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 29759,
+      "sha256": "2e76603594bc8151deefeef1cdf16c2f550a0c3e404b41be0d2c277aef0d786b"
+    },
+    {
+      "name": "icewand_world1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 22078,
+      "sha256": "2deaad02b9a02fc46cb12d846745f1c8c152606bc12561f7d6b69e793be1c7df"
+    },
+    {
+      "name": "icewand_world2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 22048,
+      "sha256": "6c728d11b1bba9cb7b0d107e9d17b75856ceb4c877f1cf68231bf33a6a92b362"
+    },
+    {
+      "name": "icewand_world3.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 22082,
+      "sha256": "c4d5fec09eda6f93007c4bd1879e56ad71eae003f6858765bad1fb70dc2f5e3b"
+    },
+    {
+      "name": "jackbomb_breath.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 53182,
+      "sha256": "f056ec4156c54ac552e19547c0dcd110997b2f9e3ed1e0bc98ae15c1e096196c"
+    },
+    {
+      "name": "jackbomb_explode.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 48369,
+      "sha256": "18a8c95d64277c4c3e7409ba80d217bb51f31f62456820716b5a8749e7995ce4"
+    },
+    {
+      "name": "jackbomb_music.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 47618,
+      "sha256": "204424e79809f59362fef07e442d60d175e613e4d6dc30dac2c551fb5ffe762c"
+    },
+    {
+      "name": "jackbomb_pop.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 31339,
+      "sha256": "f43e27fc2b40bf324de5f516dc978ea20b7edf04bf71233cb7978c03da75d224"
+    },
+    {
+      "name": "jackbomb_toss.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 15749,
+      "sha256": "03fbe94f6426a61f0b27cb3222ec6b8e52fea6f8812cfbbe76e9a6040bd877e5"
+    },
+    {
+      "name": "jacks_ball_bounce.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 11314,
+      "sha256": "162b4623fdd7a0b3171bd73d88276a9b03515485da515f72e91a992cb4d22de9"
+    },
+    {
+      "name": "jacks_bounce.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 12804,
+      "sha256": "a753df94d2dfcb54b30b3effdad7aa7137ab95d8f4a95505bfab0366f7f8c7d5"
+    },
+    {
+      "name": "jacks_flesh1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 27863,
+      "sha256": "9aef56f7811fb00c48009301cc18cb164f46696e62b8e7e2873e8db6e9459df4"
+    },
+    {
+      "name": "jacks_flesh2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 18025,
+      "sha256": "ca0b8232a66dabb5f9e28237d2b25ef1cc76a6b42dfe5bd2c2a9b106a164b267"
+    },
+    {
+      "name": "jacks_flesh3.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 20374,
+      "sha256": "8627719dd350182bde715d5bfa2bf0962b6aab87777fc1e6ff7fe54f1a713981"
+    },
+    {
+      "name": "jacks_loop.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 30979,
+      "sha256": "dafba5f6973f8f520a48d7027be2fca79560ba15f99a22bb4d04b683b9483da6"
+    },
+    {
+      "name": "jacks_ricochet1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 20047,
+      "sha256": "bb32baca52c2139b80b69c7ab9843b281d73afd7ea0229466ab80641c9bacad5"
+    },
+    {
+      "name": "jacks_ricochet2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 20047,
+      "sha256": "b0db2444967100216e7b261377f24663c1837a5e5e42fb412f3e9d8678290601"
+    },
+    {
+      "name": "jacks_ricochet3.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 20047,
+      "sha256": "c69b7a8bad967b4b586f78726df48e8bb9b76f851d7540191d9cdb5d2afe9066"
+    },
+    {
+      "name": "jacks_toss.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 35421,
+      "sha256": "cf35da059854d49283d530dea525eca9b30002cdcb80dc2ecbf86b1a0a4ae09c"
+    },
+    {
+      "name": "knife_hit_flesh.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 9055,
+      "sha256": "3276c73c1eaac281019fa0889caa6d8415433f79196145658661c0323e3bfb0b"
+    },
+    {
+      "name": "knife_hit_flesh1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 9293,
+      "sha256": "4844899dc94323ec4fa60945b5f38384999261ad0b0936e4d1d15271efa78574"
+    },
+    {
+      "name": "knife_hit_flesh2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 10106,
+      "sha256": "5c11f2bb606049d0cdcb7bcf77f440cc977fa66f779df216079004310bac4ae3"
+    },
+    {
+      "name": "knife_hit_flesh3.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 9362,
+      "sha256": "1635f89bc2ec11de02dd8e73533f37778635388f14295351364a7c896ecfc10f"
+    },
+    {
+      "name": "knife_hit_world1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 7903,
+      "sha256": "146c4186b574c707f492d857a97658cc3a8fc24054b8776dd1583fb97d90da9b"
+    },
+    {
+      "name": "knife_hit_world2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 5555,
+      "sha256": "3e6800e2e99aac8effa6c7e3cdc8f4f8a95099d1348b705aee15d3af54ef0492"
+    },
+    {
+      "name": "knife_hit_world3.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 7078,
+      "sha256": "7885fef103a72cf5d1e6225548e5b96cb516f6446879d964f1e497ad1f8a16a4"
+    },
+    {
+      "name": "knife_phit_flesh1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 12240,
+      "sha256": "3644bf274db7bc8f6c2d09b75ee4496cfd64323b24d39a8c161f8a521b91655b"
+    },
+    {
+      "name": "knife_phit_flesh2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 11072,
+      "sha256": "616ee4b97a43afad5b1c337b18b793e3a985661a5839422d7230c47fdaaaf336"
+    },
+    {
+      "name": "knife_phit_flesh3.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 10250,
+      "sha256": "a06133d2f61def4017cd7a5307c95ee4591cd05d0a35b88d2368d281080cf3f1"
+    },
+    {
+      "name": "knife_phit_world1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 14813,
+      "sha256": "ff7641232960b1cf39f1b161731c4076272d18d9c918c6569e9823415b2c11f2"
+    },
+    {
+      "name": "knife_phit_world2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 11560,
+      "sha256": "41e6fb784fa908cf88a900b14c10152bc4a0fd8336a8b452b74827bc5f780646"
+    },
+    {
+      "name": "knife_phit_world3.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 8866,
+      "sha256": "66ba9a054c9b9d55555dfce0db62d50623269421e5043f005fc7456357ab22f2"
+    },
+    {
+      "name": "knife_ready.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 16415,
+      "sha256": "bd3b9000e9301a843e2bee7430427cb6e9de16c5e7abb5545ff65b51d5fe3ca9"
+    },
+    {
+      "name": "knife_spin.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 22586,
+      "sha256": "7868bdea9bab0144dcdf57e98ae6c1c5b9287b76336fd25195cf414e78dff739"
+    },
+    {
+      "name": "knife_swing1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 6519,
+      "sha256": "b24d890c882e98260c672f8624613f16dc2e98bd6b34f0d41e96ce9f015221d8"
+    },
+    {
+      "name": "knife_swing2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 6403,
+      "sha256": "b66258c65a0091ce53600e82cf4427e9ff643c1097bc94a8eff7bd578d34dcb1"
+    },
+    {
+      "name": "knife_swing3.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 4253,
+      "sha256": "ff86c6d7f1f0185cca7b36b46eff0d4c3af998adf00f8f900cf3b939a1fadd29"
+    },
+    {
+      "name": "knife_throw.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 6122,
+      "sha256": "b00aa81308a420f58c0b9c3094efc20651d90fdecda322633d540c1c59827a61"
+    },
+    {
+      "name": "mallet_ball_bounce.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 6691,
+      "sha256": "68d446c40a8d9ad10d0b17a83433eaed9f47016b1f20c34dc99b390159153f65"
+    },
+    {
+      "name": "mallet_ball_flesh1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 7804,
+      "sha256": "6971df74915a82149095e95ee7dbdee6359d5c2b8e8ca22ffaa35259a09b1e72"
+    },
+    {
+      "name": "mallet_ball_flesh2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 23140,
+      "sha256": "6324b8feca102e0af5bd128d50674f364a0b294fa8f8fdaab3234e76f6479f16"
+    },
+    {
+      "name": "mallet_ball_loop.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 13406,
+      "sha256": "7a4d1f1e9306a3fe45820c3807af834bc206df7678c9696e06a32e21e57e3856"
+    },
+    {
+      "name": "mallet_ball_swing.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 23326,
+      "sha256": "5b30d27c2f3d776d3fb341fe4615acc3cde87146626dfce22175f23744901dc3"
+    },
+    {
+      "name": "mallet_hit_flesh1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 8157,
+      "sha256": "309b4c11774a13ff67b0f2cea2701eff6f2a6e6b4e1a05cf6487bb2dc85efc17"
+    },
+    {
+      "name": "mallet_hit_flesh2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 9216,
+      "sha256": "71efb746b3b0b16a5b19ebd7419a648e69f8fb4201ba12eb062a9b2e45284f09"
+    },
+    {
+      "name": "mallet_hit_flesh3.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 9889,
+      "sha256": "4bff78b2bb52c848fb017bb6f1d5436c172439d848c47aef88d2759e0751b271"
+    },
+    {
+      "name": "mallet_hit_world1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 13264,
+      "sha256": "2389a7b0aac25d38dd3d234a20c560c35d696c7533718b13ec19ed59b872a774"
+    },
+    {
+      "name": "mallet_hit_world2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 12679,
+      "sha256": "c41186dd2b23212100a9e731d7087b750314e51e0b7ddaed2a1af7ca6b73419a"
+    },
+    {
+      "name": "mallet_hit_world3.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 10586,
+      "sha256": "b21195f97757781a72bc30dfa795627bda1d4463e71b3f844beb4526d2470d6c"
+    },
+    {
+      "name": "mallet_swing1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 22046,
+      "sha256": "4ed186d9f61a1086869201be375d07098c4690bb36c7af52df1815e6b5d78233"
+    },
+    {
+      "name": "mallet_swing2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 21766,
+      "sha256": "b242f742c03c4d398e7002869d4f362f8a1e1922c6c808f1f078fbb035487481"
+    },
+    {
+      "name": "noammo.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 11133,
+      "sha256": "2f9d60b6c56693e975434172cc1932f31896312917d58db55811aecfc4035f40"
+    },
+    {
+      "name": "pickup.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 26942,
+      "sha256": "e48823699eb9d2a032111b9c9ea1ce058b6fc0f864c6b98fffa8104305921e30"
+    },
+    {
+      "name": "small_drop.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 8512,
+      "sha256": "e4485e4f8f76926cc4098fc667571f97fd7664fbae93693d37ce4f877b818d95"
+    },
+    {
+      "name": "splat1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 25536,
+      "sha256": "d0926cf72abd25601fa3bc94ba6f4baafcfe4ac129f82002c7fe86de28e9fbc5"
+    },
+    {
+      "name": "splat2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 16606,
+      "sha256": "851ec8d38e6c4344fac96fc33049c8b1f81cd1c47d2cb319995f52c60ea94f67"
+    },
+    {
+      "name": "splat3.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 37590,
+      "sha256": "1d6d060eb80c4c409b91325bea8267ee2d994a2249ab6673279d3a5ffaa2b5ff"
+    },
+    {
+      "name": "splat4.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 26169,
+      "sha256": "5343086b12dc5ab7eaa160a6c2433039a7313fb84126e17261a0fa5e664dea82"
+    },
+    {
+      "name": "splat_small.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 15158,
+      "sha256": "ff200566b061c3e4721d3c921b287cf0f75611485c86fffb0b6b7db84b32eb87"
+    },
+    {
+      "name": "spurt.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 56959,
+      "sha256": "cc92e5b6bba9d764a42864436f3f29482383217437fa85ffa24d7247e23d761e"
+    },
+    {
+      "name": "staff_beam_loop.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 15355,
+      "sha256": "147c2e223a22788724ce6cd58769016c50193f34a0b244d5eb6a90ba19c0a4ab"
+    },
+    {
+      "name": "staff_charge1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 105710,
+      "sha256": "6020d0b12bd031f2d99ab36af6d2eb8a2c2552048837b292de8ec375dfc3028a"
+    },
+    {
+      "name": "staff_charge2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 87211,
+      "sha256": "81d447c9ca4fc143e39aba18c4498b741738afa202e543cb385ef99c008387a8"
+    },
+    {
+      "name": "staff_charge_off.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 28526,
+      "sha256": "07cf67e8a476e5f4e2efbd90f2d6af999f9eb32f5438e8aa76fefe9cc014763d"
+    },
+    {
+      "name": "staff_explode1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 31292,
+      "sha256": "0604ad08d76f51a8d49f9b79f8ec3a4faff86ee3f590c218ab6878c61be17c2b"
+    },
+    {
+      "name": "staff_explode2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 55948,
+      "sha256": "7ab23d0cbafa3be76401594a81f78cede99b9843d7d8951a86731020344ab468"
+    },
+    {
+      "name": "staff_liftoff.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 31685,
+      "sha256": "75cfd73b83464dabea113a0c5b82568f85ccbb6f84ee882a53ade5c6ca8682ce"
+    },
+    {
+      "name": "staff_powerup1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 118095,
+      "sha256": "a8b1cbdc9feac575620e0600113217b4058dc264b647f3b9c2ff76056edf38c2"
+    },
+    {
+      "name": "staff_powerup2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 86059,
+      "sha256": "b1d2dcc7ef64a94378415a013f0acdfa79313db9569099cb527c7b67ca9b279e"
+    },
+    {
+      "name": "staff_pulse.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 7964,
+      "sha256": "7bbf83aec7777e2e995029c43cf2cc42bc325fbf3a7fb5d132c0092ffea5273a"
+    },
+    {
+      "name": "water_exit1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 19117,
+      "sha256": "1fdeb4b70544ba54b7bc596913d19c365b59d844a599cbab62144c80e13bc3c8"
+    },
+    {
+      "name": "water_splash1.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 33735,
+      "sha256": "e6886762c08ba7d30b2afaeb4a1ed0614c9d2bcef2d8819107444ec3decf68ac"
+    },
+    {
+      "name": "water_splash2.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 32695,
+      "sha256": "04aa6365d19d979a41607ecac6c0fc8ae217a8b5586d317200412bf2f9a8bf8f"
+    },
+    {
+      "name": "weapon_reappear.wav",
+      "rate": 22050,
+      "channels": 1,
+      "bits": 16,
+      "frames": 37463,
+      "sha256": "6c6ec2839fc63c7119112f478433c33d4ad8ea057c9c1bbac12a0776a963d867"
+    }
+  ]
+}

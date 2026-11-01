@@ -1,0 +1,50 @@
+{
+  "release": "0.8.13",
+  "classification": "developer/public-testing review candidate; not AV certified",
+  "compiler": "Clang/LLD i686-pc-windows-msvc (39-step Source/Engine/windows-build-recipe.json)",
+  "audio_core_unchanged": true,
+  "mile_proxy_source_reproduction": "Source/Alice2011_NameFix_v089/build_proxy_from_export_map.py",
+  "disclaimer": "PE build/import checks do not prove malware-free. Do not infer new VirusTotal results.",
+  "game_binary_files": {
+    "Universal_Core/a3d.dll": {
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0",
+      "size": 3584,
+      "build_origin": "reproducible universal audio core"
+    },
+    "Universal_Core/a3dapi.dll": {
+      "sha256": "2e6f500e8d86b641d702f21cbfa2662f6327e15c794af7c07745c24cba8e8db2",
+      "size": 1094144,
+      "build_origin": "reproducible universal audio core"
+    },
+    "Game_Kits/Alice_2000/COPY_TO_GAME_FOLDER/alice-a3d-bridge.exe": {
+      "sha256": "7b389fb76b987dbcaf6bd26da7ea3c1d0c3250ec3c277b67d5ec68c93da944be",
+      "size": 6656,
+      "build_origin": "compiled locally from included Source/Engine"
+    },
+    "Game_Kits/Alice_2011_VorpalFix/COPY_TO_GAME_FOLDER/mss32.dll": {
+      "sha256": "8bc83f25b228849693ef187877388f917d7a5e3475f7db5e0cf9fa9b708426b8",
+      "size": 30720,
+      "build_origin": "reproduced from included source + ABI export metadata"
+    },
+    "Game_Kits/Half_Life_1011/COPY_TO_GAME_FOLDER/halflife-a3d-alpha.exe": {
+      "sha256": "18420dc4c33ccedc6ffbbf26bf5a78b01ad373189cf4d809318229e812ffd612",
+      "size": 10752,
+      "build_origin": "compiled locally from included Source/Engine"
+    },
+    "Extras/Experimental/quake3-a3d-native.exe": {
+      "sha256": "dd31b8481ac93819d85ab2b871cd8de664cbad559c427c1c7253387533d1dbe0",
+      "size": 5632,
+      "build_origin": "compiled locally from included Source/Engine"
+    },
+    "Extras/Experimental/unreal-a3d-alpha.exe": {
+      "sha256": "c960fa4336e6c8efb2c11a009c625dc49fda0e110f3b0e73457685609b1ea607",
+      "size": 10752,
+      "build_origin": "compiled locally from included Source/Engine"
+    },
+    "Extras/Experimental/a3d-launch.exe": {
+      "sha256": "762f7ccb267c6d7d8a27b7f2a916a89eba3bc608b5e0e9a54e02f8820e92eb1a",
+      "size": 12800,
+      "build_origin": "compiled locally from included Source/Engine"
+    }
+  }
+}

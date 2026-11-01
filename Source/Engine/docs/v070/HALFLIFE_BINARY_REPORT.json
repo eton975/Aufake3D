@@ -1,0 +1,222 @@
+{
+  "version": "0.7.0-alpha",
+  "files": [
+    {
+      "file": "hl.exe",
+      "size": 1067520,
+      "sha256": "1bb9db7cab8d39feeba7c5fd9327502a8a4ad795cec8da0cd8589f08f35765c6",
+      "machine": "0x14c",
+      "pe32_x86": true,
+      "imports": [
+        "WINMM.dll",
+        "DDRAW.dll",
+        "WONAu_W95.dll",
+        "WONCr_W95.dll",
+        "KERNEL32.dll",
+        "USER32.dll",
+        "GDI32.dll",
+        "comdlg32.dll",
+        "WINSPOOL.DRV",
+        "ADVAPI32.dll",
+        "SHELL32.dll",
+        "COMCTL32.dll",
+        "WSOCK32.dll",
+        "WININET.dll"
+      ],
+      "guid_evidence": {},
+      "a3d_markers": [
+        "A3D Support",
+        "Software\\Aureal\\A3D",
+        "s_a3d"
+      ],
+      "relative_path": "hl.exe",
+      "route": "markers_only_needs_binary_analysis"
+    },
+    {
+      "file": "hlds.exe",
+      "size": 141312,
+      "sha256": "4a630a262bdf52d59a8b1a59856de26ff47f125f781bc1477a9c0ba5073b40db",
+      "machine": "0x14c",
+      "pe32_x86": true,
+      "imports": [
+        "WSOCK32.dll",
+        "KERNEL32.dll",
+        "USER32.dll",
+        "WINMM.dll",
+        "WONCr_W95.dll",
+        "WONAu_W95.dll"
+      ],
+      "guid_evidence": {},
+      "a3d_markers": [],
+      "relative_path": "hlds.exe",
+      "route": "no_a3d_evidence_found"
+    },
+    {
+      "file": "hw.dll",
+      "size": 1037312,
+      "sha256": "f27259003b1922e10a371536b5686543be829eba3664596d418d1fd9524ed4aa",
+      "machine": "0x14c",
+      "pe32_x86": true,
+      "imports": [
+        "DDRAW.dll",
+        "WINMM.dll",
+        "WSOCK32.dll",
+        "KERNEL32.dll",
+        "USER32.dll",
+        "GDI32.dll",
+        "ADVAPI32.dll",
+        "ole32.dll",
+        "VERSION.dll",
+        "OLEAUT32.dll"
+      ],
+      "guid_evidence": {
+        "CLSID_A3dApi": {
+          "guid": "92fa2c24-253c-11d2-90fb-006008a1f441",
+          "file_offset": 762800
+        },
+        "IID_IA3d3": {
+          "guid": "c398e560-d90b-11d1-90fb-006008a1f441",
+          "file_offset": 762816
+        },
+        "IID_IA3dGeom": {
+          "guid": "c398e561-d90b-11d1-90fb-006008a1f441",
+          "file_offset": 762832
+        },
+        "IID_IA3dSource": {
+          "guid": "c398e562-d90b-11d1-90fb-006008a1f441",
+          "file_offset": 762848
+        },
+        "IID_IA3dListener": {
+          "guid": "c398e563-d90b-11d1-90fb-006008a1f441",
+          "file_offset": 762864
+        }
+      },
+      "a3d_markers": [
+        ".?AVCA3DSource2D@@",
+        ".?AVCA3DSource3D@@",
+        ".?AVCA3DSource@@",
+        "A3D Initialized successfully",
+        "A3D already enabled",
+        "A3D is not currently running.",
+        "A3D.DLL",
+        "A3D_SetGlobals - not yet implemented for Doppler or Rolloff.",
+        "Aureal A3D initialization failed.  Dropping to Direct Sound",
+        "Aureal A3D initialized",
+        "Aureal Semiconductor",
+        "Aureal Semiconductor Inc.",
+        "CA3DRenderer::SetMainVolume - not yet implemented in API.",
+        "CA3DSource2D::Disable3DSource - not implemented.",
+        "CA3DSource2D::Enable3DSource - not implemented.",
+        "CA3DSource2D::FeedDataSource - ",
+        "CA3DSource3D::Disable3DSource - not implemented.",
+        "CA3DSource3D::Enable3DSource - not implemented.",
+        "CA3DSource3D::FeedDataSource - ",
+        "CA3DSource3D::SetWidth - invalid bit width",
+        "Destroying A3D renderer object...",
+        "Initializing Aureal A3D...",
+        "Non-Aureal A3D.dll found.  This is an unsupported version A3D.",
+        "Non-Aureal A3D.dll found.  This is an unsupported version of A3D.",
+        "PaintToA3D: Error feeding A3DSource data!",
+        "Restarting A3D engine...",
+        "S_TransferStereo16: A3D::Lock MixBuffer Failed",
+        "Shutting down A3D",
+        "Software\\Aureal\\A3D",
+        "\\A3D.DLL",
+        "error in S_GetDSPointer - shouldn't be called with A3D.",
+        "hA3D_FeedBuffer - unhandled status.",
+        "s_a3d",
+        "s_disable_a3d",
+        "s_enable_a3d",
+        "s_geometry",
+        "s_occlude"
+      ],
+      "relative_path": "hw.dll",
+      "route": "a3d2_com_candidate"
+    },
+    {
+      "file": "sw.dll",
+      "size": 900608,
+      "sha256": "506db31d99a5cc7140cba4d85bc728e81c6e585f82f63d5daf4e481300c4a77f",
+      "machine": "0x14c",
+      "pe32_x86": true,
+      "imports": [
+        "WINMM.dll",
+        "WSOCK32.dll",
+        "KERNEL32.dll",
+        "USER32.dll",
+        "ADVAPI32.dll",
+        "VERSION.dll",
+        "ole32.dll"
+      ],
+      "guid_evidence": {
+        "CLSID_A3dApi": {
+          "guid": "92fa2c24-253c-11d2-90fb-006008a1f441",
+          "file_offset": 690792
+        },
+        "IID_IA3d3": {
+          "guid": "c398e560-d90b-11d1-90fb-006008a1f441",
+          "file_offset": 690808
+        },
+        "IID_IA3dGeom": {
+          "guid": "c398e561-d90b-11d1-90fb-006008a1f441",
+          "file_offset": 690824
+        },
+        "IID_IA3dSource": {
+          "guid": "c398e562-d90b-11d1-90fb-006008a1f441",
+          "file_offset": 690840
+        },
+        "IID_IA3dListener": {
+          "guid": "c398e563-d90b-11d1-90fb-006008a1f441",
+          "file_offset": 690856
+        }
+      },
+      "a3d_markers": [
+        ".?AVCA3DSource2D@@",
+        ".?AVCA3DSource3D@@",
+        ".?AVCA3DSource@@",
+        "A3D Initialized successfully",
+        "A3D already enabled",
+        "A3D is not currently running.",
+        "A3D.DLL",
+        "A3D_SetGlobals - not yet implemented for Doppler or Rolloff.",
+        "Aureal A3D initialization failed.  Dropping to Direct Sound",
+        "Aureal A3D initialized",
+        "Aureal Semiconductor",
+        "Aureal Semiconductor Inc.",
+        "CA3DRenderer::SetMainVolume - not yet implemented in API.",
+        "CA3DSource2D::Disable3DSource - not implemented.",
+        "CA3DSource2D::Enable3DSource - not implemented.",
+        "CA3DSource2D::FeedDataSource - ",
+        "CA3DSource3D::Disable3DSource - not implemented.",
+        "CA3DSource3D::Enable3DSource - not implemented.",
+        "CA3DSource3D::FeedDataSource - ",
+        "CA3DSource3D::SetWidth - invalid bit width",
+        "Destroying A3D renderer object...",
+        "Initializing Aureal A3D...",
+        "Non-Aureal A3D.dll found.  This is an unsupported version A3D.",
+        "Non-Aureal A3D.dll found.  This is an unsupported version of A3D.",
+        "PaintToA3D: Error feeding A3DSource data!",
+        "Restarting A3D engine...",
+        "S_TransferStereo16: A3D::Lock MixBuffer Failed",
+        "Shutting down A3D",
+        "Software\\Aureal\\A3D",
+        "\\A3D.DLL",
+        "error in S_GetDSPointer - shouldn't be called with A3D.",
+        "hA3D_FeedBuffer - unhandled status.",
+        "s_a3d",
+        "s_disable_a3d",
+        "s_enable_a3d",
+        "s_geometry",
+        "s_occlude"
+      ],
+      "relative_path": "sw.dll",
+      "route": "a3d2_com_candidate"
+    }
+  ],
+  "gameplay_verified": false,
+  "original_binaries_modified": false,
+  "readme_version": "1.0.1.1 (1999-06-13)",
+  "startup_observation": "User confirms original installation runs normally. Isolated trace found access denied on optional HKLM Aureal SplashScreen setup; private debugger skip reached launcher/window setup and stayed alive. Desktop capture failed; no menu/audio/gameplay confirmed.",
+  "workaround": "Explicit A3D_HALFLIFE_SPLASH_FIX=1; checked child-RAM-only replacement for retail 1.0.1.1; no disk or registry change.",
+  "production_workaround_game_runtime_verified": false
+}

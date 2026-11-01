@@ -1,0 +1,104 @@
+{
+  "wrapper_version": "0.7.0-alpha",
+  "profile": "unreal",
+  "mode": "read-only static inventory",
+  "files": [
+    {
+      "file": "Unreal.exe",
+      "size": 159744,
+      "sha256": "2bd22dba9cd13c4159f19e0bfccae73f53f8e3f27300c1693e95f8c9d4c330ac",
+      "machine": "0x14c",
+      "pe32_x86": true,
+      "imports": [
+        "Window.dll",
+        "Core.dll",
+        "Engine.dll",
+        "USER32.dll",
+        "KERNEL32.dll",
+        "GDI32.dll",
+        "MSVCRT.dll"
+      ],
+      "guid_evidence": {},
+      "a3d_markers": []
+    },
+    {
+      "file": "Galaxy.dll",
+      "size": 339968,
+      "sha256": "be3c7edb0fd044b0141bd0eef65882a0b1ce83a44c11b1d20d40a752c9d96c2f",
+      "machine": "0x14c",
+      "pe32_x86": true,
+      "imports": [
+        "Core.dll",
+        "Engine.dll",
+        "KERNEL32.dll",
+        "USER32.dll",
+        "WINMM.dll",
+        "ole32.dll",
+        "ADVAPI32.dll",
+        "MSVCRT.dll"
+      ],
+      "guid_evidence": {
+        "CLSID_A3dApi": {
+          "guid": "92fa2c24-253c-11d2-90fb-006008a1f441",
+          "file_offset": 234472
+        },
+        "IID_IA3d3": {
+          "guid": "c398e560-d90b-11d1-90fb-006008a1f441",
+          "file_offset": 234520
+        },
+        "IID_IA3d4": {
+          "guid": "e4c40280-ccba-11d2-9dcf-00500411582f",
+          "file_offset": 234536
+        },
+        "IID_IA3dGeom": {
+          "guid": "c398e561-d90b-11d1-90fb-006008a1f441",
+          "file_offset": 234552
+        },
+        "IID_IA3dSource": {
+          "guid": "c398e562-d90b-11d1-90fb-006008a1f441",
+          "file_offset": 234568
+        },
+        "IID_IA3dListener": {
+          "guid": "c398e563-d90b-11d1-90fb-006008a1f441",
+          "file_offset": 234584
+        }
+      },
+      "a3d_markers": []
+    },
+    {
+      "file": "Core.dll",
+      "size": 770048,
+      "sha256": "11de8f82d9d5d9119dc53ed27283024551bb173927594f218987c56da628ffce",
+      "machine": "0x14c",
+      "pe32_x86": true,
+      "imports": [
+        "USER32.dll",
+        "KERNEL32.dll",
+        "WINMM.dll",
+        "SHELL32.dll",
+        "ole32.dll",
+        "ADVAPI32.dll",
+        "MSVCRT.dll"
+      ],
+      "guid_evidence": {},
+      "a3d_markers": []
+    },
+    {
+      "file": "Engine.dll",
+      "size": 1478656,
+      "sha256": "0ff172ced9777d0258ed59f1885a5762eb6bc7f575a490e63db4242ee7d4ed03",
+      "machine": "0x14c",
+      "pe32_x86": true,
+      "imports": [
+        "Core.dll",
+        "MSVCRT.dll"
+      ],
+      "guid_evidence": {},
+      "a3d_markers": []
+    }
+  ],
+  "missing_files": [],
+  "note": "Half-Life hw.dll/sw.dll are alternative engine modules; both are useful if present.",
+  "gameplay_verified": false,
+  "compatibility": "not established by static evidence"
+}

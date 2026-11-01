@@ -1,0 +1,3 @@
+Build: 30/30 recipe steps succeeded using Clang/LLD, PE32 checked.
+All tool regression suites: 82 tests passed.
+User gameplay/Wine distro validation: NOT RUN.

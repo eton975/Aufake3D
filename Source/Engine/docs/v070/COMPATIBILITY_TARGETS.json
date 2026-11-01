@@ -1,0 +1,217 @@
+{
+  "source_url": "https://www.dosdays.co.uk/topics/3daudio_games.php",
+  "observed_date": "2026-11-01",
+  "source_a3d_marked_rows": 181,
+  "source_version_mark_counts": {
+    "1": 101,
+    "2": 77,
+    "3": 9
+  },
+  "warning": "A source claim is not proof of a released, A3D-enabled binary. Middleware rows and historical announcements are mixed into the source. Version-specific binaries must be checked.",
+  "selection": "Prioritized subset for follow-on binary audits, not a supported-games list",
+  "targets": [
+    {
+      "title": "Baldur's Gate 2: Shadows of Amn",
+      "dosdays_claimed_a3d_versions": [
+        2
+      ],
+      "work_track": "middleware/provider audit",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Battlezone",
+      "dosdays_claimed_a3d_versions": [
+        1
+      ],
+      "work_track": "legacy DirectSound3D implementation track",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Descent Freespace 2",
+      "dosdays_claimed_a3d_versions": [
+        1
+      ],
+      "work_track": "legacy DirectSound3D implementation track",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Deus Ex",
+      "dosdays_claimed_a3d_versions": [
+        2
+      ],
+      "work_track": "audio backend audit",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Half-Life",
+      "dosdays_claimed_a3d_versions": [
+        2
+      ],
+      "work_track": "current client ABI inspection",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Half-Life: Opposing Force",
+      "dosdays_claimed_a3d_versions": [
+        2
+      ],
+      "work_track": "GoldSrc client audit",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Heavy Metal: F.A.A.K. 2",
+      "dosdays_claimed_a3d_versions": [
+        2
+      ],
+      "work_track": "provider/engine audit",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Heretic 2",
+      "dosdays_claimed_a3d_versions": [
+        1,
+        2
+      ],
+      "work_track": "provider/engine audit",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Jedi Knight: Dark Forces II",
+      "dosdays_claimed_a3d_versions": [
+        1
+      ],
+      "work_track": "legacy DirectSound3D implementation track",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "MDK 2",
+      "dosdays_claimed_a3d_versions": [
+        3
+      ],
+      "work_track": "A3D3 or fallback ABI audit",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Messiah",
+      "dosdays_claimed_a3d_versions": [
+        3
+      ],
+      "work_track": "A3D3 or fallback ABI audit",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Quake III Arena",
+      "dosdays_claimed_a3d_versions": [
+        2
+      ],
+      "work_track": "existing profile regression",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Return to Castle Wolfenstein",
+      "dosdays_claimed_a3d_versions": [
+        2
+      ],
+      "work_track": "listed claim conflicts with inspected local evidence",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "SiN",
+      "dosdays_claimed_a3d_versions": [
+        1,
+        2
+      ],
+      "work_track": "provider/engine audit",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Soldier of Fortune",
+      "dosdays_claimed_a3d_versions": [
+        3
+      ],
+      "work_track": "A3D3 or fallback ABI audit",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Star Trek Deep Space Nine: The Fallen",
+      "dosdays_claimed_a3d_versions": [
+        2
+      ],
+      "work_track": "audio backend audit",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Star Trek Voyager: Elite Force",
+      "dosdays_claimed_a3d_versions": [
+        3
+      ],
+      "work_track": "A3D3 or fallback ABI audit",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "System Shock 2",
+      "dosdays_claimed_a3d_versions": [
+        1
+      ],
+      "work_track": "legacy DirectSound3D implementation track",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Team Fortress Classic",
+      "dosdays_claimed_a3d_versions": [
+        2
+      ],
+      "work_track": "GoldSrc client audit",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Thief 2: The Metal Age",
+      "dosdays_claimed_a3d_versions": [
+        1
+      ],
+      "work_track": "legacy DirectSound3D implementation track",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Thief Gold",
+      "dosdays_claimed_a3d_versions": [
+        1
+      ],
+      "work_track": "legacy DirectSound3D implementation track",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Unreal",
+      "dosdays_claimed_a3d_versions": [
+        1,
+        2
+      ],
+      "work_track": "current Galaxy ABI inspection",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Unreal Tournament",
+      "dosdays_claimed_a3d_versions": [
+        3
+      ],
+      "work_track": "Galaxy/version and A3D3-claim audit",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Wheel of Time, The",
+      "dosdays_claimed_a3d_versions": [
+        2
+      ],
+      "work_track": "audio backend audit",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    },
+    {
+      "title": "Wizardry 8",
+      "dosdays_claimed_a3d_versions": [
+        2
+      ],
+      "work_track": "middleware/provider audit",
+      "compatibility_status": "not gameplay verified in this snapshot"
+    }
+  ]
+}

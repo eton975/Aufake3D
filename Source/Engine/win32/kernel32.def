@@ -1,0 +1,39 @@
+LIBRARY KERNEL32.dll
+EXPORTS
+ CreateFileA
+ WriteFile
+ GetStdHandle
+ CloseHandle
+ InterlockedIncrement
+ InterlockedDecrement
+ LoadLibraryA
+ GetProcAddress
+ FreeLibrary
+ ExitProcess
+GetEnvironmentVariableA
+
+GetFileAttributesA
+
+GetCurrentDirectoryA
+
+GetProcessHeap
+HeapAlloc
+HeapFree
+Sleep
+
+InitializeCriticalSection
+EnterCriticalSection
+LeaveCriticalSection
+InterlockedCompareExchange
+InterlockedExchange
+CreateThread
+WaitForSingleObject
+
+SetEvent
+
+CreateEventA
+SetThreadPriority
+
+GetTickCount
+GetFileAttributesA
+DeleteFileA

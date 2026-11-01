@@ -1,0 +1,26 @@
+title,claimed_A3D_versions,work_track,gameplay_verified
+"Baldur's Gate 2: Shadows of Amn","2","middleware/provider audit",false
+"Battlezone","1","legacy DirectSound3D implementation track",false
+"Descent Freespace 2","1","legacy DirectSound3D implementation track",false
+"Deus Ex","2","audio backend audit",false
+"Half-Life","2","current client ABI inspection",false
+"Half-Life: Opposing Force","2","GoldSrc client audit",false
+"Heavy Metal: F.A.A.K. 2","2","provider/engine audit",false
+"Heretic 2","1/2","provider/engine audit",false
+"Jedi Knight: Dark Forces II","1","legacy DirectSound3D implementation track",false
+"MDK 2","3","A3D3 or fallback ABI audit",false
+"Messiah","3","A3D3 or fallback ABI audit",false
+"Quake III Arena","2","existing profile regression",false
+"Return to Castle Wolfenstein","2","listed claim conflicts with inspected local evidence",false
+"SiN","1/2","provider/engine audit",false
+"Soldier of Fortune","3","A3D3 or fallback ABI audit",false
+"Star Trek Deep Space Nine: The Fallen","2","audio backend audit",false
+"Star Trek Voyager: Elite Force","3","A3D3 or fallback ABI audit",false
+"System Shock 2","1","legacy DirectSound3D implementation track",false
+"Team Fortress Classic","2","GoldSrc client audit",false
+"Thief 2: The Metal Age","1","legacy DirectSound3D implementation track",false
+"Thief Gold","1","legacy DirectSound3D implementation track",false
+"Unreal","1/2","current Galaxy ABI inspection",false
+"Unreal Tournament","3","Galaxy/version and A3D3-claim audit",false
+"Wheel of Time, The","2","audio backend audit",false
+"Wizardry 8","2","middleware/provider audit",false

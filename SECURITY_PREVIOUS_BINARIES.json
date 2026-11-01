@@ -1,0 +1,375 @@
+{
+  "source": "AuFake3D v0.8.13 GitHub Preflight Full Monty, SHA256 1941490ad9e3c61723b68478958ffc4fd5aa05397fcb5f0b2c8f6d0c2b33ba3f",
+  "inspection": "static MZ signature, SHA256, llvm-objdump PE imports; no executable was run",
+  "pe_file_occurrences": 40,
+  "unique_pe_hashes": 24,
+  "entries": [
+    {
+      "path": "Extras/Diagnostics/a3d-provider-autoprobe-v083.exe",
+      "sha256": "4911b7b0d0052c5998e5966e1bb36afb4e79ba1eab27e787c843174693b94e00",
+      "bytes": 6656,
+      "import_libraries": [
+        "kernel32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Extras/Diagnostics/a3d-sdk-method-probe-v081.exe",
+      "sha256": "1ce8129717c74fddbb8db6d98aaf2a0f81be07cf40234d345fa1ab51a7f4e87a",
+      "bytes": 12800,
+      "import_libraries": [
+        "kernel32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Extras/Experimental/quake3-a3d-native.exe",
+      "sha256": "9ff0415affaa6c37e0f482add0b481e038d8d12c570919705c542214dd99005d",
+      "bytes": 5120,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Extras/Utilities/a3d-abi-survey.exe",
+      "sha256": "6392e9da4ee9d890fbee5f1ff0c6a1cc758cd8f4b05f7d5f964ddd56740248b1",
+      "bytes": 4096,
+      "import_libraries": [
+        "KERNEL32.dll",
+        "OLE32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Extras/Utilities/a3d-direct.exe",
+      "sha256": "23f88222cf3f1e091e5f58da259e4261e67b3fd9bc062464e4db3579a25fda48",
+      "bytes": 6144,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Extras/Utilities/a3d-regfree-survey.exe",
+      "sha256": "6392e9da4ee9d890fbee5f1ff0c6a1cc758cd8f4b05f7d5f964ddd56740248b1",
+      "bytes": 4096,
+      "import_libraries": [
+        "KERNEL32.dll",
+        "OLE32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Game_Kits/Alice_2000/COPY_TO_GAME_FOLDER/a3d.dll",
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0",
+      "bytes": 3584,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Game_Kits/Alice_2000/COPY_TO_GAME_FOLDER/a3dapi.dll",
+      "sha256": "2e6f500e8d86b641d702f21cbfa2662f6327e15c794af7c07745c24cba8e8db2",
+      "bytes": 1094144,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Game_Kits/Alice_2000/COPY_TO_GAME_FOLDER/alice-a3d-bridge.exe",
+      "sha256": "802d1dccc9bf451bb875ef659e5853ae7b52d99163d5d697a4df3ad788bba503",
+      "bytes": 5120,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Game_Kits/Alice_2011_VorpalFix/COPY_TO_GAME_FOLDER/SndDrivers/a3d.dll",
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0",
+      "bytes": 3584,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Game_Kits/Alice_2011_VorpalFix/COPY_TO_GAME_FOLDER/SndDrivers/a3dapi.dll",
+      "sha256": "2e6f500e8d86b641d702f21cbfa2662f6327e15c794af7c07745c24cba8e8db2",
+      "bytes": 1094144,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Game_Kits/Alice_2011_VorpalFix/COPY_TO_GAME_FOLDER/SndDrivers/mss32.dll",
+      "sha256": "8bc83f25b228849693ef187877388f917d7a5e3475f7db5e0cf9fa9b708426b8",
+      "bytes": 30720,
+      "import_libraries": [
+        "kernel32.dll",
+        "ole32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Game_Kits/Alice_2011_VorpalFix/COPY_TO_GAME_FOLDER/a3d.dll",
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0",
+      "bytes": 3584,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Game_Kits/Alice_2011_VorpalFix/COPY_TO_GAME_FOLDER/a3dapi.dll",
+      "sha256": "2e6f500e8d86b641d702f21cbfa2662f6327e15c794af7c07745c24cba8e8db2",
+      "bytes": 1094144,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Game_Kits/Alice_2011_VorpalFix/COPY_TO_GAME_FOLDER/mss32.dll",
+      "sha256": "8bc83f25b228849693ef187877388f917d7a5e3475f7db5e0cf9fa9b708426b8",
+      "bytes": 30720,
+      "import_libraries": [
+        "kernel32.dll",
+        "ole32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Game_Kits/Half_Life_1011/COPY_TO_GAME_FOLDER/a3d.dll",
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0",
+      "bytes": 3584,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Game_Kits/Half_Life_1011/COPY_TO_GAME_FOLDER/a3dapi.dll",
+      "sha256": "2e6f500e8d86b641d702f21cbfa2662f6327e15c794af7c07745c24cba8e8db2",
+      "bytes": 1094144,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Game_Kits/Half_Life_1011/COPY_TO_GAME_FOLDER/halflife-a3d-alpha.exe",
+      "sha256": "6304a64110371c3ac1b0cf146a0038394d4eb41789bf348b1129be47b52b8a93",
+      "bytes": 10752,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Game_Kits/Quake_III_117/COPY_TO_GAME_FOLDER/a3d.dll",
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0",
+      "bytes": 3584,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Game_Kits/Quake_III_117/COPY_TO_GAME_FOLDER/a3dapi.dll",
+      "sha256": "2e6f500e8d86b641d702f21cbfa2662f6327e15c794af7c07745c24cba8e8db2",
+      "bytes": 1094144,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Source/Engine/classic2000/alice-a3d2000-native.exe",
+      "sha256": "7b389fb76b987dbcaf6bd26da7ea3c1d0c3250ec3c277b67d5ec68c93da944be",
+      "bytes": 6656,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Source/Engine/experimental/build/a3d-launch.exe",
+      "sha256": "762f7ccb267c6d7d8a27b7f2a916a89eba3bc608b5e0e9a54e02f8820e92eb1a",
+      "bytes": 12800,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Source/Engine/experimental/build/halflife-a3d-alpha.exe",
+      "sha256": "18420dc4c33ccedc6ffbbf26bf5a78b01ad373189cf4d809318229e812ffd612",
+      "bytes": 10752,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Source/Engine/experimental/build/unreal-a3d-alpha.exe",
+      "sha256": "c960fa4336e6c8efb2c11a009c625dc49fda0e110f3b0e73457685609b1ea607",
+      "bytes": 10752,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Source/Engine/native/quake3-a3d-native.exe",
+      "sha256": "dd31b8481ac93819d85ab2b871cd8de664cbad559c427c1c7253387533d1dbe0",
+      "bytes": 5632,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Source/Engine/remaster2011/alice-a3d2011-native.exe",
+      "sha256": "9dbbb2cf565e7132fc12639152844996053c4e644466122b18f2e6ffcbb707c4",
+      "bytes": 6656,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Source/Engine/win32/build/a3d-comtest.exe",
+      "sha256": "b51ce3eadf9e98bb62406ac606b8966c07d2aad504fb829eb3511ac45a2c3973",
+      "bytes": 3584,
+      "import_libraries": [
+        "KERNEL32.dll",
+        "OLE32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Source/Engine/win32/build/a3d-miles-enum.exe",
+      "sha256": "bd1736216cba18b068d1371945013b0d7e4470d6ce1b571ef5d2492a822afa80",
+      "bytes": 7680,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Source/Engine/win32/build/a3d-miles-open.exe",
+      "sha256": "47c4c4b4069bd2fea573257504b2c791f67ff662632a0651c55ce359683f89c9",
+      "bytes": 8192,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Source/Engine/win32/build/a3d-miles-wave.exe",
+      "sha256": "74b176167f4b7e2ff4a35fba782467fad8ca98c246c7567d69cdad3683cda9d1",
+      "bytes": 12288,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Source/Engine/win32/build/a3d-playback-demo.exe",
+      "sha256": "85c4fc3e45fba0389d8f5b47908771da52c411436fc81dd26c73b570a40d0a45",
+      "bytes": 5120,
+      "import_libraries": [
+        "KERNEL32.dll",
+        "OLE32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Source/Engine/win32/build/a3d-quake3-lock-test.exe",
+      "sha256": "9cb68abb27e0cf884d64e3a09321ff5b3c87e90c1bb3df4f39cd5ee3b6053a18",
+      "bytes": 3072,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Source/Engine/win32/build/a3d-register32.exe",
+      "sha256": "ca3b1b392daa8218afd075c6268d0de398497ac3761ea86e6535d7e4ec89fdb4",
+      "bytes": 5632,
+      "import_libraries": [
+        "ADVAPI32.dll",
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Source/Engine/win32/build/a3d-selftest.exe",
+      "sha256": "ffa19e714ca84c663aae93b0955633949b3d2e6482acbc59b2a4df6775a356d3",
+      "bytes": 4096,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Source/Engine/win32/build/a3d.dll",
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0",
+      "bytes": 3584,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Source/Engine/win32/build/a3dapi.dll",
+      "sha256": "2e6f500e8d86b641d702f21cbfa2662f6327e15c794af7c07745c24cba8e8db2",
+      "bytes": 1094144,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Universal_Core/a3d.dll",
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0",
+      "bytes": 3584,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "Universal_Core/a3dapi.dll",
+      "sha256": "2e6f500e8d86b641d702f21cbfa2662f6327e15c794af7c07745c24cba8e8db2",
+      "bytes": 1094144,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "dist/core/a3d.dll",
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0",
+      "bytes": 3584,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    },
+    {
+      "path": "dist/core/a3dapi.dll",
+      "sha256": "2e6f500e8d86b641d702f21cbfa2662f6327e15c794af7c07745c24cba8e8db2",
+      "bytes": 1094144,
+      "import_libraries": [
+        "KERNEL32.dll"
+      ],
+      "selected_process_api_imports": []
+    }
+  ]
+}

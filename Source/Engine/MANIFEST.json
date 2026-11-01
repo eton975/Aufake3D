@@ -1,0 +1,3717 @@
+{
+  "version": "0.7.0-alpha",
+  "provenance": {
+    "version": "0.7.0-alpha",
+    "status": "Half-Life progress development snapshot; game audio/gameplay unverified",
+    "baseline_archive": "A3D_v070_alpha_BroadCompatibility_AllInOne.zip",
+    "baseline_sha256": "3e8bfdd20b90cf384b3dde8d0ce441968f94d9f2e788827444eaae2b4eef5f93",
+    "half_life_gameplay_verified": false,
+    "unreal_gameplay_verified": false,
+    "wine_runtime_verified": false,
+    "production_half_life_workaround_game_runtime_verified": false,
+    "private_game_binaries_included": false,
+    "audio_algorithm_changed": false
+  },
+  "files": [
+    {
+      "path": "acoustics/CMakeLists.txt",
+      "size": 1707,
+      "sha256": "290e981a863227be0ce4b1fc4c77032a9fbdcb2243771a80a08f6f038394278c"
+    },
+    {
+      "path": "acoustics/include/alice_a3d/acoustics.hpp",
+      "size": 2679,
+      "sha256": "f377b89171d99bbd8492b93c2492cbbae624bd507c053cbfc776e52be76c2191"
+    },
+    {
+      "path": "acoustics/include/alice_a3d/bsp.hpp",
+      "size": 1331,
+      "sha256": "03c7944116353c35696c69b250cf9602145f2d3e6294813c1d87526fba9d1e33"
+    },
+    {
+      "path": "acoustics/LICENSE",
+      "size": 1099,
+      "sha256": "db4bcb30daec2782b7fed55c69292edc506cd27b0a6256158fcd785b067ad8b6"
+    },
+    {
+      "path": "acoustics/samples/synthetic_alice_fakk42.bsp",
+      "size": 1004,
+      "sha256": "637abe4ec2f7d6b8ef88f15583517b655a70f711d47e503b5e414d75add566fb"
+    },
+    {
+      "path": "acoustics/samples/synthetic_ibsp46.bsp",
+      "size": 964,
+      "sha256": "d31fec28702809500d526c29c72e7696ac2a1b7c3ed49e80d0f115de100c588e"
+    },
+    {
+      "path": "acoustics/src/acoustics.cpp",
+      "size": 12352,
+      "sha256": "9bda3d072a209ed9dbf95f24f5d72fd4ea8d93dea9c77889219cb435fd5bb6e7"
+    },
+    {
+      "path": "acoustics/src/bsp.cpp",
+      "size": 14107,
+      "sha256": "6e58d284c0b8600ffb169c6c78de73d17895100c306aabfa1c14d5041fc1ee02"
+    },
+    {
+      "path": "acoustics/src/demo.cpp",
+      "size": 3021,
+      "sha256": "8017c4c498bc0b88376f091bf62984c9362876e637b5228ae03dc0a6125e1641"
+    },
+    {
+      "path": "acoustics/src/inspect_bsp.cpp",
+      "size": 1623,
+      "sha256": "254036447107d82129c8cd06e8a2b1e7e6e6f4149da2d7b425a6b52481277fc4"
+    },
+    {
+      "path": "acoustics/src/obj_trace.cpp",
+      "size": 1514,
+      "sha256": "2c0d8a3906880ca2797b8c4b4c8732b6b56cb644bcac84ab65a8ba68a86b2b5a"
+    },
+    {
+      "path": "acoustics/tests/tests.cpp",
+      "size": 2896,
+      "sha256": "d51ef6c3187c3d5bfa27cfe6356cde242cc4e1196588b9425b97c0a5e36c9db0"
+    },
+    {
+      "path": "acoustics/tools/build_test_bsp.py",
+      "size": 1516,
+      "sha256": "499cb2c175dc2ac5b6d90c19ccb4dc2212617d6d2fe393e52ded44e678098683"
+    },
+    {
+      "path": "acoustics/tools/build_test_fakk42.py",
+      "size": 1598,
+      "sha256": "d2c3cd27891e47d5e774a55c30739999f845d73e65688a26a9054a46675aa537"
+    },
+    {
+      "path": "acoustics/tools/extract_bsp.py",
+      "size": 1338,
+      "sha256": "858001c55162cf7c0acadd98ccf6d3c7e86c7976b20930be3c6b709673aa6890"
+    },
+    {
+      "path": "BINAURAL_STATUS_v028.md",
+      "size": 1243,
+      "sha256": "5936a93c6086f37966195201bb8f513ecea79f855e4129d15c412a599d952971"
+    },
+    {
+      "path": "build_and_test_v060.sh",
+      "size": 1969,
+      "sha256": "c974c593dd912f782ef3771a5ad51cffe91e4113f94b3b6b02ffe7be9644bc40"
+    },
+    {
+      "path": "build_from_recipe.py",
+      "size": 2008,
+      "sha256": "961fefa5a6a98d0509608ab908ee07cb8562f19589dce7a1425271ba4bbe4e97"
+    },
+    {
+      "path": "build_native_windows.ps1",
+      "size": 909,
+      "sha256": "45be2bf91af9d539860145375eeed278ac1569fe9fdbd77b9ab643268be7a66a"
+    },
+    {
+      "path": "BUILD_VERIFICATION_v040.md",
+      "size": 1150,
+      "sha256": "95f14b72d492d37816f41744da74ac8253ff9149cb24b69ea61c030b90162485"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "size": 2448,
+      "sha256": "51d0f09420cf8ef4e2354667ecda67805e495e3f98e9ae11f1555177aca846e9"
+    },
+    {
+      "path": "CHANGELOG_HOTFIX10.md",
+      "size": 410,
+      "sha256": "0fcd75fea498b6f6a619d6bd87f5a672b77257f90a79f8166e5c55c2125c202d"
+    },
+    {
+      "path": "CHANGELOG_V040.md",
+      "size": 1998,
+      "sha256": "ddce49eda18576ea500807597ebad0774a1ecf6076930f4c067f9a481ade4cf1"
+    },
+    {
+      "path": "CHANGELOG_V041.md",
+      "size": 2778,
+      "sha256": "ff5e4a64ad0ac393bec2f5353eeeb1726b70201689d021c263f36083188b14be"
+    },
+    {
+      "path": "CHANGELOG_V042.md",
+      "size": 1778,
+      "sha256": "8f15e5904ec592bbd49396ded1011979b5188c1ada2b279a52195a6b931c09cb"
+    },
+    {
+      "path": "classic2000/alice-a3d-bridge.exe",
+      "size": 5120,
+      "sha256": "802d1dccc9bf451bb875ef659e5853ae7b52d99163d5d697a4df3ad788bba503"
+    },
+    {
+      "path": "classic2000/alice-a3d-bridge.exe.manifest",
+      "size": 353,
+      "sha256": "9dbd829280cabf74d4529957b29ca2a98622f061d90cbbc739278835a95cec5a"
+    },
+    {
+      "path": "classic2000/alice-a3d2000-native.exe",
+      "size": 6656,
+      "sha256": "08eeae37b7f92e15117fe725045705e61bc34a5418e321cf1ddb1e9b8a68d362"
+    },
+    {
+      "path": "classic2000/alice_a3d_bridge.c",
+      "size": 10177,
+      "sha256": "58e8407a69d0b47f8f4780a8990b33f60cc5796a5c7e9dd03fb2929c0035779e"
+    },
+    {
+      "path": "classic2000/build.sh",
+      "size": 1052,
+      "sha256": "d8969ac6edc4ea34f96891f63a528212db4b1ef473cbb3eaea6ce29f4a6e0f99"
+    },
+    {
+      "path": "classic2000/kernel32.def",
+      "size": 367,
+      "sha256": "e00a7901ecace922142acadb9a486f01d6abb3bdb04b19af34aa840e66a33839"
+    },
+    {
+      "path": "classic2000/README.md",
+      "size": 2845,
+      "sha256": "ba981b6d83b11607fabadad06854d23adc2f1a9619ea5dff265bad962af241b4"
+    },
+    {
+      "path": "classic2000/test_stub.c",
+      "size": 2668,
+      "sha256": "348bd41037495130db17e081241d79af2f090efaa6565e66731460fad5e9d572"
+    },
+    {
+      "path": "CLASSIC_ALICE_PACKAGING_FIX.md",
+      "size": 832,
+      "sha256": "793903c33092c4adb8918ee5b0bb427090b4ab2c59e1aad63ae37f3d3552745f"
+    },
+    {
+      "path": "config/game_profiles_v069.json",
+      "size": 1758,
+      "sha256": "6e7ee1727bf02bfb083e28a6aa523f13637e3225c17f7565b76cf4747f8172ab"
+    },
+    {
+      "path": "config/game_profiles_v070_alpha.json",
+      "size": 857,
+      "sha256": "d37feb69da04156844449722cf27f0cd5649fdaf430e5f3c61a84688378c4810"
+    },
+    {
+      "path": "DEBIAN13_ABI_SMOKE.sh",
+      "size": 890,
+      "sha256": "133388139b68920902a398d009e2b6ad7c1faca7eb1b81ebffd971832233f2bc"
+    },
+    {
+      "path": "DEBIAN13_PREFLIGHT.sh",
+      "size": 1682,
+      "sha256": "bb51a11bce66c216254c1adf17728b2d31e729e5f9849c8ba833e3c85e0c99ef"
+    },
+    {
+      "path": "DEBIAN13_WINE.md",
+      "size": 67,
+      "sha256": "5f4bfaf4cc8403169556ee1d669b0625b0a4b047bbf7326c6fa952c4990aca0d"
+    },
+    {
+      "path": "deliverables/a3d-miles-open.exe",
+      "size": 8192,
+      "sha256": "2270fafba04c223ee8ab44a698b3192661b90ecd3776dc0f84e7978ab19640f6"
+    },
+    {
+      "path": "deliverables/a3d-miles-wave.exe",
+      "size": 12288,
+      "sha256": "91046800378c8cab3d3e97b749d6d9878468f65f50caf6974cdde9ba539d7742"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "1f13a1b520f738f21aa9d42c4c7c74f3f44717e69a4e67a1401c7f4978d82cba"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/a3d-comtest.exe.manifest",
+      "size": 348,
+      "sha256": "3651dbd5a008d5580584783d8b22decd1380c8582e07358348563021d71e5fb6"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/a3d-quake3-lock-test.exe",
+      "size": 3072,
+      "sha256": "60275b2c7d4a9497121fbc715f131bbd93c48a34145f9bca7f29ee6e82e372e8"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/a3d-selftest.exe",
+      "size": 4096,
+      "sha256": "8e7cf03321c74702ab7877269d231c91631286793837642593e55146bf8f223f"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/a3d.dll",
+      "size": 3584,
+      "sha256": "05bc76ef18227ce78188818f8ae93c89c7d5f92e9680dff9ab3e581bcba1c928"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/a3dapi.dll",
+      "size": 1079808,
+      "sha256": "c16c755623e8da58badb34ad535aa54a9fabaf57aca3a38622169c85445629ff"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/alice-a3d2000-native.exe",
+      "size": 6656,
+      "sha256": "70b5fff450a73311383994f57db0ca41d29fa87103a4ee99a577a3f66b1e2399"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/alice.exe.manifest",
+      "size": 342,
+      "sha256": "361f1dba06d17f6ef8c9345530bb3f814b82b78eaa226ce529b45a20e5f74cc4"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/ANALYSE_STAFF_LOG.py",
+      "size": 3887,
+      "sha256": "ea1d61170acaa2154160a9a0b78773d37bb3ba477cada983b3151b638493f435"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/MARK_STAFF_BAD_WINDOWS.cmd",
+      "size": 128,
+      "sha256": "d94b48c485face8ebd20409518828e59ebc7146a707762755b6fa11ad8d47024"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/MARK_STAFF_BAD_WINE.sh",
+      "size": 135,
+      "sha256": "41923ce05476e576968d682f11ad0433c69b615cc72cea4091d822882d556a35"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/MARK_STAFF_GOOD_WINDOWS.cmd",
+      "size": 130,
+      "sha256": "ad5bcf365ede4a9e6e62f0f5c6cdaa36ea84b57375dbbbebcc29a712aa92f1bd"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/MARK_STAFF_GOOD_WINE.sh",
+      "size": 137,
+      "sha256": "bb5df26998f97e17746dd14ba23b59502f5d66fb9ab3d0967a62260715f428d3"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/PROFILE_v069.txt",
+      "size": 242,
+      "sha256": "21b01708703676184275926af9fe3902fd0c2c05b025cda0d93e1158143f89fc"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/RUN_A3D_6x256_WINDOWS.cmd",
+      "size": 140,
+      "sha256": "458d32fa26545dc2f434700b4152c4c5cf9a8c8882bfe34849c79741cf0b3ad0"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/RUN_A3D_6x256_WINE.sh",
+      "size": 90,
+      "sha256": "d60fd571793c5137de9ab8977233385e9d86fee2c7756290a5080844bdafe646"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/RUN_A3D_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 123,
+      "sha256": "f90478089db910b3fe8d89d03cba276ed0bc57d6499add2f82955e0cb1189172"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/RUN_A3D_DIAGNOSTIC_WINE.sh",
+      "size": 134,
+      "sha256": "161daeb4ef31c801c6c34509ff9296608c0151232eb694dd4d26bc19a2cf3d9c"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/RUN_A3D_STAFF_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 537,
+      "sha256": "797a98b7be7b584b45c13dbe1a9feecbe90984d4896439f5886c62468ea43733"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/RUN_A3D_STAFF_DIAGNOSTIC_WINE.sh",
+      "size": 418,
+      "sha256": "cdd77927bc19de02bcf485488bc6b975100f3259583b287552ac304cb77aee25"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/RUN_A3D_WINDOWS.cmd",
+      "size": 1260,
+      "sha256": "c8cd696afd40ea016dd064a43159a742c2db67db1925d870d93c2b5af6fb384e"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/RUN_A3D_WINE.sh",
+      "size": 1875,
+      "sha256": "0cce1f1ac92703ef590670fd92a0676c3248cafcb9cb7acbcde5a6e5b812aab7"
+    },
+    {
+      "path": "deploy-v0610/Alice2000/STAFF_DIAGNOSTIC_README.txt",
+      "size": 1420,
+      "sha256": "b705545b51fbe1de34bcb932575e3071b027eb181ea6d8fcb55170dee975a1bc"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "1f13a1b520f738f21aa9d42c4c7c74f3f44717e69a4e67a1401c7f4978d82cba"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/a3d-comtest.exe.manifest",
+      "size": 348,
+      "sha256": "3651dbd5a008d5580584783d8b22decd1380c8582e07358348563021d71e5fb6"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/a3d-quake3-lock-test.exe",
+      "size": 3072,
+      "sha256": "60275b2c7d4a9497121fbc715f131bbd93c48a34145f9bca7f29ee6e82e372e8"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/a3d-selftest.exe",
+      "size": 4096,
+      "sha256": "8e7cf03321c74702ab7877269d231c91631286793837642593e55146bf8f223f"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/a3d.dll",
+      "size": 3584,
+      "sha256": "05bc76ef18227ce78188818f8ae93c89c7d5f92e9680dff9ab3e581bcba1c928"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/a3dapi.dll",
+      "size": 1079808,
+      "sha256": "c16c755623e8da58badb34ad535aa54a9fabaf57aca3a38622169c85445629ff"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/alice-a3d2011-native.exe",
+      "size": 6656,
+      "sha256": "d188e58bc29aaa197a828b1ee6ebf4d3aac2cb97534e9fd193a8fb9b2a7c23f9"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/alice.exe.manifest",
+      "size": 342,
+      "sha256": "361f1dba06d17f6ef8c9345530bb3f814b82b78eaa226ce529b45a20e5f74cc4"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/ANALYSE_STAFF_LOG.py",
+      "size": 3887,
+      "sha256": "ea1d61170acaa2154160a9a0b78773d37bb3ba477cada983b3151b638493f435"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/MARK_STAFF_BAD_WINDOWS.cmd",
+      "size": 128,
+      "sha256": "d94b48c485face8ebd20409518828e59ebc7146a707762755b6fa11ad8d47024"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/MARK_STAFF_BAD_WINE.sh",
+      "size": 135,
+      "sha256": "41923ce05476e576968d682f11ad0433c69b615cc72cea4091d822882d556a35"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/MARK_STAFF_GOOD_WINDOWS.cmd",
+      "size": 130,
+      "sha256": "ad5bcf365ede4a9e6e62f0f5c6cdaa36ea84b57375dbbbebcc29a712aa92f1bd"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/MARK_STAFF_GOOD_WINE.sh",
+      "size": 137,
+      "sha256": "bb5df26998f97e17746dd14ba23b59502f5d66fb9ab3d0967a62260715f428d3"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/PROFILE_v069.txt",
+      "size": 329,
+      "sha256": "af0d94bacfdb6f95f040b9e4a28761fc6dbe2082f7191af74f57e16e61aac8a9"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/RUN_A3D_144FPS_WINDOWS.cmd",
+      "size": 160,
+      "sha256": "adc59f683e20fa96bd03541aa00b8d8d6336785cf5533f420c6f8cb888b70dd8"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/RUN_A3D_144FPS_WINE.sh",
+      "size": 170,
+      "sha256": "771853e29fdbc1533f1ffddaafd43597ea09caf644b48f9d80dc9337694e83c8"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/RUN_A3D_4x512_FALLBACK_WINDOWS.cmd",
+      "size": 247,
+      "sha256": "69ee0160e347463eb37b2d2a761710c78ae099bbc383ef8238ad881ea11586b3"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/RUN_A3D_4x512_FALLBACK_WINE.sh",
+      "size": 186,
+      "sha256": "37f29f0f95d23af90236e34200bdf9666b3243c8c2d2f39c4ba0a54a85235c49"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/RUN_A3D_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 123,
+      "sha256": "f90478089db910b3fe8d89d03cba276ed0bc57d6499add2f82955e0cb1189172"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/RUN_A3D_DIAGNOSTIC_WINE.sh",
+      "size": 134,
+      "sha256": "161daeb4ef31c801c6c34509ff9296608c0151232eb694dd4d26bc19a2cf3d9c"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/RUN_A3D_STAFF_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 537,
+      "sha256": "85766642393d6cb17bdbc75547780782c543acd68957eb2ac0ff1fa9e9d98191"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/RUN_A3D_STAFF_DIAGNOSTIC_WINE.sh",
+      "size": 418,
+      "sha256": "a00694e4e9961e953caa73a88f1b66f4d0c05ebcc827fcb2a39065da2381f803"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/RUN_A3D_WINDOWS.cmd",
+      "size": 1484,
+      "sha256": "2da80e1190a4461a69f42652388d73b8a906147459f16a48724d3d4de75e808c"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/RUN_A3D_WINE.sh",
+      "size": 2213,
+      "sha256": "225b79293cf67fd896d4d7d804c7e59406e58e7b015e24a566b174446ce01ed5"
+    },
+    {
+      "path": "deploy-v0610/Alice2011-VorpalFix/STAFF_DIAGNOSTIC_README.txt",
+      "size": 1420,
+      "sha256": "b705545b51fbe1de34bcb932575e3071b027eb181ea6d8fcb55170dee975a1bc"
+    },
+    {
+      "path": "deploy-v0610/DEBIAN13_ABI_SMOKE.sh",
+      "size": 889,
+      "sha256": "39a48b41d90c17b16d19d195fba636959ecb99d834e3310e1a893233c39a26e4"
+    },
+    {
+      "path": "deploy-v0610/DEBIAN13_PREFLIGHT.sh",
+      "size": 1675,
+      "sha256": "503a6e80c57e7694886fb8e75a91a68f5c22105b5457629724b38b0f4c57167a"
+    },
+    {
+      "path": "deploy-v0610/DEBIAN13_WINE.md",
+      "size": 3239,
+      "sha256": "98f8b84a6b69a7926e11e77ad44d9b31574f07ac9907328e028f6da161e3325a"
+    },
+    {
+      "path": "deploy-v0610/QuakeIII-117/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "1f13a1b520f738f21aa9d42c4c7c74f3f44717e69a4e67a1401c7f4978d82cba"
+    },
+    {
+      "path": "deploy-v0610/QuakeIII-117/a3d-comtest.exe.manifest",
+      "size": 348,
+      "sha256": "3651dbd5a008d5580584783d8b22decd1380c8582e07358348563021d71e5fb6"
+    },
+    {
+      "path": "deploy-v0610/QuakeIII-117/a3d-quake3-lock-test.exe",
+      "size": 3072,
+      "sha256": "60275b2c7d4a9497121fbc715f131bbd93c48a34145f9bca7f29ee6e82e372e8"
+    },
+    {
+      "path": "deploy-v0610/QuakeIII-117/a3d-selftest.exe",
+      "size": 4096,
+      "sha256": "8e7cf03321c74702ab7877269d231c91631286793837642593e55146bf8f223f"
+    },
+    {
+      "path": "deploy-v0610/QuakeIII-117/a3d.dll",
+      "size": 3584,
+      "sha256": "05bc76ef18227ce78188818f8ae93c89c7d5f92e9680dff9ab3e581bcba1c928"
+    },
+    {
+      "path": "deploy-v0610/QuakeIII-117/a3dapi.dll",
+      "size": 1079808,
+      "sha256": "c16c755623e8da58badb34ad535aa54a9fabaf57aca3a38622169c85445629ff"
+    },
+    {
+      "path": "deploy-v0610/QuakeIII-117/PROFILE_v069.txt",
+      "size": 357,
+      "sha256": "bf3a8361390c33a5c1f274aa24952fd6844fb9120a8f1ad05872d727556c2e3d"
+    },
+    {
+      "path": "deploy-v0610/QuakeIII-117/quake3-a3d-native.exe",
+      "size": 5632,
+      "sha256": "e3f62bd3fed6b7bcfc3626bd41a139d49373a48036506e85f5f008e676e24dfa"
+    },
+    {
+      "path": "deploy-v0610/QuakeIII-117/quake3.exe.manifest",
+      "size": 343,
+      "sha256": "b26300c94988d9ebd2097bfc7ef91d7079374535507ce2d2edbfb8ac2c76678c"
+    },
+    {
+      "path": "deploy-v0610/QuakeIII-117/RUN_A3D_32MS_TEST_WINDOWS.cmd",
+      "size": 197,
+      "sha256": "53dc0ad7755b558a0f31bcdae1d6d8000d0904683b3aa6833be06948ec1e57ea"
+    },
+    {
+      "path": "deploy-v0610/QuakeIII-117/RUN_A3D_32MS_TEST_WINE.sh",
+      "size": 205,
+      "sha256": "8dae3d202b9feeddb4d6f707d89a936c85c2c48f5fff9459a675afdc0f6271fd"
+    },
+    {
+      "path": "deploy-v0610/QuakeIII-117/RUN_A3D_3x512_FALLBACK_WINDOWS.cmd",
+      "size": 266,
+      "sha256": "8cb0db7fad2981d6c291410e942c619c321fbeb11c63eac213996b479c737d91"
+    },
+    {
+      "path": "deploy-v0610/QuakeIII-117/RUN_A3D_3x512_FALLBACK_WINE.sh",
+      "size": 230,
+      "sha256": "170c90da592e7c80b2fc0e4a0759c4fd4b15cb47ff1d49e9e350aefb5924438e"
+    },
+    {
+      "path": "deploy-v0610/QuakeIII-117/RUN_A3D_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 123,
+      "sha256": "f90478089db910b3fe8d89d03cba276ed0bc57d6499add2f82955e0cb1189172"
+    },
+    {
+      "path": "deploy-v0610/QuakeIII-117/RUN_A3D_DIAGNOSTIC_WINE.sh",
+      "size": 134,
+      "sha256": "161daeb4ef31c801c6c34509ff9296608c0151232eb694dd4d26bc19a2cf3d9c"
+    },
+    {
+      "path": "deploy-v0610/QuakeIII-117/RUN_A3D_WINDOWS.cmd",
+      "size": 1440,
+      "sha256": "4a174f38b90a1c70b8f2b52c00376b12031a2d5011e9e834b1fc511be7e81445"
+    },
+    {
+      "path": "deploy-v0610/QuakeIII-117/RUN_A3D_WINE.sh",
+      "size": 1918,
+      "sha256": "61903dbec3beaa34ebd1bd840de8a05510c457b1bd19e07e6880afa7d1344492"
+    },
+    {
+      "path": "deploy-v0610/README_START_HERE.md",
+      "size": 3615,
+      "sha256": "55ea74839ad4d0838e7d8f15ea8c34fcc0c080d650f3b27fca4dd7cc86c524ac"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "97cd513e76c6c9975ed6e8a861940dc6b5e5002e339aa0f153227229392def49"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/a3d-comtest.exe.manifest",
+      "size": 348,
+      "sha256": "3651dbd5a008d5580584783d8b22decd1380c8582e07358348563021d71e5fb6"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/a3d-quake3-lock-test.exe",
+      "size": 3072,
+      "sha256": "080e39b0434e3d89c21c7907effa89b8f176a3d73c9ffaa61dad202993896b60"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/a3d-selftest.exe",
+      "size": 4096,
+      "sha256": "43ef20afe442d8ac25b2f84ca1bf2f8a6ffc55835d74bf4a80497bab3e5a8589"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/a3d.dll",
+      "size": 3584,
+      "sha256": "6c036c48dbd2d7ec119d3742efb896eaec00230cd8fd1217814d30b9f1b1b384"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/a3dapi.dll",
+      "size": 1082368,
+      "sha256": "36828a553f5d679983dec7cac9ed1365715b8e7f351ef08afc5d3c4f941bac6b"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/alice-a3d2000-native.exe",
+      "size": 6656,
+      "sha256": "70b5fff450a73311383994f57db0ca41d29fa87103a4ee99a577a3f66b1e2399"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/alice.exe.manifest",
+      "size": 342,
+      "sha256": "361f1dba06d17f6ef8c9345530bb3f814b82b78eaa226ce529b45a20e5f74cc4"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/ANALYSE_STAFF_LOG.py",
+      "size": 3887,
+      "sha256": "ea1d61170acaa2154160a9a0b78773d37bb3ba477cada983b3151b638493f435"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/ANALYSE_WEAPONS_V0611.py",
+      "size": 9707,
+      "sha256": "e79e2b35e9e77588673768db939615b70e9a8f0e8b52fde8ba950e9d50a8e9ce"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/ANALYSE_WEAPONS_WINDOWS.cmd",
+      "size": 463,
+      "sha256": "ea974e286b15c1e58a6bf5a16fcf22d746bc3be7c991052bcebaa4ca124346e0"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/MARK_STAFF_BAD_WINDOWS.cmd",
+      "size": 128,
+      "sha256": "d94b48c485face8ebd20409518828e59ebc7146a707762755b6fa11ad8d47024"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/MARK_STAFF_BAD_WINE.sh",
+      "size": 135,
+      "sha256": "41923ce05476e576968d682f11ad0433c69b615cc72cea4091d822882d556a35"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/MARK_STAFF_GOOD_WINDOWS.cmd",
+      "size": 130,
+      "sha256": "ad5bcf365ede4a9e6e62f0f5c6cdaa36ea84b57375dbbbebcc29a712aa92f1bd"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/MARK_STAFF_GOOD_WINE.sh",
+      "size": 137,
+      "sha256": "bb5df26998f97e17746dd14ba23b59502f5d66fb9ab3d0967a62260715f428d3"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/PROFILE_v069.txt",
+      "size": 242,
+      "sha256": "21b01708703676184275926af9fe3902fd0c2c05b025cda0d93e1158143f89fc"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/RUN_A3D_6x256_WINDOWS.cmd",
+      "size": 140,
+      "sha256": "458d32fa26545dc2f434700b4152c4c5cf9a8c8882bfe34849c79741cf0b3ad0"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/RUN_A3D_6x256_WINE.sh",
+      "size": 90,
+      "sha256": "d60fd571793c5137de9ab8977233385e9d86fee2c7756290a5080844bdafe646"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/RUN_A3D_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 123,
+      "sha256": "f90478089db910b3fe8d89d03cba276ed0bc57d6499add2f82955e0cb1189172"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/RUN_A3D_DIAGNOSTIC_WINE.sh",
+      "size": 134,
+      "sha256": "161daeb4ef31c801c6c34509ff9296608c0151232eb694dd4d26bc19a2cf3d9c"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/RUN_A3D_STAFF_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 537,
+      "sha256": "797a98b7be7b584b45c13dbe1a9feecbe90984d4896439f5886c62468ea43733"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/RUN_A3D_STAFF_DIAGNOSTIC_WINE.sh",
+      "size": 418,
+      "sha256": "cdd77927bc19de02bcf485488bc6b975100f3259583b287552ac304cb77aee25"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/RUN_A3D_WEAPON_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 605,
+      "sha256": "70aafa8f071b4807738e49b976b227bf375cc81b0059545b4a88f2ced64af829"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/RUN_A3D_WEAPON_DIAGNOSTIC_WINE.sh",
+      "size": 355,
+      "sha256": "8fdaafc08bec14e57227b92ed26b8320268d2a28549e7aa814a154873f2c9174"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/RUN_A3D_WINDOWS.cmd",
+      "size": 1261,
+      "sha256": "8afcd7ff4cc9697026f540137fa23f3901dd6a2653a968266fc4c695f787e4fc"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/RUN_A3D_WINE.sh",
+      "size": 1876,
+      "sha256": "52c552c2226d0141854586c18be7e69a7e3008feb51ca77eb3764ca2b605a1ea"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/STAFF_DIAGNOSTIC_README.txt",
+      "size": 1420,
+      "sha256": "b705545b51fbe1de34bcb932575e3071b027eb181ea6d8fcb55170dee975a1bc"
+    },
+    {
+      "path": "deploy-v0611/Alice2000/weapon_reference_catalog_v0611.json",
+      "size": 21600,
+      "sha256": "24c115cdd3968534f6e0ade6a71f1f4c74b416bb8af4ee96f25064b6b82fd65c"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "97cd513e76c6c9975ed6e8a861940dc6b5e5002e339aa0f153227229392def49"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/a3d-comtest.exe.manifest",
+      "size": 348,
+      "sha256": "3651dbd5a008d5580584783d8b22decd1380c8582e07358348563021d71e5fb6"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/a3d-quake3-lock-test.exe",
+      "size": 3072,
+      "sha256": "080e39b0434e3d89c21c7907effa89b8f176a3d73c9ffaa61dad202993896b60"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/a3d-selftest.exe",
+      "size": 4096,
+      "sha256": "43ef20afe442d8ac25b2f84ca1bf2f8a6ffc55835d74bf4a80497bab3e5a8589"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/a3d.dll",
+      "size": 3584,
+      "sha256": "6c036c48dbd2d7ec119d3742efb896eaec00230cd8fd1217814d30b9f1b1b384"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/a3dapi.dll",
+      "size": 1082368,
+      "sha256": "36828a553f5d679983dec7cac9ed1365715b8e7f351ef08afc5d3c4f941bac6b"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/alice-a3d2011-native.exe",
+      "size": 6656,
+      "sha256": "d188e58bc29aaa197a828b1ee6ebf4d3aac2cb97534e9fd193a8fb9b2a7c23f9"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/alice.exe.manifest",
+      "size": 342,
+      "sha256": "361f1dba06d17f6ef8c9345530bb3f814b82b78eaa226ce529b45a20e5f74cc4"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/ANALYSE_STAFF_LOG.py",
+      "size": 3887,
+      "sha256": "ea1d61170acaa2154160a9a0b78773d37bb3ba477cada983b3151b638493f435"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/ANALYSE_WEAPONS_V0611.py",
+      "size": 9707,
+      "sha256": "e79e2b35e9e77588673768db939615b70e9a8f0e8b52fde8ba950e9d50a8e9ce"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/ANALYSE_WEAPONS_WINDOWS.cmd",
+      "size": 463,
+      "sha256": "a96e4c83f4df192bc8782ef1bea75ebf8a4f6437a6c5abaf83a68c4cfa64d498"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/MARK_STAFF_BAD_WINDOWS.cmd",
+      "size": 128,
+      "sha256": "d94b48c485face8ebd20409518828e59ebc7146a707762755b6fa11ad8d47024"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/MARK_STAFF_BAD_WINE.sh",
+      "size": 135,
+      "sha256": "41923ce05476e576968d682f11ad0433c69b615cc72cea4091d822882d556a35"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/MARK_STAFF_GOOD_WINDOWS.cmd",
+      "size": 130,
+      "sha256": "ad5bcf365ede4a9e6e62f0f5c6cdaa36ea84b57375dbbbebcc29a712aa92f1bd"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/MARK_STAFF_GOOD_WINE.sh",
+      "size": 137,
+      "sha256": "bb5df26998f97e17746dd14ba23b59502f5d66fb9ab3d0967a62260715f428d3"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/PROFILE_v069.txt",
+      "size": 329,
+      "sha256": "af0d94bacfdb6f95f040b9e4a28761fc6dbe2082f7191af74f57e16e61aac8a9"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/RUN_A3D_144FPS_WINDOWS.cmd",
+      "size": 160,
+      "sha256": "adc59f683e20fa96bd03541aa00b8d8d6336785cf5533f420c6f8cb888b70dd8"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/RUN_A3D_144FPS_WINE.sh",
+      "size": 170,
+      "sha256": "771853e29fdbc1533f1ffddaafd43597ea09caf644b48f9d80dc9337694e83c8"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/RUN_A3D_4x512_FALLBACK_WINDOWS.cmd",
+      "size": 247,
+      "sha256": "69ee0160e347463eb37b2d2a761710c78ae099bbc383ef8238ad881ea11586b3"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/RUN_A3D_4x512_FALLBACK_WINE.sh",
+      "size": 186,
+      "sha256": "37f29f0f95d23af90236e34200bdf9666b3243c8c2d2f39c4ba0a54a85235c49"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/RUN_A3D_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 123,
+      "sha256": "f90478089db910b3fe8d89d03cba276ed0bc57d6499add2f82955e0cb1189172"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/RUN_A3D_DIAGNOSTIC_WINE.sh",
+      "size": 134,
+      "sha256": "161daeb4ef31c801c6c34509ff9296608c0151232eb694dd4d26bc19a2cf3d9c"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/RUN_A3D_STAFF_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 537,
+      "sha256": "85766642393d6cb17bdbc75547780782c543acd68957eb2ac0ff1fa9e9d98191"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/RUN_A3D_STAFF_DIAGNOSTIC_WINE.sh",
+      "size": 418,
+      "sha256": "a00694e4e9961e953caa73a88f1b66f4d0c05ebcc827fcb2a39065da2381f803"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/RUN_A3D_WEAPON_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 605,
+      "sha256": "a34cf76b59d5abce76373718267286e2e76be6e5aeccfca375074b9747522f8a"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/RUN_A3D_WEAPON_DIAGNOSTIC_WINE.sh",
+      "size": 355,
+      "sha256": "6583287b5644738978e2fa409e2f31c524275de5b83f5d54701cb1babf8e1c91"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/RUN_A3D_WINDOWS.cmd",
+      "size": 1485,
+      "sha256": "1d91ad1c2bbd88b80e300094010dc6eeaaa15e1e816d167583bfc309f0c2be44"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/RUN_A3D_WINE.sh",
+      "size": 2214,
+      "sha256": "805ff73042a376825982363948d5d8b419815fc354d75491d7c219716a1e01cd"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/STAFF_DIAGNOSTIC_README.txt",
+      "size": 1420,
+      "sha256": "b705545b51fbe1de34bcb932575e3071b027eb181ea6d8fcb55170dee975a1bc"
+    },
+    {
+      "path": "deploy-v0611/Alice2011-VorpalFix/weapon_reference_catalog_v0611.json",
+      "size": 21600,
+      "sha256": "24c115cdd3968534f6e0ade6a71f1f4c74b416bb8af4ee96f25064b6b82fd65c"
+    },
+    {
+      "path": "deploy-v0611/DEBIAN13_ABI_SMOKE.sh",
+      "size": 889,
+      "sha256": "39a48b41d90c17b16d19d195fba636959ecb99d834e3310e1a893233c39a26e4"
+    },
+    {
+      "path": "deploy-v0611/DEBIAN13_PREFLIGHT.sh",
+      "size": 1675,
+      "sha256": "503a6e80c57e7694886fb8e75a91a68f5c22105b5457629724b38b0f4c57167a"
+    },
+    {
+      "path": "deploy-v0611/DEBIAN13_WINE.md",
+      "size": 3239,
+      "sha256": "98f8b84a6b69a7926e11e77ad44d9b31574f07ac9907328e028f6da161e3325a"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "97cd513e76c6c9975ed6e8a861940dc6b5e5002e339aa0f153227229392def49"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/a3d-comtest.exe.manifest",
+      "size": 348,
+      "sha256": "3651dbd5a008d5580584783d8b22decd1380c8582e07358348563021d71e5fb6"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/a3d-quake3-lock-test.exe",
+      "size": 3072,
+      "sha256": "080e39b0434e3d89c21c7907effa89b8f176a3d73c9ffaa61dad202993896b60"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/a3d-selftest.exe",
+      "size": 4096,
+      "sha256": "43ef20afe442d8ac25b2f84ca1bf2f8a6ffc55835d74bf4a80497bab3e5a8589"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/a3d.dll",
+      "size": 3584,
+      "sha256": "6c036c48dbd2d7ec119d3742efb896eaec00230cd8fd1217814d30b9f1b1b384"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/a3dapi.dll",
+      "size": 1082368,
+      "sha256": "36828a553f5d679983dec7cac9ed1365715b8e7f351ef08afc5d3c4f941bac6b"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/ANALYSE_WEAPONS_V0611.py",
+      "size": 9707,
+      "sha256": "e79e2b35e9e77588673768db939615b70e9a8f0e8b52fde8ba950e9d50a8e9ce"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/PROFILE_v069.txt",
+      "size": 357,
+      "sha256": "bf3a8361390c33a5c1f274aa24952fd6844fb9120a8f1ad05872d727556c2e3d"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/quake3-a3d-native.exe",
+      "size": 5632,
+      "sha256": "e3f62bd3fed6b7bcfc3626bd41a139d49373a48036506e85f5f008e676e24dfa"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/quake3.exe.manifest",
+      "size": 343,
+      "sha256": "b26300c94988d9ebd2097bfc7ef91d7079374535507ce2d2edbfb8ac2c76678c"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/RUN_A3D_32MS_TEST_WINDOWS.cmd",
+      "size": 197,
+      "sha256": "53dc0ad7755b558a0f31bcdae1d6d8000d0904683b3aa6833be06948ec1e57ea"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/RUN_A3D_32MS_TEST_WINE.sh",
+      "size": 205,
+      "sha256": "8dae3d202b9feeddb4d6f707d89a936c85c2c48f5fff9459a675afdc0f6271fd"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/RUN_A3D_3x512_FALLBACK_WINDOWS.cmd",
+      "size": 266,
+      "sha256": "8cb0db7fad2981d6c291410e942c619c321fbeb11c63eac213996b479c737d91"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/RUN_A3D_3x512_FALLBACK_WINE.sh",
+      "size": 230,
+      "sha256": "170c90da592e7c80b2fc0e4a0759c4fd4b15cb47ff1d49e9e350aefb5924438e"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/RUN_A3D_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 123,
+      "sha256": "f90478089db910b3fe8d89d03cba276ed0bc57d6499add2f82955e0cb1189172"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/RUN_A3D_DIAGNOSTIC_WINE.sh",
+      "size": 134,
+      "sha256": "161daeb4ef31c801c6c34509ff9296608c0151232eb694dd4d26bc19a2cf3d9c"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/RUN_A3D_WINDOWS.cmd",
+      "size": 1441,
+      "sha256": "a302c419f07fbbac894b9fe22a227fa89003de448a1fbffcdc9453ae97217425"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/RUN_A3D_WINE.sh",
+      "size": 1919,
+      "sha256": "ad126a55d43d23c279d593a44abbc2036c69c48839ce8431586f80b000dacc7b"
+    },
+    {
+      "path": "deploy-v0611/QuakeIII-117/weapon_reference_catalog_v0611.json",
+      "size": 21600,
+      "sha256": "24c115cdd3968534f6e0ade6a71f1f4c74b416bb8af4ee96f25064b6b82fd65c"
+    },
+    {
+      "path": "deploy-v0611/README_START_HERE.md",
+      "size": 3615,
+      "sha256": "55ea74839ad4d0838e7d8f15ea8c34fcc0c080d650f3b27fca4dd7cc86c524ac"
+    },
+    {
+      "path": "deploy-v0611/README_v0611_WEAPON_FORENSICS.md",
+      "size": 4672,
+      "sha256": "1134b12f6bac08d923e1010cd154ce676dcdcd0f31177b00a41515c5f2f554b4"
+    },
+    {
+      "path": "deploy-v0611/weapon_reference_catalog_v0611.json",
+      "size": 21600,
+      "sha256": "24c115cdd3968534f6e0ade6a71f1f4c74b416bb8af4ee96f25064b6b82fd65c"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "23ce07a1e5b1ba3b9876cdae3406147e8995b2f92b9e6326dd47117e0a4ca908"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/a3d-comtest.exe.manifest",
+      "size": 348,
+      "sha256": "3651dbd5a008d5580584783d8b22decd1380c8582e07358348563021d71e5fb6"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/a3d-quake3-lock-test.exe",
+      "size": 3072,
+      "sha256": "266ae087abe11f2d11794bef2bbad4610f69d05a0d88ba8685bef845872d98ac"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/a3d-selftest.exe",
+      "size": 4096,
+      "sha256": "ffa19e714ca84c663aae93b0955633949b3d2e6482acbc59b2a4df6775a356d3"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/a3d.dll",
+      "size": 3584,
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/a3dapi.dll",
+      "size": 1102848,
+      "sha256": "c1033ac705a268c05a208798dc3426154595d92800eb4b47d7f7294ef3d18446"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/alice-a3d2000-native.exe",
+      "size": 6656,
+      "sha256": "08eeae37b7f92e15117fe725045705e61bc34a5418e321cf1ddb1e9b8a68d362"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/alice.exe.manifest",
+      "size": 342,
+      "sha256": "361f1dba06d17f6ef8c9345530bb3f814b82b78eaa226ce529b45a20e5f74cc4"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/ANALYSE_STAFF_LOG.py",
+      "size": 3887,
+      "sha256": "ea1d61170acaa2154160a9a0b78773d37bb3ba477cada983b3151b638493f435"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/ANALYSE_WEAPONS_V0611.py",
+      "size": 9707,
+      "sha256": "e79e2b35e9e77588673768db939615b70e9a8f0e8b52fde8ba950e9d50a8e9ce"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/ANALYSE_WEAPONS_WINDOWS.cmd",
+      "size": 463,
+      "sha256": "ea974e286b15c1e58a6bf5a16fcf22d746bc3be7c991052bcebaa4ca124346e0"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/MARK_STAFF_BAD_WINDOWS.cmd",
+      "size": 128,
+      "sha256": "d94b48c485face8ebd20409518828e59ebc7146a707762755b6fa11ad8d47024"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/MARK_STAFF_BAD_WINE.sh",
+      "size": 135,
+      "sha256": "41923ce05476e576968d682f11ad0433c69b615cc72cea4091d822882d556a35"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/MARK_STAFF_GOOD_WINDOWS.cmd",
+      "size": 130,
+      "sha256": "ad5bcf365ede4a9e6e62f0f5c6cdaa36ea84b57375dbbbebcc29a712aa92f1bd"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/MARK_STAFF_GOOD_WINE.sh",
+      "size": 137,
+      "sha256": "bb5df26998f97e17746dd14ba23b59502f5d66fb9ab3d0967a62260715f428d3"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/PROFILE_v069.txt",
+      "size": 242,
+      "sha256": "21b01708703676184275926af9fe3902fd0c2c05b025cda0d93e1158143f89fc"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/RUN_A3D_6x256_WINDOWS.cmd",
+      "size": 140,
+      "sha256": "458d32fa26545dc2f434700b4152c4c5cf9a8c8882bfe34849c79741cf0b3ad0"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/RUN_A3D_6x256_WINE.sh",
+      "size": 90,
+      "sha256": "d60fd571793c5137de9ab8977233385e9d86fee2c7756290a5080844bdafe646"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/RUN_A3D_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 123,
+      "sha256": "f90478089db910b3fe8d89d03cba276ed0bc57d6499add2f82955e0cb1189172"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/RUN_A3D_DIAGNOSTIC_WINE.sh",
+      "size": 134,
+      "sha256": "161daeb4ef31c801c6c34509ff9296608c0151232eb694dd4d26bc19a2cf3d9c"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/RUN_A3D_ORIGINAL_MIX_WINDOWS.cmd",
+      "size": 198,
+      "sha256": "3d9270ddd6db4ad25fbe3c1414b6547d34ed50a46e3f00ff86d2e5bef2bb0360"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/RUN_A3D_ORIGINAL_MIX_WINE.sh",
+      "size": 118,
+      "sha256": "30a7b08e950ea650d39e1de692ee54a4267d2e63209072d84f5e49dbf2da106b"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/RUN_A3D_STAFF_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 537,
+      "sha256": "797a98b7be7b584b45c13dbe1a9feecbe90984d4896439f5886c62468ea43733"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/RUN_A3D_STAFF_DIAGNOSTIC_WINE.sh",
+      "size": 418,
+      "sha256": "cdd77927bc19de02bcf485488bc6b975100f3259583b287552ac304cb77aee25"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/RUN_A3D_WEAPON_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 605,
+      "sha256": "70aafa8f071b4807738e49b976b227bf375cc81b0059545b4a88f2ced64af829"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/RUN_A3D_WEAPON_DIAGNOSTIC_WINE.sh",
+      "size": 355,
+      "sha256": "8fdaafc08bec14e57227b92ed26b8320268d2a28549e7aa814a154873f2c9174"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/RUN_A3D_WINDOWS.cmd",
+      "size": 1324,
+      "sha256": "c55b1ce2e713cf4a55583c8a2b780a62fec367ade5dbffe44b4a17edd4a39d64"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/RUN_A3D_WINE.sh",
+      "size": 1933,
+      "sha256": "bff34643c42fa3060e3e98324d19bf8f0881ef4c75bdbc46f635788ab03608c5"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/STAFF_DIAGNOSTIC_README.txt",
+      "size": 1420,
+      "sha256": "b705545b51fbe1de34bcb932575e3071b027eb181ea6d8fcb55170dee975a1bc"
+    },
+    {
+      "path": "deploy-v0612/Alice2000/weapon_reference_catalog_v0611.json",
+      "size": 21600,
+      "sha256": "24c115cdd3968534f6e0ade6a71f1f4c74b416bb8af4ee96f25064b6b82fd65c"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "23ce07a1e5b1ba3b9876cdae3406147e8995b2f92b9e6326dd47117e0a4ca908"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/a3d-comtest.exe.manifest",
+      "size": 348,
+      "sha256": "3651dbd5a008d5580584783d8b22decd1380c8582e07358348563021d71e5fb6"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/a3d-quake3-lock-test.exe",
+      "size": 3072,
+      "sha256": "266ae087abe11f2d11794bef2bbad4610f69d05a0d88ba8685bef845872d98ac"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/a3d-selftest.exe",
+      "size": 4096,
+      "sha256": "ffa19e714ca84c663aae93b0955633949b3d2e6482acbc59b2a4df6775a356d3"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/a3d.dll",
+      "size": 3584,
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/a3dapi.dll",
+      "size": 1102848,
+      "sha256": "c1033ac705a268c05a208798dc3426154595d92800eb4b47d7f7294ef3d18446"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/alice-a3d2011-native.exe",
+      "size": 6656,
+      "sha256": "fc459718643fc93a518921eaab9fdc35d6be54ebfff7c66c16db1846b74a754a"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/alice.exe.manifest",
+      "size": 342,
+      "sha256": "361f1dba06d17f6ef8c9345530bb3f814b82b78eaa226ce529b45a20e5f74cc4"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/ANALYSE_STAFF_LOG.py",
+      "size": 3887,
+      "sha256": "ea1d61170acaa2154160a9a0b78773d37bb3ba477cada983b3151b638493f435"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/ANALYSE_WEAPONS_V0611.py",
+      "size": 9707,
+      "sha256": "e79e2b35e9e77588673768db939615b70e9a8f0e8b52fde8ba950e9d50a8e9ce"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/ANALYSE_WEAPONS_WINDOWS.cmd",
+      "size": 463,
+      "sha256": "a96e4c83f4df192bc8782ef1bea75ebf8a4f6437a6c5abaf83a68c4cfa64d498"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/MARK_STAFF_BAD_WINDOWS.cmd",
+      "size": 128,
+      "sha256": "d94b48c485face8ebd20409518828e59ebc7146a707762755b6fa11ad8d47024"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/MARK_STAFF_BAD_WINE.sh",
+      "size": 135,
+      "sha256": "41923ce05476e576968d682f11ad0433c69b615cc72cea4091d822882d556a35"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/MARK_STAFF_GOOD_WINDOWS.cmd",
+      "size": 130,
+      "sha256": "ad5bcf365ede4a9e6e62f0f5c6cdaa36ea84b57375dbbbebcc29a712aa92f1bd"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/MARK_STAFF_GOOD_WINE.sh",
+      "size": 137,
+      "sha256": "bb5df26998f97e17746dd14ba23b59502f5d66fb9ab3d0967a62260715f428d3"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/PROFILE_v069.txt",
+      "size": 329,
+      "sha256": "af0d94bacfdb6f95f040b9e4a28761fc6dbe2082f7191af74f57e16e61aac8a9"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/RUN_A3D_144FPS_WINDOWS.cmd",
+      "size": 160,
+      "sha256": "adc59f683e20fa96bd03541aa00b8d8d6336785cf5533f420c6f8cb888b70dd8"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/RUN_A3D_144FPS_WINE.sh",
+      "size": 170,
+      "sha256": "771853e29fdbc1533f1ffddaafd43597ea09caf644b48f9d80dc9337694e83c8"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/RUN_A3D_4x512_FALLBACK_WINDOWS.cmd",
+      "size": 247,
+      "sha256": "69ee0160e347463eb37b2d2a761710c78ae099bbc383ef8238ad881ea11586b3"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/RUN_A3D_4x512_FALLBACK_WINE.sh",
+      "size": 186,
+      "sha256": "37f29f0f95d23af90236e34200bdf9666b3243c8c2d2f39c4ba0a54a85235c49"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/RUN_A3D_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 123,
+      "sha256": "f90478089db910b3fe8d89d03cba276ed0bc57d6499add2f82955e0cb1189172"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/RUN_A3D_DIAGNOSTIC_WINE.sh",
+      "size": 134,
+      "sha256": "161daeb4ef31c801c6c34509ff9296608c0151232eb694dd4d26bc19a2cf3d9c"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/RUN_A3D_ORIGINAL_MIX_WINDOWS.cmd",
+      "size": 198,
+      "sha256": "3d9270ddd6db4ad25fbe3c1414b6547d34ed50a46e3f00ff86d2e5bef2bb0360"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/RUN_A3D_ORIGINAL_MIX_WINE.sh",
+      "size": 118,
+      "sha256": "30a7b08e950ea650d39e1de692ee54a4267d2e63209072d84f5e49dbf2da106b"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/RUN_A3D_STAFF_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 537,
+      "sha256": "85766642393d6cb17bdbc75547780782c543acd68957eb2ac0ff1fa9e9d98191"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/RUN_A3D_STAFF_DIAGNOSTIC_WINE.sh",
+      "size": 418,
+      "sha256": "a00694e4e9961e953caa73a88f1b66f4d0c05ebcc827fcb2a39065da2381f803"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/RUN_A3D_WEAPON_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 605,
+      "sha256": "a34cf76b59d5abce76373718267286e2e76be6e5aeccfca375074b9747522f8a"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/RUN_A3D_WEAPON_DIAGNOSTIC_WINE.sh",
+      "size": 355,
+      "sha256": "6583287b5644738978e2fa409e2f31c524275de5b83f5d54701cb1babf8e1c91"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/RUN_A3D_WINDOWS.cmd",
+      "size": 1548,
+      "sha256": "8316c1c2632eb6e0070bf450d7d45af964071114aa2620fd101f2cc03371c726"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/RUN_A3D_WINE.sh",
+      "size": 2271,
+      "sha256": "10a9283e5a9f4da215b53d80f41b2ef88b6b3c7b0d8a0d032ed04bcbb1f68222"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/STAFF_DIAGNOSTIC_README.txt",
+      "size": 1420,
+      "sha256": "b705545b51fbe1de34bcb932575e3071b027eb181ea6d8fcb55170dee975a1bc"
+    },
+    {
+      "path": "deploy-v0612/Alice2011-VorpalFix/weapon_reference_catalog_v0611.json",
+      "size": 21600,
+      "sha256": "24c115cdd3968534f6e0ade6a71f1f4c74b416bb8af4ee96f25064b6b82fd65c"
+    },
+    {
+      "path": "deploy-v0612/DEBIAN13_ABI_SMOKE.sh",
+      "size": 890,
+      "sha256": "133388139b68920902a398d009e2b6ad7c1faca7eb1b81ebffd971832233f2bc"
+    },
+    {
+      "path": "deploy-v0612/DEBIAN13_PREFLIGHT.sh",
+      "size": 1682,
+      "sha256": "bb51a11bce66c216254c1adf17728b2d31e729e5f9849c8ba833e3c85e0c99ef"
+    },
+    {
+      "path": "deploy-v0612/DEBIAN13_WINE.md",
+      "size": 3239,
+      "sha256": "98f8b84a6b69a7926e11e77ad44d9b31574f07ac9907328e028f6da161e3325a"
+    },
+    {
+      "path": "deploy-v0612/LICENSE_ACOUSTICS.txt",
+      "size": 1099,
+      "sha256": "db4bcb30daec2782b7fed55c69292edc506cd27b0a6256158fcd785b067ad8b6"
+    },
+    {
+      "path": "deploy-v0612/LINUX_WINE_SETUP.md",
+      "size": 6640,
+      "sha256": "a4adf4c59693c2cfc486a0e9d838d96b254f2fb8affc3be14a50c48a317c00ae"
+    },
+    {
+      "path": "deploy-v0612/PROVENANCE.json",
+      "size": 320,
+      "sha256": "6b8622744d1b5d42ef6e7d14c6d46ed7f100c2ddfac262b5243ae8bb711be18a"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "23ce07a1e5b1ba3b9876cdae3406147e8995b2f92b9e6326dd47117e0a4ca908"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/a3d-comtest.exe.manifest",
+      "size": 348,
+      "sha256": "3651dbd5a008d5580584783d8b22decd1380c8582e07358348563021d71e5fb6"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/a3d-quake3-lock-test.exe",
+      "size": 3072,
+      "sha256": "266ae087abe11f2d11794bef2bbad4610f69d05a0d88ba8685bef845872d98ac"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/a3d-selftest.exe",
+      "size": 4096,
+      "sha256": "ffa19e714ca84c663aae93b0955633949b3d2e6482acbc59b2a4df6775a356d3"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/a3d.dll",
+      "size": 3584,
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/a3dapi.dll",
+      "size": 1102848,
+      "sha256": "c1033ac705a268c05a208798dc3426154595d92800eb4b47d7f7294ef3d18446"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/ANALYSE_WEAPONS_V0611.py",
+      "size": 9707,
+      "sha256": "e79e2b35e9e77588673768db939615b70e9a8f0e8b52fde8ba950e9d50a8e9ce"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/PROFILE_v069.txt",
+      "size": 357,
+      "sha256": "bf3a8361390c33a5c1f274aa24952fd6844fb9120a8f1ad05872d727556c2e3d"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/quake3-a3d-native.exe",
+      "size": 5120,
+      "sha256": "9ff0415affaa6c37e0f482add0b481e038d8d12c570919705c542214dd99005d"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/quake3.exe.manifest",
+      "size": 343,
+      "sha256": "b26300c94988d9ebd2097bfc7ef91d7079374535507ce2d2edbfb8ac2c76678c"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/RUN_A3D_32MS_TEST_WINDOWS.cmd",
+      "size": 197,
+      "sha256": "53dc0ad7755b558a0f31bcdae1d6d8000d0904683b3aa6833be06948ec1e57ea"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/RUN_A3D_32MS_TEST_WINE.sh",
+      "size": 205,
+      "sha256": "8dae3d202b9feeddb4d6f707d89a936c85c2c48f5fff9459a675afdc0f6271fd"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/RUN_A3D_3x512_FALLBACK_WINDOWS.cmd",
+      "size": 266,
+      "sha256": "8cb0db7fad2981d6c291410e942c619c321fbeb11c63eac213996b479c737d91"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/RUN_A3D_3x512_FALLBACK_WINE.sh",
+      "size": 230,
+      "sha256": "170c90da592e7c80b2fc0e4a0759c4fd4b15cb47ff1d49e9e350aefb5924438e"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/RUN_A3D_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 123,
+      "sha256": "f90478089db910b3fe8d89d03cba276ed0bc57d6499add2f82955e0cb1189172"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/RUN_A3D_DIAGNOSTIC_WINE.sh",
+      "size": 134,
+      "sha256": "161daeb4ef31c801c6c34509ff9296608c0151232eb694dd4d26bc19a2cf3d9c"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/RUN_A3D_WINDOWS.cmd",
+      "size": 1504,
+      "sha256": "5f3abfac0dbb8ae759533b73154a6819e1aea237b742d19c5833a537a5c144e9"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/RUN_A3D_WINE.sh",
+      "size": 1976,
+      "sha256": "b8dcec68a7814853207a0ae699024bfceba2487fdd8e2856758f3a998418c904"
+    },
+    {
+      "path": "deploy-v0612/QuakeIII-117/weapon_reference_catalog_v0611.json",
+      "size": 21600,
+      "sha256": "24c115cdd3968534f6e0ade6a71f1f4c74b416bb8af4ee96f25064b6b82fd65c"
+    },
+    {
+      "path": "deploy-v0612/README_START_HERE.md",
+      "size": 72,
+      "sha256": "69b673827662517b3d3e2a8efa6f208edbe914d17a23e1ccd4b8f0f80a605d5c"
+    },
+    {
+      "path": "deploy-v0612/README_v0611_WEAPON_FORENSICS.md",
+      "size": 4672,
+      "sha256": "1134b12f6bac08d923e1010cd154ce676dcdcd0f31177b00a41515c5f2f554b4"
+    },
+    {
+      "path": "deploy-v0612/README_v0612_WEAPON_CLARITY.md",
+      "size": 4724,
+      "sha256": "c170b643cb748f9b7027f1da1e68aeeaa0ffd0057cfcb9ae32e4aaa596239b64"
+    },
+    {
+      "path": "deploy-v0612/SOURCE_GUIDE.md",
+      "size": 4740,
+      "sha256": "5e9bb22fd4df130c04812cc1149dce85acfdc90c56799b09a2f9da9eef3807f7"
+    },
+    {
+      "path": "deploy-v0612/START_HERE.md",
+      "size": 2403,
+      "sha256": "62eaf22c2fa8a7ad7946872bfe04f532c76b798beae6e469030ceebe0895e563"
+    },
+    {
+      "path": "deploy-v0612/THIRD_PARTY_NOTICES.md",
+      "size": 1087,
+      "sha256": "e88473c703610010d99af55ec8f6fd9c8b15742206e9af6a755a56caf09c9043"
+    },
+    {
+      "path": "deploy-v0612/VERIFICATION.md",
+      "size": 3917,
+      "sha256": "fa826cfa1c262965b659053a056f5d7b7fb3ca32ffb3c37be696e371a16d8b90"
+    },
+    {
+      "path": "deploy-v0612/weapon_reference_catalog_v0611.json",
+      "size": 21600,
+      "sha256": "24c115cdd3968534f6e0ade6a71f1f4c74b416bb8af4ee96f25064b6b82fd65c"
+    },
+    {
+      "path": "deploy-v0612/WINDOWS_SETUP.md",
+      "size": 3995,
+      "sha256": "f8611812d8a9e5b3b468404d2dcc9273e865a5eac01183b4ecdda9f575c2ce2c"
+    },
+    {
+      "path": "deploy-v066/Alice2000/RUN_A3D_3x512_WINDOWS.cmd",
+      "size": 501,
+      "sha256": "9fa52548d567c4d6dd2d62e5423e178cd2569db057ab71bacb995812cc019253"
+    },
+    {
+      "path": "deploy-v066/Alice2000/RUN_A3D_3x512_WINE.sh",
+      "size": 427,
+      "sha256": "eb1edd84d4c0e75502839a9cb07a583c2bfeec543896355ffe198d067abae3db"
+    },
+    {
+      "path": "deploy-v066/Alice2000/RUN_A3D_4x256_WINDOWS.cmd",
+      "size": 501,
+      "sha256": "c3dcbf997c6c40ce6bfdf354dff915f72f8c792ba3f984403fb2625d06de6983"
+    },
+    {
+      "path": "deploy-v066/Alice2000/RUN_A3D_4x256_WINE.sh",
+      "size": 427,
+      "sha256": "943e882ce0a5b598450b2aed7658dda2f15cd75cd2c39896c17c6c63d30378b5"
+    },
+    {
+      "path": "deploy-v066/Alice2000/RUN_A3D_6x256_WINDOWS.cmd",
+      "size": 501,
+      "sha256": "36ec1397d4b0f02c47f6a4e5f4731c980b487ec51b4c126452c0b6662ec130da"
+    },
+    {
+      "path": "deploy-v066/Alice2000/RUN_A3D_6x256_WINE.sh",
+      "size": 427,
+      "sha256": "5b26b62ec429379d7b39975823c714685b42b0e667841c4cac1f024c00589614"
+    },
+    {
+      "path": "deploy-v066/Alice2000/RUN_A3D_8x256_WINDOWS.cmd",
+      "size": 501,
+      "sha256": "37cbb7c9c843d6fb70f3fa5d6164d2f695d8794196cffde823cd06da894a3d09"
+    },
+    {
+      "path": "deploy-v066/Alice2000/RUN_A3D_8x256_WINE.sh",
+      "size": 427,
+      "sha256": "954d6e06c329705258efb074437eb1144bda97f98f1bb14460397f10726503db"
+    },
+    {
+      "path": "deploy-v066/Alice2000/RUN_A3D_LEGACY_WINDOWS.cmd",
+      "size": 133,
+      "sha256": "af2ccca6d87989a3206c0898e9030c986d391e5f4a11cd3a3d7d34104243b81a"
+    },
+    {
+      "path": "deploy-v066/Alice2000/RUN_A3D_LEGACY_WINE.sh",
+      "size": 136,
+      "sha256": "901b53fdd834cc54814e33a8e2c829aeb7b14a73726156b3064947f8573ab43d"
+    },
+    {
+      "path": "deploy-v066/Alice2000/RUN_A3D_WINDOWS.cmd",
+      "size": 1853,
+      "sha256": "d4b3d4bdd6c1dc6b9f9bfb8362664c7839aa03b601b80c40dd4d1649b1bd9242"
+    },
+    {
+      "path": "deploy-v066/Alice2000/RUN_A3D_WINE.sh",
+      "size": 1967,
+      "sha256": "293a294c3a49927d8b98595e5595a1cc436225435c478faa67b8182ceab36784"
+    },
+    {
+      "path": "deploy-v066/Alice2000/TEST_A3D_WIN32.cmd",
+      "size": 336,
+      "sha256": "5725f98b0d12b95502323608fa3294b21721e225970623344143eddc1b10a5ed"
+    },
+    {
+      "path": "deploy-v066/Alice2000/TEST_A3D_WINE.sh",
+      "size": 257,
+      "sha256": "96a37915bbb8b70364cbabd8c407b27c71c18adf0e79adece52b0b3392ffd2a8"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "23ce07a1e5b1ba3b9876cdae3406147e8995b2f92b9e6326dd47117e0a4ca908"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/a3d-comtest.exe.manifest",
+      "size": 348,
+      "sha256": "3651dbd5a008d5580584783d8b22decd1380c8582e07358348563021d71e5fb6"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/a3d-quake3-lock-test.exe",
+      "size": 3072,
+      "sha256": "266ae087abe11f2d11794bef2bbad4610f69d05a0d88ba8685bef845872d98ac"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/a3d-selftest.exe",
+      "size": 4096,
+      "sha256": "ffa19e714ca84c663aae93b0955633949b3d2e6482acbc59b2a4df6775a356d3"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/a3d.dll",
+      "size": 3584,
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/a3dapi.dll",
+      "size": 1103360,
+      "sha256": "1126f87bc55ad9a64ff885ec32dd1794bfb69d713cd93e5591cc2997a9cf0711"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/alice-a3d2000-native.exe",
+      "size": 6656,
+      "sha256": "08eeae37b7f92e15117fe725045705e61bc34a5418e321cf1ddb1e9b8a68d362"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/alice.exe.manifest",
+      "size": 342,
+      "sha256": "361f1dba06d17f6ef8c9345530bb3f814b82b78eaa226ce529b45a20e5f74cc4"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/ANALYSE_STAFF_LOG.py",
+      "size": 3887,
+      "sha256": "ea1d61170acaa2154160a9a0b78773d37bb3ba477cada983b3151b638493f435"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/ANALYSE_WEAPONS_V0611.py",
+      "size": 9707,
+      "sha256": "e79e2b35e9e77588673768db939615b70e9a8f0e8b52fde8ba950e9d50a8e9ce"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/ANALYSE_WEAPONS_WINDOWS.cmd",
+      "size": 463,
+      "sha256": "ea974e286b15c1e58a6bf5a16fcf22d746bc3be7c991052bcebaa4ca124346e0"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/MARK_STAFF_BAD_WINDOWS.cmd",
+      "size": 128,
+      "sha256": "d94b48c485face8ebd20409518828e59ebc7146a707762755b6fa11ad8d47024"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/MARK_STAFF_BAD_WINE.sh",
+      "size": 135,
+      "sha256": "41923ce05476e576968d682f11ad0433c69b615cc72cea4091d822882d556a35"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/MARK_STAFF_GOOD_WINDOWS.cmd",
+      "size": 130,
+      "sha256": "ad5bcf365ede4a9e6e62f0f5c6cdaa36ea84b57375dbbbebcc29a712aa92f1bd"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/MARK_STAFF_GOOD_WINE.sh",
+      "size": 137,
+      "sha256": "bb5df26998f97e17746dd14ba23b59502f5d66fb9ab3d0967a62260715f428d3"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/PROFILE_v069.txt",
+      "size": 242,
+      "sha256": "21b01708703676184275926af9fe3902fd0c2c05b025cda0d93e1158143f89fc"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/RUN_A3D_6x256_WINDOWS.cmd",
+      "size": 140,
+      "sha256": "458d32fa26545dc2f434700b4152c4c5cf9a8c8882bfe34849c79741cf0b3ad0"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/RUN_A3D_6x256_WINE.sh",
+      "size": 90,
+      "sha256": "d60fd571793c5137de9ab8977233385e9d86fee2c7756290a5080844bdafe646"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/RUN_A3D_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 123,
+      "sha256": "f90478089db910b3fe8d89d03cba276ed0bc57d6499add2f82955e0cb1189172"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/RUN_A3D_DIAGNOSTIC_WINE.sh",
+      "size": 134,
+      "sha256": "161daeb4ef31c801c6c34509ff9296608c0151232eb694dd4d26bc19a2cf3d9c"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/RUN_A3D_ORIGINAL_MIX_WINDOWS.cmd",
+      "size": 203,
+      "sha256": "5bbe77303956d0d3c0aca037b918fee9968339e5cbc0f15d528d562691223d25"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/RUN_A3D_ORIGINAL_MIX_WINE.sh",
+      "size": 118,
+      "sha256": "30a7b08e950ea650d39e1de692ee54a4267d2e63209072d84f5e49dbf2da106b"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/RUN_A3D_STAFF_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 537,
+      "sha256": "797a98b7be7b584b45c13dbe1a9feecbe90984d4896439f5886c62468ea43733"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/RUN_A3D_STAFF_DIAGNOSTIC_WINE.sh",
+      "size": 418,
+      "sha256": "cdd77927bc19de02bcf485488bc6b975100f3259583b287552ac304cb77aee25"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/RUN_A3D_WEAPON_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 605,
+      "sha256": "70aafa8f071b4807738e49b976b227bf375cc81b0059545b4a88f2ced64af829"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/RUN_A3D_WEAPON_DIAGNOSTIC_WINE.sh",
+      "size": 355,
+      "sha256": "8fdaafc08bec14e57227b92ed26b8320268d2a28549e7aa814a154873f2c9174"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/RUN_A3D_WINDOWS.cmd",
+      "size": 1334,
+      "sha256": "e216c8e496793b5fc8e20c7abb619515c5a8445d337e72caa56b9aa6c66d9674"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/RUN_A3D_WINE.sh",
+      "size": 1943,
+      "sha256": "379eff7e6c5886f2efc231df66ff192b51cf3728bcee503eb213ad051cc5cc14"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/STAFF_DIAGNOSTIC_README.txt",
+      "size": 1420,
+      "sha256": "b705545b51fbe1de34bcb932575e3071b027eb181ea6d8fcb55170dee975a1bc"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2000/weapon_reference_catalog_v0611.json",
+      "size": 21600,
+      "sha256": "24c115cdd3968534f6e0ade6a71f1f4c74b416bb8af4ee96f25064b6b82fd65c"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "23ce07a1e5b1ba3b9876cdae3406147e8995b2f92b9e6326dd47117e0a4ca908"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/a3d-comtest.exe.manifest",
+      "size": 348,
+      "sha256": "3651dbd5a008d5580584783d8b22decd1380c8582e07358348563021d71e5fb6"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/a3d-quake3-lock-test.exe",
+      "size": 3072,
+      "sha256": "266ae087abe11f2d11794bef2bbad4610f69d05a0d88ba8685bef845872d98ac"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/a3d-selftest.exe",
+      "size": 4096,
+      "sha256": "ffa19e714ca84c663aae93b0955633949b3d2e6482acbc59b2a4df6775a356d3"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/a3d.dll",
+      "size": 3584,
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/a3dapi.dll",
+      "size": 1103360,
+      "sha256": "1126f87bc55ad9a64ff885ec32dd1794bfb69d713cd93e5591cc2997a9cf0711"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/alice-a3d2011-native.exe",
+      "size": 6656,
+      "sha256": "fc459718643fc93a518921eaab9fdc35d6be54ebfff7c66c16db1846b74a754a"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/alice.exe.manifest",
+      "size": 342,
+      "sha256": "361f1dba06d17f6ef8c9345530bb3f814b82b78eaa226ce529b45a20e5f74cc4"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/ANALYSE_STAFF_LOG.py",
+      "size": 3887,
+      "sha256": "ea1d61170acaa2154160a9a0b78773d37bb3ba477cada983b3151b638493f435"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/ANALYSE_WEAPONS_V0611.py",
+      "size": 9707,
+      "sha256": "e79e2b35e9e77588673768db939615b70e9a8f0e8b52fde8ba950e9d50a8e9ce"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/ANALYSE_WEAPONS_WINDOWS.cmd",
+      "size": 463,
+      "sha256": "a96e4c83f4df192bc8782ef1bea75ebf8a4f6437a6c5abaf83a68c4cfa64d498"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/MARK_STAFF_BAD_WINDOWS.cmd",
+      "size": 128,
+      "sha256": "d94b48c485face8ebd20409518828e59ebc7146a707762755b6fa11ad8d47024"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/MARK_STAFF_BAD_WINE.sh",
+      "size": 135,
+      "sha256": "41923ce05476e576968d682f11ad0433c69b615cc72cea4091d822882d556a35"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/MARK_STAFF_GOOD_WINDOWS.cmd",
+      "size": 130,
+      "sha256": "ad5bcf365ede4a9e6e62f0f5c6cdaa36ea84b57375dbbbebcc29a712aa92f1bd"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/MARK_STAFF_GOOD_WINE.sh",
+      "size": 137,
+      "sha256": "bb5df26998f97e17746dd14ba23b59502f5d66fb9ab3d0967a62260715f428d3"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/PROFILE_v069.txt",
+      "size": 329,
+      "sha256": "af0d94bacfdb6f95f040b9e4a28761fc6dbe2082f7191af74f57e16e61aac8a9"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/RUN_A3D_144FPS_WINDOWS.cmd",
+      "size": 160,
+      "sha256": "adc59f683e20fa96bd03541aa00b8d8d6336785cf5533f420c6f8cb888b70dd8"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/RUN_A3D_144FPS_WINE.sh",
+      "size": 170,
+      "sha256": "771853e29fdbc1533f1ffddaafd43597ea09caf644b48f9d80dc9337694e83c8"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/RUN_A3D_4x512_FALLBACK_WINDOWS.cmd",
+      "size": 247,
+      "sha256": "69ee0160e347463eb37b2d2a761710c78ae099bbc383ef8238ad881ea11586b3"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/RUN_A3D_4x512_FALLBACK_WINE.sh",
+      "size": 186,
+      "sha256": "37f29f0f95d23af90236e34200bdf9666b3243c8c2d2f39c4ba0a54a85235c49"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/RUN_A3D_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 123,
+      "sha256": "f90478089db910b3fe8d89d03cba276ed0bc57d6499add2f82955e0cb1189172"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/RUN_A3D_DIAGNOSTIC_WINE.sh",
+      "size": 134,
+      "sha256": "161daeb4ef31c801c6c34509ff9296608c0151232eb694dd4d26bc19a2cf3d9c"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/RUN_A3D_ORIGINAL_MIX_WINDOWS.cmd",
+      "size": 203,
+      "sha256": "5bbe77303956d0d3c0aca037b918fee9968339e5cbc0f15d528d562691223d25"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/RUN_A3D_ORIGINAL_MIX_WINE.sh",
+      "size": 118,
+      "sha256": "30a7b08e950ea650d39e1de692ee54a4267d2e63209072d84f5e49dbf2da106b"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/RUN_A3D_STAFF_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 537,
+      "sha256": "85766642393d6cb17bdbc75547780782c543acd68957eb2ac0ff1fa9e9d98191"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/RUN_A3D_STAFF_DIAGNOSTIC_WINE.sh",
+      "size": 418,
+      "sha256": "a00694e4e9961e953caa73a88f1b66f4d0c05ebcc827fcb2a39065da2381f803"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/RUN_A3D_WEAPON_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 605,
+      "sha256": "a34cf76b59d5abce76373718267286e2e76be6e5aeccfca375074b9747522f8a"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/RUN_A3D_WEAPON_DIAGNOSTIC_WINE.sh",
+      "size": 355,
+      "sha256": "6583287b5644738978e2fa409e2f31c524275de5b83f5d54701cb1babf8e1c91"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/RUN_A3D_WINDOWS.cmd",
+      "size": 1558,
+      "sha256": "59f51a05b70c67d548a160f578280fa9e70a42d58d490d6ba84759dc004db6ca"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/RUN_A3D_WINE.sh",
+      "size": 2281,
+      "sha256": "73af0741a9ac72beb18dbe916820408bd320747110942d903d6f4db205d8c14c"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/STAFF_DIAGNOSTIC_README.txt",
+      "size": 1420,
+      "sha256": "b705545b51fbe1de34bcb932575e3071b027eb181ea6d8fcb55170dee975a1bc"
+    },
+    {
+      "path": "deploy-v070-alpha/Alice2011-VorpalFix/weapon_reference_catalog_v0611.json",
+      "size": 21600,
+      "sha256": "24c115cdd3968534f6e0ade6a71f1f4c74b416bb8af4ee96f25064b6b82fd65c"
+    },
+    {
+      "path": "deploy-v070-alpha/Generic-A3D2/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "23ce07a1e5b1ba3b9876cdae3406147e8995b2f92b9e6326dd47117e0a4ca908"
+    },
+    {
+      "path": "deploy-v070-alpha/Generic-A3D2/a3d-comtest.exe.manifest",
+      "size": 348,
+      "sha256": "3651dbd5a008d5580584783d8b22decd1380c8582e07358348563021d71e5fb6"
+    },
+    {
+      "path": "deploy-v070-alpha/Generic-A3D2/a3d-launch.exe",
+      "size": 12800,
+      "sha256": "8b2f69ba08904fac75be3423ed7bdfcecc95618f2526f3e0a38bd286bc1c7397"
+    },
+    {
+      "path": "deploy-v070-alpha/Generic-A3D2/a3d-quake3-lock-test.exe",
+      "size": 3072,
+      "sha256": "266ae087abe11f2d11794bef2bbad4610f69d05a0d88ba8685bef845872d98ac"
+    },
+    {
+      "path": "deploy-v070-alpha/Generic-A3D2/a3d-selftest.exe",
+      "size": 4096,
+      "sha256": "ffa19e714ca84c663aae93b0955633949b3d2e6482acbc59b2a4df6775a356d3"
+    },
+    {
+      "path": "deploy-v070-alpha/Generic-A3D2/a3d.dll",
+      "size": 3584,
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0"
+    },
+    {
+      "path": "deploy-v070-alpha/Generic-A3D2/a3dapi.dll",
+      "size": 1103360,
+      "sha256": "1126f87bc55ad9a64ff885ec32dd1794bfb69d713cd93e5591cc2997a9cf0711"
+    },
+    {
+      "path": "deploy-v070-alpha/Generic-A3D2/GAME.exe.manifest.template",
+      "size": 383,
+      "sha256": "e25165056320944c4654769cc42c67878b8cd27203a106151d712ac4c8d46e40"
+    },
+    {
+      "path": "deploy-v070-alpha/Generic-A3D2/README_GENERIC.txt",
+      "size": 153,
+      "sha256": "b847153016e8e1c595714ac9fc223204518f92d1696a7efe793b3b4027c1160a"
+    },
+    {
+      "path": "deploy-v070-alpha/HalfLife-Retail/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "23ce07a1e5b1ba3b9876cdae3406147e8995b2f92b9e6326dd47117e0a4ca908"
+    },
+    {
+      "path": "deploy-v070-alpha/HalfLife-Retail/a3d-comtest.exe.manifest",
+      "size": 348,
+      "sha256": "3651dbd5a008d5580584783d8b22decd1380c8582e07358348563021d71e5fb6"
+    },
+    {
+      "path": "deploy-v070-alpha/HalfLife-Retail/a3d-quake3-lock-test.exe",
+      "size": 3072,
+      "sha256": "266ae087abe11f2d11794bef2bbad4610f69d05a0d88ba8685bef845872d98ac"
+    },
+    {
+      "path": "deploy-v070-alpha/HalfLife-Retail/a3d-selftest.exe",
+      "size": 4096,
+      "sha256": "ffa19e714ca84c663aae93b0955633949b3d2e6482acbc59b2a4df6775a356d3"
+    },
+    {
+      "path": "deploy-v070-alpha/HalfLife-Retail/a3d.dll",
+      "size": 3584,
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0"
+    },
+    {
+      "path": "deploy-v070-alpha/HalfLife-Retail/a3dapi.dll",
+      "size": 1103360,
+      "sha256": "1126f87bc55ad9a64ff885ec32dd1794bfb69d713cd93e5591cc2997a9cf0711"
+    },
+    {
+      "path": "deploy-v070-alpha/HalfLife-Retail/halflife-a3d-alpha.exe",
+      "size": 10752,
+      "sha256": "6304a64110371c3ac1b0cf146a0038394d4eb41789bf348b1129be47b52b8a93"
+    },
+    {
+      "path": "deploy-v070-alpha/HalfLife-Retail/hl.exe.manifest",
+      "size": 383,
+      "sha256": "e25165056320944c4654769cc42c67878b8cd27203a106151d712ac4c8d46e40"
+    },
+    {
+      "path": "deploy-v070-alpha/HalfLife-Retail/README_ALPHA.txt",
+      "size": 105,
+      "sha256": "262bcb489cd8fff399b576cdb0668e4dfad821a50dd5f7e0fe1fc0f222f28cfd"
+    },
+    {
+      "path": "deploy-v070-alpha/HalfLife-Retail/RUN_A3D_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 96,
+      "sha256": "fb36aec794a8969cc68eaa8b7b4d746506c5dbe483d8c33b4b37417ad914ffda"
+    },
+    {
+      "path": "deploy-v070-alpha/HalfLife-Retail/RUN_A3D_DIAGNOSTIC_WINE.sh",
+      "size": 107,
+      "sha256": "1f425f1acedf5d00057fb7167920aab40467e7da3e1b66a538e85dc707a9aaa2"
+    },
+    {
+      "path": "deploy-v070-alpha/HalfLife-Retail/RUN_A3D_SPLASH_FIX_WINDOWS.cmd",
+      "size": 112,
+      "sha256": "46b82ba1611bf2d500856acf39491e6ca0dd5f3f8618b7e5f1b59dccc900f890"
+    },
+    {
+      "path": "deploy-v070-alpha/HalfLife-Retail/RUN_A3D_SPLASH_FIX_WINE.sh",
+      "size": 123,
+      "sha256": "8ca7c78949e58374eb9757a44d62319cc03cb24b5005dc3983edd4a3185ce3f1"
+    },
+    {
+      "path": "deploy-v070-alpha/HalfLife-Retail/RUN_A3D_WINDOWS.cmd",
+      "size": 1250,
+      "sha256": "c60fe92562897a5d12c1638c0bfc61c0f6b42ec75f4a49bf3a8176cd072a46e7"
+    },
+    {
+      "path": "deploy-v070-alpha/HalfLife-Retail/RUN_A3D_WINE.sh",
+      "size": 1508,
+      "sha256": "61e4bb48b19b7d9aef5315ba7b9c936e91f0c200867e76f3279d6ce673df718c"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "23ce07a1e5b1ba3b9876cdae3406147e8995b2f92b9e6326dd47117e0a4ca908"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/a3d-comtest.exe.manifest",
+      "size": 348,
+      "sha256": "3651dbd5a008d5580584783d8b22decd1380c8582e07358348563021d71e5fb6"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/a3d-quake3-lock-test.exe",
+      "size": 3072,
+      "sha256": "266ae087abe11f2d11794bef2bbad4610f69d05a0d88ba8685bef845872d98ac"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/a3d-selftest.exe",
+      "size": 4096,
+      "sha256": "ffa19e714ca84c663aae93b0955633949b3d2e6482acbc59b2a4df6775a356d3"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/a3d.dll",
+      "size": 3584,
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/a3dapi.dll",
+      "size": 1103360,
+      "sha256": "1126f87bc55ad9a64ff885ec32dd1794bfb69d713cd93e5591cc2997a9cf0711"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/ANALYSE_WEAPONS_V0611.py",
+      "size": 9707,
+      "sha256": "e79e2b35e9e77588673768db939615b70e9a8f0e8b52fde8ba950e9d50a8e9ce"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/PROFILE_v069.txt",
+      "size": 357,
+      "sha256": "bf3a8361390c33a5c1f274aa24952fd6844fb9120a8f1ad05872d727556c2e3d"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/quake3-a3d-native.exe",
+      "size": 5120,
+      "sha256": "9ff0415affaa6c37e0f482add0b481e038d8d12c570919705c542214dd99005d"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/quake3.exe.manifest",
+      "size": 343,
+      "sha256": "b26300c94988d9ebd2097bfc7ef91d7079374535507ce2d2edbfb8ac2c76678c"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/RUN_A3D_32MS_TEST_WINDOWS.cmd",
+      "size": 197,
+      "sha256": "53dc0ad7755b558a0f31bcdae1d6d8000d0904683b3aa6833be06948ec1e57ea"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/RUN_A3D_32MS_TEST_WINE.sh",
+      "size": 205,
+      "sha256": "8dae3d202b9feeddb4d6f707d89a936c85c2c48f5fff9459a675afdc0f6271fd"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/RUN_A3D_3x512_FALLBACK_WINDOWS.cmd",
+      "size": 266,
+      "sha256": "8cb0db7fad2981d6c291410e942c619c321fbeb11c63eac213996b479c737d91"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/RUN_A3D_3x512_FALLBACK_WINE.sh",
+      "size": 230,
+      "sha256": "170c90da592e7c80b2fc0e4a0759c4fd4b15cb47ff1d49e9e350aefb5924438e"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/RUN_A3D_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 123,
+      "sha256": "f90478089db910b3fe8d89d03cba276ed0bc57d6499add2f82955e0cb1189172"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/RUN_A3D_DIAGNOSTIC_WINE.sh",
+      "size": 134,
+      "sha256": "161daeb4ef31c801c6c34509ff9296608c0151232eb694dd4d26bc19a2cf3d9c"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/RUN_A3D_WINDOWS.cmd",
+      "size": 1514,
+      "sha256": "5789ea80797e61d84e4812a289384826823de09152ca4293e9f9365aeeb3d2d3"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/RUN_A3D_WINE.sh",
+      "size": 1986,
+      "sha256": "98d398b8e39bf02b44cb0f509ca9a078fd56ad749ed3f96f4cf58ecb1dcf3e5c"
+    },
+    {
+      "path": "deploy-v070-alpha/QuakeIII-117/weapon_reference_catalog_v0611.json",
+      "size": 21600,
+      "sha256": "24c115cdd3968534f6e0ade6a71f1f4c74b416bb8af4ee96f25064b6b82fd65c"
+    },
+    {
+      "path": "deploy-v070-alpha/Unreal-Galaxy/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "23ce07a1e5b1ba3b9876cdae3406147e8995b2f92b9e6326dd47117e0a4ca908"
+    },
+    {
+      "path": "deploy-v070-alpha/Unreal-Galaxy/a3d-comtest.exe.manifest",
+      "size": 348,
+      "sha256": "3651dbd5a008d5580584783d8b22decd1380c8582e07358348563021d71e5fb6"
+    },
+    {
+      "path": "deploy-v070-alpha/Unreal-Galaxy/a3d-quake3-lock-test.exe",
+      "size": 3072,
+      "sha256": "266ae087abe11f2d11794bef2bbad4610f69d05a0d88ba8685bef845872d98ac"
+    },
+    {
+      "path": "deploy-v070-alpha/Unreal-Galaxy/a3d-selftest.exe",
+      "size": 4096,
+      "sha256": "ffa19e714ca84c663aae93b0955633949b3d2e6482acbc59b2a4df6775a356d3"
+    },
+    {
+      "path": "deploy-v070-alpha/Unreal-Galaxy/a3d.dll",
+      "size": 3584,
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0"
+    },
+    {
+      "path": "deploy-v070-alpha/Unreal-Galaxy/a3dapi.dll",
+      "size": 1103360,
+      "sha256": "1126f87bc55ad9a64ff885ec32dd1794bfb69d713cd93e5591cc2997a9cf0711"
+    },
+    {
+      "path": "deploy-v070-alpha/Unreal-Galaxy/README_ALPHA.txt",
+      "size": 105,
+      "sha256": "262bcb489cd8fff399b576cdb0668e4dfad821a50dd5f7e0fe1fc0f222f28cfd"
+    },
+    {
+      "path": "deploy-v070-alpha/Unreal-Galaxy/RUN_A3D_DIAGNOSTIC_WINDOWS.cmd",
+      "size": 96,
+      "sha256": "fb36aec794a8969cc68eaa8b7b4d746506c5dbe483d8c33b4b37417ad914ffda"
+    },
+    {
+      "path": "deploy-v070-alpha/Unreal-Galaxy/RUN_A3D_DIAGNOSTIC_WINE.sh",
+      "size": 107,
+      "sha256": "1f425f1acedf5d00057fb7167920aab40467e7da3e1b66a538e85dc707a9aaa2"
+    },
+    {
+      "path": "deploy-v070-alpha/Unreal-Galaxy/RUN_A3D_WINDOWS.cmd",
+      "size": 1453,
+      "sha256": "77d35cfc1fde9b1ba3bc3f18b9a13c56aeed1fd00b551c6e5bcdc79e81ed65d6"
+    },
+    {
+      "path": "deploy-v070-alpha/Unreal-Galaxy/RUN_A3D_WINE.sh",
+      "size": 1777,
+      "sha256": "8972f2b093ff3266576fb7ae3af98e0b41659cc750a8ba53e2a378b9237d0148"
+    },
+    {
+      "path": "deploy-v070-alpha/Unreal-Galaxy/unreal-a3d-alpha.exe",
+      "size": 10752,
+      "sha256": "a8f54e8f10fa6b0c9b15d60153f6fbb47683823c8134cef0792647cfd5900eee"
+    },
+    {
+      "path": "deploy-v070-alpha/Unreal-Galaxy/Unreal.exe.manifest",
+      "size": 381,
+      "sha256": "0db3a2f8bb1bd5f49360fb6074213f9a09eedf6cca4d6cf6d20b14e047b7b004"
+    },
+    {
+      "path": "docs/alice-binary-inventory.json",
+      "size": 1598,
+      "sha256": "bc1767a93edb02c32daa01898dd5885ef12764cba9307e6cffef99db1148b2dc"
+    },
+    {
+      "path": "docs/ANNOTATED_SOURCE_GUIDE.md",
+      "size": 7029,
+      "sha256": "99b913d8ec133e4822e92d9ecf34b5e217f6a183268d1d5e98927caf5a00dfd1"
+    },
+    {
+      "path": "docs/ANNOTATION_INVENTORY.md",
+      "size": 10171,
+      "sha256": "e75d663a9d32d10b4dcca9a5533a9da73175ea2d01f7403500597c02f5d0d691"
+    },
+    {
+      "path": "docs/CROSS_GAME_ROADMAP.md",
+      "size": 3726,
+      "sha256": "d63496a46debfe408b926121aa5b059f5a78487297d0c3aacfecf2a932ddf629"
+    },
+    {
+      "path": "docs/KNOWN_LIMITATIONS.md",
+      "size": 2888,
+      "sha256": "2db208324529d0a61871e367f32eb1f88c1fea1200cafa311246362156c818f5"
+    },
+    {
+      "path": "docs/v070/BROAD_COMPATIBILITY.md",
+      "size": 5156,
+      "sha256": "a2e746de0971946bc8675f2c11b05e294eb2de3538e0885ab10f4f3b39df7850"
+    },
+    {
+      "path": "docs/v070/COMPATIBILITY_TARGETS.csv",
+      "size": 1615,
+      "sha256": "f8460ff024879b3994f0d0bb54a1091e55b7aff33777f1add8762ded7538b286"
+    },
+    {
+      "path": "docs/v070/COMPATIBILITY_TARGETS.json",
+      "size": 6358,
+      "sha256": "6d301ae37a37e7600639aa2e9e7e56c08bf387e85c6d593205c92ba479e2bf74"
+    },
+    {
+      "path": "docs/v070/DEVELOPMENT.md",
+      "size": 1453,
+      "sha256": "3cb06105164eecdc8683cc0d2e8bd36e9655eded0444d2b8caa802913c84056c"
+    },
+    {
+      "path": "docs/v070/DSP_SOURCE_IDENTITY.json",
+      "size": 2903,
+      "sha256": "cdccbd4402c8e560d71d235dbf125a582cf2ddc4a29d2438264de06af704d85b"
+    },
+    {
+      "path": "docs/v070/GENERIC_CANDIDATE_SETUP.md",
+      "size": 2580,
+      "sha256": "995aa906477769f43da0a6c6b0983bcc658330ad8c38a869450853e34c70b3c5"
+    },
+    {
+      "path": "docs/v070/HALFLIFE_BINARY_REPORT.json",
+      "size": 7453,
+      "sha256": "54a7150a2ed23cd566dbd2382af39c987997591c4a1caa13ff56aa89dd97242f"
+    },
+    {
+      "path": "docs/v070/HALFLIFE_PROGRESS.md",
+      "size": 5156,
+      "sha256": "a2e746de0971946bc8675f2c11b05e294eb2de3538e0885ab10f4f3b39df7850"
+    },
+    {
+      "path": "docs/v070/README.md",
+      "size": 293,
+      "sha256": "cd9ed9820eeda72ab33c5ef71d4207535691748ce6ebd746dd32ed03da35d22e"
+    },
+    {
+      "path": "docs/v070/RTCW_BINARY_REPORT.json",
+      "size": 4288,
+      "sha256": "7140cdaba08872c70e0845bbe01405ddda12e232758b08de26c0c04dfbc4dc1c"
+    },
+    {
+      "path": "docs/v070/SETUP_CANDIDATES.md",
+      "size": 6530,
+      "sha256": "11bad82d8f0ee9a92b0468f2c5eba0f687eb1efadfd28a6b9d3af65be5b42569"
+    },
+    {
+      "path": "docs/v070/UNREAL_STATIC_INVENTORY.json",
+      "size": 2825,
+      "sha256": "6399cc93ddad9a4efbfdd45faea62aaf5e63e12841a28760f1563b680e617ee6"
+    },
+    {
+      "path": "docs/v070/VERIFICATION.md",
+      "size": 3036,
+      "sha256": "839d9af3de4e8d47fb3a39214e613ffd6fa5b720a365692597d76eeda4ba23e4"
+    },
+    {
+      "path": "dropin/a3d-comtest.exe.manifest",
+      "size": 348,
+      "sha256": "3651dbd5a008d5580584783d8b22decd1380c8582e07358348563021d71e5fb6"
+    },
+    {
+      "path": "dropin/Alice-A3D2.exe.manifest",
+      "size": 347,
+      "sha256": "770f07ddaab1df080a93a06df129281c049a02c75c41c8ce482fe04a89809f38"
+    },
+    {
+      "path": "dropin/Alice.exe.manifest",
+      "size": 342,
+      "sha256": "361f1dba06d17f6ef8c9345530bb3f814b82b78eaa226ce529b45a20e5f74cc4"
+    },
+    {
+      "path": "dropin/bin/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "6605bac315ab0cd0ddef01ff9c7d2aa88a07762c28a6c912c49e44efaa0ad939"
+    },
+    {
+      "path": "dropin/bin/a3d.dll",
+      "size": 3072,
+      "sha256": "3e8c136648a247228059a11740016f8667bb1005b9f3b4a2f8dc9275653bb2c5"
+    },
+    {
+      "path": "dropin/bin/a3dapi.dll",
+      "size": 1070592,
+      "sha256": "c11269a47f3d09610ec69c70f7af666b1efbc553a8f00695c784ae399b1a79ac"
+    },
+    {
+      "path": "dropin/install.py",
+      "size": 8342,
+      "sha256": "475aefae69b83e0596eb3922c781438d99729796e701e8a3df300dcda4d2bbd6"
+    },
+    {
+      "path": "dropin/install_alice_windows.cmd",
+      "size": 437,
+      "sha256": "2de1d903ee661990f013fe0f45493c7de448f44f4da94637d97bb1c9734f4e06"
+    },
+    {
+      "path": "dropin/install_quake3_windows.cmd",
+      "size": 426,
+      "sha256": "1266cb1da61839e7fd4bf6579d593609c4444836d1537825d2651f94bbb58964"
+    },
+    {
+      "path": "dropin/install_windows.ps1",
+      "size": 3132,
+      "sha256": "bffbb0134463ca541a8e346f6f88472e50b130c31d9b56d3fb0c016e29f26975"
+    },
+    {
+      "path": "dropin/optional_register_windows.ps1",
+      "size": 1849,
+      "sha256": "0a9e3c2b6c01cdea5b51d5979931cf1aa87e4fecef38a7f65a1dda98eca47138"
+    },
+    {
+      "path": "dropin/quake3.exe.manifest",
+      "size": 343,
+      "sha256": "b26300c94988d9ebd2097bfc7ef91d7079374535507ce2d2edbfb8ac2c76678c"
+    },
+    {
+      "path": "dropin/README.md",
+      "size": 5952,
+      "sha256": "b37b96cd06fff2c20314d25f3b9dfced1e777555670ec8721742c3d2439d8e09"
+    },
+    {
+      "path": "dropin/run_wine.sh",
+      "size": 2031,
+      "sha256": "a556134f73506a3f1322a3c5ed22c11a7238163e32fc2f69e6c57eb5c3ad7503"
+    },
+    {
+      "path": "dropin/test_regfree_wine.sh",
+      "size": 1910,
+      "sha256": "5d65bb2875135fac6e66d205977e3e53b41bb59f16b26bf696bb7bb35bc8602d"
+    },
+    {
+      "path": "dropin/tests/test_binary_contract.py",
+      "size": 2303,
+      "sha256": "5bed3b8d13ce5f76b918344dd24f29319a83306b9e2f7aa5290eda75cb234e4e"
+    },
+    {
+      "path": "dropin/tests/test_install.py",
+      "size": 4313,
+      "sha256": "a64c39ffd9c1e4847c2e00d25d4592e46438a4c42f5f913f91670cce3fd189d5"
+    },
+    {
+      "path": "ENGINEERING_v031.md",
+      "size": 3781,
+      "sha256": "f6e0df1f0e9965a146a59bee67e5414310e4dace34d204d97ba795e3c580f4da"
+    },
+    {
+      "path": "experimental/activation_fixture.c",
+      "size": 2360,
+      "sha256": "3570d718ffce8aed88658020e99ce80e25c489eb6e135ea774862ad204cfa54d"
+    },
+    {
+      "path": "experimental/build/a3d-launch.exe",
+      "size": 12800,
+      "sha256": "8b2f69ba08904fac75be3423ed7bdfcecc95618f2526f3e0a38bd286bc1c7397"
+    },
+    {
+      "path": "experimental/build/halflife-a3d-alpha.exe",
+      "size": 10752,
+      "sha256": "6304a64110371c3ac1b0cf146a0038394d4eb41789bf348b1129be47b52b8a93"
+    },
+    {
+      "path": "experimental/build/unreal-a3d-alpha.exe",
+      "size": 10752,
+      "sha256": "a8f54e8f10fa6b0c9b15d60153f6fbb47683823c8134cef0792647cfd5900eee"
+    },
+    {
+      "path": "experimental/client_contracts.inc",
+      "size": 3559,
+      "sha256": "102b7fa9fb55869d679bdd73f69f546726930accf296c68eb10a684f07200e38"
+    },
+    {
+      "path": "experimental/game_activation.c",
+      "size": 7342,
+      "sha256": "5690ae465a9c431cb8161fff334467d957955e0cc5d44509c1192184bd203441"
+    },
+    {
+      "path": "experimental/halflife_splash_compat.h",
+      "size": 2037,
+      "sha256": "64abd0cb154e66d889af9cd58eab5e1d1581cea874d3be18af79548f2089714d"
+    },
+    {
+      "path": "experimental/halflife_splash_signature.h",
+      "size": 1368,
+      "sha256": "54d51937a06e32c3f4a189521f62aa058f246ee4563d19860b7061e09ae63625"
+    },
+    {
+      "path": "experimental/kernel32.def",
+      "size": 459,
+      "sha256": "6d49982be53ff1c69928c40f34ce12121d7a37b246717117f5c0b853048eb936"
+    },
+    {
+      "path": "experimental/launcher_diagnostics.h",
+      "size": 1696,
+      "sha256": "442fc0d80d2c9ae4a8ff521814fe616665ae212be0bab625ab78e26cf14ae855"
+    },
+    {
+      "path": "experimental/native_host.h",
+      "size": 2423,
+      "sha256": "1c9490727591abeffd1223f304e040674e8fc65afa0f01e119df398cd006e467"
+    },
+    {
+      "path": "HF3_BUILD_VERIFICATION.md",
+      "size": 608,
+      "sha256": "374fa32cab9b1af66a762efb4ee7076455e1f752980155b632d099bc98b5b975"
+    },
+    {
+      "path": "LICENSE_ACOUSTICS.txt",
+      "size": 1099,
+      "sha256": "db4bcb30daec2782b7fed55c69292edc506cd27b0a6256158fcd785b067ad8b6"
+    },
+    {
+      "path": "MAX_GAIN_DEPLOYMENT.md",
+      "size": 1644,
+      "sha256": "db7fd082263619c347b3e1e53a148d30b163bd16a7dad521cab1c475d590e49c"
+    },
+    {
+      "path": "MAX_GAIN_VALIDATION.txt",
+      "size": 1539,
+      "sha256": "3589d88677c922addb90dcf41fcdd13c61049848ca7bbbb7c3308fcc64c933cf"
+    },
+    {
+      "path": "MEASURED_HRTF_v029.md",
+      "size": 2076,
+      "sha256": "5d0be006c0b5336948b3f50119ac2d7248d3987171c9fda5c4110ac7530f7b49"
+    },
+    {
+      "path": "native/kernel32.def",
+      "size": 367,
+      "sha256": "e00a7901ecace922142acadb9a486f01d6abb3bdb04b19af34aa840e66a33839"
+    },
+    {
+      "path": "native/quake3-a3d-native.exe",
+      "size": 5120,
+      "sha256": "9ff0415affaa6c37e0f482add0b481e038d8d12c570919705c542214dd99005d"
+    },
+    {
+      "path": "native/quake3_native.c",
+      "size": 6047,
+      "sha256": "e277726f4439721809cecd3372df12847f7b9cf0a7fa68a7cb0bc88ccdd7d034"
+    },
+    {
+      "path": "native_activation.inc",
+      "size": 2915,
+      "sha256": "746d52a9700e94cf00711c19de12a75d40352385004ffd9fe3240f29a03e8491"
+    },
+    {
+      "path": "NATIVE_WINDOWS_INVESTIGATION.md",
+      "size": 3835,
+      "sha256": "835bd95090d11717577076e617cc390ffcc0e4fc40038c0d75644bd19f14926e"
+    },
+    {
+      "path": "NEXT_TEST.md",
+      "size": 844,
+      "sha256": "bf4c1c768ba5ee25f9739d3b726cb2098464de08f0d46105eae388b368849c8e"
+    },
+    {
+      "path": "OFFLINE_VALIDATION_v064.txt",
+      "size": 159,
+      "sha256": "453a0c1a8b7fbabe8371ada86fcf26e09268d1c8a1411a9b4a63d1409d0eaa8c"
+    },
+    {
+      "path": "OFFLINE_VALIDATION_v065.txt",
+      "size": 704,
+      "sha256": "ffb01a1ac985809c4945889a6e560aa7b01d7e973027757b692c6d60d2f51a9e"
+    },
+    {
+      "path": "PCM_STATUS.md",
+      "size": 2524,
+      "sha256": "290c3d846f339242abee73a85c076cec741fb3a8d12f638eca073fd99ea72739"
+    },
+    {
+      "path": "portable/a3d_port.py",
+      "size": 12465,
+      "sha256": "b4983f70e88f189894294e177c6936e1e31838b7b07dc59a8703a144d13b0b61"
+    },
+    {
+      "path": "portable/ALICE2000_QUICKSTART.md",
+      "size": 696,
+      "sha256": "b9c2ae70346bd37d785c193a30254c34dced0ae90e703ee00b568a5fb7f7611a"
+    },
+    {
+      "path": "portable/ALICE2011_QUICKSTART.md",
+      "size": 939,
+      "sha256": "668a23b58b901e16ad8897100e8c17e68b3da91bb21c776fe639a4b25a0da771"
+    },
+    {
+      "path": "portable/bin/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "0962ff9f6b18353730789c03b3f0671aa2d6da76127c6fdc84833546983da4ac"
+    },
+    {
+      "path": "portable/bin/a3d-legacy-probe.exe",
+      "size": 2560,
+      "sha256": "e6af699c4b9edb31bb618c54c31ebbe0e717534a0abf2543381883765f66752b"
+    },
+    {
+      "path": "portable/bin/a3d-quake3-lock-test.exe",
+      "size": 3072,
+      "sha256": "b5dce0733d9c4482e8ae616e49bb55aedd591cd259c8d92d6b33bda9bb787473"
+    },
+    {
+      "path": "portable/bin/a3d.dll",
+      "size": 3072,
+      "sha256": "79caaa00cfd1d1d5f7e1a118d476cf5248af05eaa8c0ea3fdfdd8b3f860ed42a"
+    },
+    {
+      "path": "portable/bin/a3dapi.dll",
+      "size": 1070592,
+      "sha256": "c11269a47f3d09610ec69c70f7af666b1efbc553a8f00695c784ae399b1a79ac"
+    },
+    {
+      "path": "portable/bin/alice-a3d-bridge.exe",
+      "size": 5120,
+      "sha256": "802d1dccc9bf451bb875ef659e5853ae7b52d99163d5d697a4df3ad788bba503"
+    },
+    {
+      "path": "portable/bin/alice-a3d2011-bridge.exe",
+      "size": 5632,
+      "sha256": "b5d98f1e93d4abaf2569975e88334d9b20ae803c129ef3b283d1c6f96d328083"
+    },
+    {
+      "path": "portable/build_legacy_probe.sh",
+      "size": 921,
+      "sha256": "1d978e28dce21dd6696b7e394c1dab27c7215b3800dc328412ba8d1dd27875fe"
+    },
+    {
+      "path": "portable/history/QUAKE3_LOCK_HOTFIX_README.md",
+      "size": 3870,
+      "sha256": "d5c9012908036d0f1022da038bc4d4c21afa070b19429e683f7592dc15495070"
+    },
+    {
+      "path": "portable/history/QUAKE3_STREAM_HOTFIX2.md",
+      "size": 4664,
+      "sha256": "62320ff9f766d02a85c3728e462662fd354e7789c6cc2565d154b19af406fb2d"
+    },
+    {
+      "path": "portable/history/QUAKE3_STREAM_HOTFIX3.md",
+      "size": 2341,
+      "sha256": "6adf1b127368bd14316d4257272970f1be13f7eb276312c335a398d420e55875"
+    },
+    {
+      "path": "portable/history/QUAKE3_STREAM_HOTFIX4.md",
+      "size": 4428,
+      "sha256": "e866e77463553d0b67d5ab1b5de445e693bc14d6b79568b86278fbdd53ceb79f"
+    },
+    {
+      "path": "portable/history/README.md",
+      "size": 199,
+      "sha256": "b282db57e26e83b5532a53d1e028d3b9745c1a104e8ea499bb2c3e4fe0159118"
+    },
+    {
+      "path": "portable/history/README_FAST24_HF3A.md",
+      "size": 2328,
+      "sha256": "0618d63ce720ad22919491966ffbe8f3a187b916e34e13e5f6c446502978a9cd"
+    },
+    {
+      "path": "portable/history/README_HOTFIX10.md",
+      "size": 3303,
+      "sha256": "f1b664b41c649c560e22f60c23fcfee49999e82ca7cabf974706b6b7b7421472"
+    },
+    {
+      "path": "portable/history/README_HOTFIX4.md",
+      "size": 122,
+      "sha256": "2732e89a1c6a625550387a1e3dfa29928578ab09492050dce0c6d6e4da798f09"
+    },
+    {
+      "path": "portable/history/README_HOTFIX5.md",
+      "size": 3765,
+      "sha256": "447761607822a80023fdb81ead0824ba8f66c273b076efe4e7bf8b8978bf2b23"
+    },
+    {
+      "path": "portable/history/README_HOTFIX6.md",
+      "size": 3582,
+      "sha256": "80e397a3b8037524311947b24e0f141d9498b3efada2f0a0ae9a76096fe784d5"
+    },
+    {
+      "path": "portable/history/README_HOTFIX7.md",
+      "size": 3933,
+      "sha256": "cfbf2d9b9680eb74cc54ef358793d0f198480f36ad6a473c8ee68096e943d131"
+    },
+    {
+      "path": "portable/QUAKE3_QUICKSTART.md",
+      "size": 808,
+      "sha256": "2a443a59efd3172a0ec75ee5d9511f887650571f83c92b957e121c89d1799d0f"
+    },
+    {
+      "path": "portable/README.md",
+      "size": 5850,
+      "sha256": "8f821af5960dfd91c64211134565bc7430d036b9ed11fd27af20c3458fcf889c"
+    },
+    {
+      "path": "portable/RELEASE_NOTES.md",
+      "size": 167,
+      "sha256": "ea9b4c0d4a16fc326df532d83bdbfdccec6e93d56c185c367dd8ccf9e01455eb"
+    },
+    {
+      "path": "portable/RELEASE_NOTES_v0.6.0_FINAL.md",
+      "size": 1172,
+      "sha256": "d0dcff20787fffc8e6076860610bbcc51eb806b4d77347094537d88d6b6f59a9"
+    },
+    {
+      "path": "portable/RELEASE_NOTES_V060.md",
+      "size": 6089,
+      "sha256": "fa61f2ea2e3e5ca0885234bc489c7675f6bcc5334c2a57f6a31cab8cfc290105"
+    },
+    {
+      "path": "portable/run_alice2000_wine.sh",
+      "size": 1786,
+      "sha256": "835dd2e5dc693370a27b8240f94697126ce7633117606dec060f27981e8d7137"
+    },
+    {
+      "path": "portable/run_alice2011_wine.sh",
+      "size": 1659,
+      "sha256": "b7888f199ac9ca7ad205d836b28312e29f4cf7ead6696a63978831cbb73f261b"
+    },
+    {
+      "path": "portable/run_game_wine.sh",
+      "size": 1077,
+      "sha256": "3a208d917f6ddc6830fb591f9a704a3f9a2e79f6b53000f4689749c69b9b20ac"
+    },
+    {
+      "path": "portable/run_quake3_117_wine.sh",
+      "size": 1678,
+      "sha256": "5ec1eb475fb8df2403d330dfaa8460c5c9714b63b3eeaffe07486a90b19d9dab"
+    },
+    {
+      "path": "portable/tests/test_classic2000_bridge.py",
+      "size": 2686,
+      "sha256": "61a4dd50edf9220f7d4e510a6fdd3f82e9f089145d8843383adc7d1ba4c562c2"
+    },
+    {
+      "path": "portable/tests/test_portable.py",
+      "size": 4698,
+      "sha256": "cc90badd617e4b00225b897c55c9603507165ad7443dc0b9291225ace2aeb328"
+    },
+    {
+      "path": "profiles/Alice2000/RUN_A3D_3HEADERS_WINDOWS.cmd",
+      "size": 163,
+      "sha256": "5d4b5e49f3734beb22db7bfa6315cb21ad0c3ad937a999769698261dff4da3e0"
+    },
+    {
+      "path": "profiles/Alice2000/RUN_A3D_3HEADERS_WINE.sh",
+      "size": 125,
+      "sha256": "0f96e71b8ea87b6ad050af2882f6e5c6b08103daf135a8c1f4720bc2b82efa36"
+    },
+    {
+      "path": "profiles/Alice2000/RUN_A3D_LEGACY_WINDOWS.cmd",
+      "size": 133,
+      "sha256": "af2ccca6d87989a3206c0898e9030c986d391e5f4a11cd3a3d7d34104243b81a"
+    },
+    {
+      "path": "profiles/Alice2000/RUN_A3D_LEGACY_WINE.sh",
+      "size": 136,
+      "sha256": "901b53fdd834cc54814e33a8e2c829aeb7b14a73726156b3064947f8573ab43d"
+    },
+    {
+      "path": "profiles/Alice2000/RUN_A3D_WINDOWS.cmd",
+      "size": 1223,
+      "sha256": "45bb26b7ae26a79af6c0682c47d07499db29d02c5229bcd6696c2e5de6f8397e"
+    },
+    {
+      "path": "profiles/Alice2000/RUN_A3D_WINE.sh",
+      "size": 1633,
+      "sha256": "3f469cc24b834d316e81a5238f0aaaddc7d2e625befce5e870acb7f491d56519"
+    },
+    {
+      "path": "profiles/Alice2011-VorpalFix/RUN_A3D_WINDOWS.cmd",
+      "size": 1280,
+      "sha256": "fbf2b461eb01634b6f070d8375351dd99febac7c3b3e098c925eb6d7156f7f00"
+    },
+    {
+      "path": "profiles/Alice2011-VorpalFix/RUN_A3D_WINE.sh",
+      "size": 1789,
+      "sha256": "757f65a0274a18ff98cce356c3cac2909f759d2f5a6a544c71710105e2ebbcb5"
+    },
+    {
+      "path": "profiles/QuakeIII-117/RUN_A3D_LEGACY_WINDOWS.cmd",
+      "size": 133,
+      "sha256": "af2ccca6d87989a3206c0898e9030c986d391e5f4a11cd3a3d7d34104243b81a"
+    },
+    {
+      "path": "profiles/QuakeIII-117/RUN_A3D_LEGACY_WINE.sh",
+      "size": 136,
+      "sha256": "901b53fdd834cc54814e33a8e2c829aeb7b14a73726156b3064947f8573ab43d"
+    },
+    {
+      "path": "profiles/QuakeIII-117/RUN_A3D_WINDOWS.cmd",
+      "size": 1318,
+      "sha256": "8e6fb2d69627ea75967806334b9acba9435a0e056c215494798ff8f2a7d4e5b7"
+    },
+    {
+      "path": "profiles/QuakeIII-117/RUN_A3D_WINE.sh",
+      "size": 1567,
+      "sha256": "03ce80b840ca2b6347a96d035731ddd32855cbaa2e9200c9441f7f5a97ef9c44"
+    },
+    {
+      "path": "PROVENANCE.json",
+      "size": 535,
+      "sha256": "f6d831f8d9c731c891003fbf2a5cd9cafc64e604a742213aa481ef953541817f"
+    },
+    {
+      "path": "QUAKE3_117_ROOT_CAUSE.md",
+      "size": 2190,
+      "sha256": "7ca39dae36f9e3c04cfb9b371ca124925a74508f4afea02cabe6f7742b23ed95"
+    },
+    {
+      "path": "QUAKE3_STREAM_HOTFIX2.md",
+      "size": 4664,
+      "sha256": "62320ff9f766d02a85c3728e462662fd354e7789c6cc2565d154b19af406fb2d"
+    },
+    {
+      "path": "QUAKE3_STREAM_HOTFIX3.md",
+      "size": 2341,
+      "sha256": "6adf1b127368bd14316d4257272970f1be13f7eb276312c335a398d420e55875"
+    },
+    {
+      "path": "QUAKE3_STREAM_HOTFIX4.md",
+      "size": 4428,
+      "sha256": "e866e77463553d0b67d5ab1b5de445e693bc14d6b79568b86278fbdd53ceb79f"
+    },
+    {
+      "path": "QUICKSTART.md",
+      "size": 216,
+      "sha256": "35cba3c1a339cfcc7c12f5f35b82ff2a83ae8113140be19cf4dc0abecb0fe7ef"
+    },
+    {
+      "path": "README.md",
+      "size": 376,
+      "sha256": "7ae06dade9691548c41c5275ce8291d7caad1d54d31f6b72b7b0a9ba25c09814"
+    },
+    {
+      "path": "README_HOTFIX10.md",
+      "size": 3303,
+      "sha256": "f1b664b41c649c560e22f60c23fcfee49999e82ca7cabf974706b6b7b7421472"
+    },
+    {
+      "path": "README_HOTFIX3.md",
+      "size": 923,
+      "sha256": "81398c8696b83cef5d3e7b8449e0960ea741e1db393ec7b4314e1b5ab83d9bc3"
+    },
+    {
+      "path": "README_HOTFIX3A.md",
+      "size": 709,
+      "sha256": "3c72faab98d1af68ac25bf9631d8f5bf96911af1fec41946e5f66bdf6d71006a"
+    },
+    {
+      "path": "README_HOTFIX5.md",
+      "size": 3765,
+      "sha256": "447761607822a80023fdb81ead0824ba8f66c273b076efe4e7bf8b8978bf2b23"
+    },
+    {
+      "path": "README_HOTFIX6.md",
+      "size": 3582,
+      "sha256": "80e397a3b8037524311947b24e0f141d9498b3efada2f0a0ae9a76096fe784d5"
+    },
+    {
+      "path": "README_HOTFIX7.md",
+      "size": 3933,
+      "sha256": "cfbf2d9b9680eb74cc54ef358793d0f198480f36ad6a473c8ee68096e943d131"
+    },
+    {
+      "path": "README_HOTFIX9.md",
+      "size": 3262,
+      "sha256": "1af143f01661b79b51b07620d7e316f5e8fe10f3c6fce29cc0d3eff9ff6b114e"
+    },
+    {
+      "path": "README_v021.txt",
+      "size": 81,
+      "sha256": "0406857d822cc7b8f38a9b318b3a339f44f76a18e5c74394b90c2be6b92b1ebd"
+    },
+    {
+      "path": "README_V040.md",
+      "size": 3047,
+      "sha256": "139f6ce35ae1e1d369c3d92c6c47b8b8241e51e79b9ad2312de4f456960a96d8"
+    },
+    {
+      "path": "README_V041.md",
+      "size": 3206,
+      "sha256": "d61be800bf36c7bf0639335c8e30e51de9b57b1dfa88d43db46aaf0f32f1f75d"
+    },
+    {
+      "path": "README_V060.md",
+      "size": 6532,
+      "sha256": "5054b2b2e7a3fb14157f8555044282c82fba8cd4bdeeb1780f431f379d72ca18"
+    },
+    {
+      "path": "README_v0610_STAFF_DIAGNOSTIC.md",
+      "size": 3615,
+      "sha256": "55ea74839ad4d0838e7d8f15ea8c34fcc0c080d650f3b27fca4dd7cc86c524ac"
+    },
+    {
+      "path": "README_v0611_WEAPON_FORENSICS.md",
+      "size": 4672,
+      "sha256": "1134b12f6bac08d923e1010cd154ce676dcdcd0f31177b00a41515c5f2f554b4"
+    },
+    {
+      "path": "README_v0612_WEAPON_CLARITY.md",
+      "size": 4724,
+      "sha256": "c170b643cb748f9b7027f1da1e68aeeaa0ffd0057cfcb9ae32e4aaa596239b64"
+    },
+    {
+      "path": "README_v062.md",
+      "size": 5043,
+      "sha256": "3890f9218eecde4ac34564e19a23a96dc7a0a9c9ac89ae9ae69f2db84224c836"
+    },
+    {
+      "path": "README_v063_ALICE2000.md",
+      "size": 3120,
+      "sha256": "894a9370f5b76935440da4ad6a72faf096bb7817c5011453ab66941f992d070b"
+    },
+    {
+      "path": "README_v064_SPATIAL.md",
+      "size": 3541,
+      "sha256": "e2f656e53a881011d5fbedb68f3765c9f46c6feafe4f73304d20a44c89fec27b"
+    },
+    {
+      "path": "README_v065_ALICE2000_LOW_LATENCY.md",
+      "size": 3203,
+      "sha256": "d219c5cfc1960a8dc200295b03b6592ba155a9ed8247424f1884956707ff758e"
+    },
+    {
+      "path": "README_v066_ALICE2000_32MS.md",
+      "size": 3296,
+      "sha256": "d5c9f2e18bdeb822865b5559cf0dff2d45143f398f240b0107318cdda6fadd05"
+    },
+    {
+      "path": "README_v069.md",
+      "size": 5487,
+      "sha256": "14b2c06d55e4406057125a0e4be6e8f4ab1bb367eb7dc0266f222a05974069c5"
+    },
+    {
+      "path": "REGISTRY_FIX_v015.md",
+      "size": 1153,
+      "sha256": "8bd6ab76c2e362ae1dbf4dbaad33344574bae58c9824a65aad2f6ba9b21d21eb"
+    },
+    {
+      "path": "release-docs/LINUX_WINE_SETUP.md",
+      "size": 6640,
+      "sha256": "a4adf4c59693c2cfc486a0e9d838d96b254f2fb8affc3be14a50c48a317c00ae"
+    },
+    {
+      "path": "release-docs/PROVENANCE.json",
+      "size": 320,
+      "sha256": "6b8622744d1b5d42ef6e7d14c6d46ed7f100c2ddfac262b5243ae8bb711be18a"
+    },
+    {
+      "path": "release-docs/SOURCE_GUIDE.md",
+      "size": 4740,
+      "sha256": "5e9bb22fd4df130c04812cc1149dce85acfdc90c56799b09a2f9da9eef3807f7"
+    },
+    {
+      "path": "release-docs/START_HERE.md",
+      "size": 2403,
+      "sha256": "62eaf22c2fa8a7ad7946872bfe04f532c76b798beae6e469030ceebe0895e563"
+    },
+    {
+      "path": "release-docs/VERIFICATION.md",
+      "size": 3917,
+      "sha256": "fa826cfa1c262965b659053a056f5d7b7fb3ca32ffb3c37be696e371a16d8b90"
+    },
+    {
+      "path": "release-docs/WINDOWS_SETUP.md",
+      "size": 3995,
+      "sha256": "f8611812d8a9e5b3b468404d2dcc9273e865a5eac01183b4ecdda9f575c2ce2c"
+    },
+    {
+      "path": "RELEASE_NOTES_HF6.md",
+      "size": 3582,
+      "sha256": "80e397a3b8037524311947b24e0f141d9498b3efada2f0a0ae9a76096fe784d5"
+    },
+    {
+      "path": "RELEASE_NOTES_HF7.md",
+      "size": 3933,
+      "sha256": "cfbf2d9b9680eb74cc54ef358793d0f198480f36ad6a473c8ee68096e943d131"
+    },
+    {
+      "path": "RELEASE_NOTES_HF9.md",
+      "size": 608,
+      "sha256": "3aa3e96b7f7deb6eea76ffdb36d2956c0454ae9692e39eb25be30c85e500d390"
+    },
+    {
+      "path": "RELEASE_NOTES_v0.6.0_FINAL.md",
+      "size": 1172,
+      "sha256": "d0dcff20787fffc8e6076860610bbcc51eb806b4d77347094537d88d6b6f59a9"
+    },
+    {
+      "path": "RELEASE_NOTES_V044.md",
+      "size": 3055,
+      "sha256": "53756abd57a608f5b6ff23f11e77a80ea85534c2a1c144d341598dde9f4a7ff3"
+    },
+    {
+      "path": "RELEASE_NOTES_V045.md",
+      "size": 342,
+      "sha256": "9e3d02d46766e32b87343edf7c7143171672c7957e7da9c3209a3ae5279d5402"
+    },
+    {
+      "path": "RELEASE_NOTES_V046.md",
+      "size": 1677,
+      "sha256": "38a8dc9718eee2c72ec483434ffab0767871fe2b4249e12d84c8cfb3a2adc842"
+    },
+    {
+      "path": "RELEASE_NOTES_V047.md",
+      "size": 993,
+      "sha256": "eb24bbe23af443efff6b46869c91148cdb0e86c492cf717e65f741dbd1c9921c"
+    },
+    {
+      "path": "RELEASE_VERIFICATION.md",
+      "size": 1048,
+      "sha256": "f001f3e400efdbe90ac2a8727f3085c9b7e32955fdc2cfe58923744293cec949"
+    },
+    {
+      "path": "remaster2011/alice-a3d2011-bridge.exe",
+      "size": 5632,
+      "sha256": "b5d98f1e93d4abaf2569975e88334d9b20ae803c129ef3b283d1c6f96d328083"
+    },
+    {
+      "path": "remaster2011/alice-a3d2011-native.exe",
+      "size": 6656,
+      "sha256": "fc459718643fc93a518921eaab9fdc35d6be54ebfff7c66c16db1846b74a754a"
+    },
+    {
+      "path": "remaster2011/alice_a3d2011_bridge.c",
+      "size": 10812,
+      "sha256": "2a42fcb7cfc8715d17de0c216fe73de37794d3664aded5833dccab2e72cd05a7"
+    },
+    {
+      "path": "remaster2011/build.sh",
+      "size": 1094,
+      "sha256": "91a45409b860a49da171ac77ff345cae1cd55f9dff97af375f64e2b76cccbf6d"
+    },
+    {
+      "path": "remaster2011/BUILD_AND_TEST.md",
+      "size": 3103,
+      "sha256": "509a34ea9e1e14bda5549db4e5e448bc7195845211bf3dec3cd8f765c082655d"
+    },
+    {
+      "path": "remaster2011/kernel32.def",
+      "size": 367,
+      "sha256": "e00a7901ecace922142acadb9a486f01d6abb3bdb04b19af34aa840e66a33839"
+    },
+    {
+      "path": "remaster2011/tests/test_remaster_install.py",
+      "size": 3919,
+      "sha256": "444647f93fa82b74506c6b4acff2f503522111833cf3d44ba491027c84666177"
+    },
+    {
+      "path": "remaster2011/tests/test_selector_stub",
+      "size": 16000,
+      "sha256": "2e61916225a3f6568100ec8fcd62596f9ba1e9ba05370de24e17b05350fa1f4b"
+    },
+    {
+      "path": "remaster2011/tests/test_selector_stub.c",
+      "size": 2154,
+      "sha256": "28e30b32a3d2a36c17126b5acce2938cc548785ecc9616910524677b5041ca9e"
+    },
+    {
+      "path": "remaster2011/verify_alice2011.py",
+      "size": 2346,
+      "sha256": "868bc98366ea617d03c183721d073e62a8dfde44067b6fd8d80f58fb55c208f9"
+    },
+    {
+      "path": "requirements-test.txt",
+      "size": 24,
+      "sha256": "3e7c285201aa9d481b7473f4b49a9dac75af78fbc0111d9666c7733d096f0735"
+    },
+    {
+      "path": "research/DRIVER_FIDELITY.md",
+      "size": 3058,
+      "sha256": "5e265caef47699686322c9c2a3f4c8a95c52899fed30f55bcbd1110b1d78c8dd"
+    },
+    {
+      "path": "RESULTS_V019_AND_NEXT.md",
+      "size": 3409,
+      "sha256": "64defd8db2b5e9f07a64223371aa77b66793368a35affa662d6e7d79a9754af4"
+    },
+    {
+      "path": "run_alpha_checks.py",
+      "size": 1350,
+      "sha256": "f77cc60f406208f89e458a363ee342840810bfdb8ecfa3c117b844d897121a38"
+    },
+    {
+      "path": "run_native_tests.py",
+      "size": 1586,
+      "sha256": "4995ea4d97e661621dad704b86dda6436b57373451afefc91da6045fb0a03311"
+    },
+    {
+      "path": "SNAPSHOT",
+      "size": 46,
+      "sha256": "25556bf72d8ae12f6187a05e6e6e2b564e96871852677bfe0e057286a4e2eac6"
+    },
+    {
+      "path": "SPATIAL_FIX_v027.md",
+      "size": 1584,
+      "sha256": "f84789f49dae048585a12f42f66199717db57de8082f8ddbd8f3962e9ea45b70"
+    },
+    {
+      "path": "TEST_MAX_GAIN_OFFLINE.sh",
+      "size": 249,
+      "sha256": "6e99184f6b0723b8fa7a5d0bed839b04cd5cb6c04c64d5901ed6fd4ce7f54dbc"
+    },
+    {
+      "path": "TEST_STATUS_V041.md",
+      "size": 613,
+      "sha256": "39988574d756b292b3db0598711eb8229b9f2af768cf4ac019f2c9bee5bd2501"
+    },
+    {
+      "path": "TEST_STATUS_V042.md",
+      "size": 451,
+      "sha256": "90745932011ad4f77495dd4d79a77b88d28c2cf6d8d3ccba9015436ce35d115e"
+    },
+    {
+      "path": "TEST_STATUS_V046.md",
+      "size": 402,
+      "sha256": "753761482b0c5e9db178f620624c4efb17dc40ed6db0b1800109c7bd35f12039"
+    },
+    {
+      "path": "tests_v070/test_alpha.py",
+      "size": 9684,
+      "sha256": "baf11a70bedaec7068b18796d9951bca597222cdc79f85ee2102d6bb90423452"
+    },
+    {
+      "path": "tests_v070/test_broad.py",
+      "size": 4025,
+      "sha256": "723e18f79b2c11e071bf1913385693c4f7f9645a8d88a3143469cebc46072a19"
+    },
+    {
+      "path": "tests_v070/test_progress.py",
+      "size": 7375,
+      "sha256": "17047941650b80239a9d82be6f16a4d655b3ea42c2711ed30eb27656cda10955"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "size": 1087,
+      "sha256": "e88473c703610010d99af55ec8f6fd9c8b15742206e9af6a755a56caf09c9043"
+    },
+    {
+      "path": "tools/alice_detection_copy.py",
+      "size": 2492,
+      "sha256": "fc099df48ee991bca17b5887a16174865c11eb435b6fa089972350a69dff5135"
+    },
+    {
+      "path": "tools/analyse_staff_log_v0610.py",
+      "size": 3887,
+      "sha256": "ea1d61170acaa2154160a9a0b78773d37bb3ba477cada983b3151b638493f435"
+    },
+    {
+      "path": "tools/analyse_weapons_v0611.py",
+      "size": 9707,
+      "sha256": "e79e2b35e9e77588673768db939615b70e9a8f0e8b52fde8ba950e9d50a8e9ce"
+    },
+    {
+      "path": "tools/bench_stream_native.c",
+      "size": 1190,
+      "sha256": "4a8e7720880a5b213095e23e9fbb8aee1a238babbbb1caf97ff384156ed4c2fd"
+    },
+    {
+      "path": "tools/gen_geom.py",
+      "size": 4358,
+      "sha256": "5fd4ac45582866c768cf949307533c6a8d54deb16a732ab0d1a0143e25c3b31f"
+    },
+    {
+      "path": "tools/generate_alpha_profiles.py",
+      "size": 5130,
+      "sha256": "79baaf6c92743bf855d13ec17b27a2f4f6dce0bb0ca7a4beaa0ea4cc5de7982e"
+    },
+    {
+      "path": "tools/generate_launchers_v069.py",
+      "size": 8235,
+      "sha256": "571b3dbf7eff1bbfb22c1ee900e5c6208135efff88bf5ccc96938887777e6a8b"
+    },
+    {
+      "path": "tools/generate_measured_hrir.py",
+      "size": 3195,
+      "sha256": "bc72ab47d48d56323c619c883f0939dd33f9af20b24398668802817787e0fcb0"
+    },
+    {
+      "path": "tools/geometry_log_to_obj.py",
+      "size": 2001,
+      "sha256": "f511851bf0fd0776e209bb339d23c229fe0ba77788068787481cd51dc5debecd"
+    },
+    {
+      "path": "tools/inspect_alice.py",
+      "size": 2737,
+      "sha256": "a2c4ccbfe12d0ae7111424ef3c0e19cab6185e23a9de245f550ed53a3e18d163"
+    },
+    {
+      "path": "tools/inspect_game_v070.py",
+      "size": 4198,
+      "sha256": "d7a949ffc476d405ede5fa235362588b0bdbf8e5733ad09602d49ae34ba84bb4"
+    },
+    {
+      "path": "tools/linux/a3dctl.py",
+      "size": 29591,
+      "sha256": "764298482811b73da5010d4086c84f04b91f5e842fe22c7ea44999bdd74eaecc"
+    },
+    {
+      "path": "tools/linux/README.md",
+      "size": 281,
+      "sha256": "e3846d58af840a02d55bb8b7571817b691f3674ddad2cf6d1dacd831aafcb76b"
+    },
+    {
+      "path": "tools/package_v0611.py",
+      "size": 3765,
+      "sha256": "489436562eae1481b4c3ad596634f8fd0b561a466aacbe32827b354faff40c0a"
+    },
+    {
+      "path": "tools/package_v0612.py",
+      "size": 3052,
+      "sha256": "251a7fa7a9b48c8004c9f8f6d12b752c6b5de4859a8ff1743ea336b7763ab613"
+    },
+    {
+      "path": "tools/package_v069.py",
+      "size": 2366,
+      "sha256": "0b6d609c40731ae95d9c341ce4474a2e86535ac5c83043fb92dbca92f4c7a32e"
+    },
+    {
+      "path": "tools/scan_a3d_clients.py",
+      "size": 3093,
+      "sha256": "5431dcb3760d0b5fa1d164274d2066ba26adc530f368eef4cd797634cca91617"
+    },
+    {
+      "path": "tools/stage_generic_candidate.py",
+      "size": 5340,
+      "sha256": "71f929a838cd785be2d2deeacf92c200144ffbbf4a6abb217534538c49558f31"
+    },
+    {
+      "path": "tools/test_acoustic_native.c",
+      "size": 3591,
+      "sha256": "ef07462b78cc348fffea3023cec254affa1ab5d6a00335e78da89813c564e7c7"
+    },
+    {
+      "path": "tools/test_acoustic_tune_native.c",
+      "size": 2047,
+      "sha256": "d0c397c2f6f25f52f5015766c134ce9216e2243f89396db33df15b747236f221"
+    },
+    {
+      "path": "tools/test_active_play_hf7.py",
+      "size": 2884,
+      "sha256": "084ee54a3ef6d407d5a2bd79a4eaff8a657732c4af5bab068c5fc279bca4cea0"
+    },
+    {
+      "path": "tools/test_alice_sync_native.c",
+      "size": 4279,
+      "sha256": "b67ce555483f0899b73acddc6ce0908327dd021c74bcb8c40cb6372bb1d3218c"
+    },
+    {
+      "path": "tools/test_binaural_contract.py",
+      "size": 1159,
+      "sha256": "fc0fe4a631e9eb49fe9539df1f00acc55415909d5e87d372d5cb74949788da88"
+    },
+    {
+      "path": "tools/test_binaural_launcher.py",
+      "size": 743,
+      "sha256": "0fbfeebb0934d7ec5e7642d9d9f4ba5c6495b0f090cd8b6d9176fb252d3ef928"
+    },
+    {
+      "path": "tools/test_binaural_native.c",
+      "size": 3204,
+      "sha256": "0107b4f6b20857dde15f86f6d0fd8a49be84c609a5cc9aeb54b8a481927eda03"
+    },
+    {
+      "path": "tools/test_default_gain_v047.py",
+      "size": 1214,
+      "sha256": "261dc973111c6ca36378e67fb59d547c28db6041e17edf1b1f7f515cc3df79a5"
+    },
+    {
+      "path": "tools/test_detection_copy.py",
+      "size": 996,
+      "sha256": "d4adbf5c8b139f12733509384e980dccb4d4859c0e5d08c57669d799221f6345"
+    },
+    {
+      "path": "tools/test_fast24_windows.py",
+      "size": 1407,
+      "sha256": "998511418707514f19c32178b54c09f75533956d93a623fc428d38043d77716d"
+    },
+    {
+      "path": "tools/test_final_release.py",
+      "size": 1712,
+      "sha256": "16e45cd8c1b5ec6e2e7eb09abfe469ce5e042c17cd1a9f2f364af633f40b6b58"
+    },
+    {
+      "path": "tools/test_game_spatial_native.c",
+      "size": 3745,
+      "sha256": "9553eae494f495b5fb253bbd0e5ab5c0e0cef5972324d7dd76da08b76b277d27"
+    },
+    {
+      "path": "tools/test_geom.py",
+      "size": 938,
+      "sha256": "d2ae1b40ebbcc8232e1d1a0a9048452f265273d4f4c8cb448b63d112ff46a6c1"
+    },
+    {
+      "path": "tools/test_idle_stop_hf6.py",
+      "size": 3020,
+      "sha256": "52c5b4189ab701f354ba1d3ae08cf33c7d48bbc72b498b9b8b05bd0e6bc85032"
+    },
+    {
+      "path": "tools/test_latency_governor_v064.py",
+      "size": 2986,
+      "sha256": "43e951ffd77a1062d86668d300a27c4d376b5176546e35c9f2aba34e65ef1f04"
+    },
+    {
+      "path": "tools/test_latency_governor_v065.py",
+      "size": 4060,
+      "sha256": "08ce7b9830b654d1764c5caa5ca8bc8dfa6efb6588910adf5606f45d19dd4548"
+    },
+    {
+      "path": "tools/test_launcher_contract.py",
+      "size": 1063,
+      "sha256": "4b51f311e6dc57afbba783e07365361c249a6c883c348cc2409c0dd9005acb85"
+    },
+    {
+      "path": "tools/test_logging_cap_v066.py",
+      "size": 4190,
+      "sha256": "11f9739eb7c62fa10c11ecc154eefa2f1255ac4cd8a6e8459f4b9a39da06c81d"
+    },
+    {
+      "path": "tools/test_master_gain_native.c",
+      "size": 2718,
+      "sha256": "f17b1a241815eddd826b3cfff2e46112ba91c40614dac693d7a9ad34f3556aab"
+    },
+    {
+      "path": "tools/test_material_contract.py",
+      "size": 1703,
+      "sha256": "c95d3ac54a24528eb4e41c4423f6e4bb9bdc6939220032dca2ff2d117e97c298"
+    },
+    {
+      "path": "tools/test_max_gain_nonclip_native.c",
+      "size": 1491,
+      "sha256": "57f9e8f4f88425730cfef075bee978a22ee88a93d2762acab2b1ba95d051f67b"
+    },
+    {
+      "path": "tools/test_max_gain_profiles.py",
+      "size": 3112,
+      "sha256": "be635bd63a3b8290f9612a0196e4c74b67d4bfb033ba16d9de5b118e22e30499"
+    },
+    {
+      "path": "tools/test_measured_native.c",
+      "size": 2835,
+      "sha256": "fe3aee2d6920ebb991ed7275a5d6834020a5b919626fbd07309acdec440d815f"
+    },
+    {
+      "path": "tools/test_miles_ia3d4_contract.py",
+      "size": 1190,
+      "sha256": "df2fd2a5b585adc41c29399b669288bc1edefc76dff1617571d0b1a4f4d1f075"
+    },
+    {
+      "path": "tools/test_miles_open_contract.py",
+      "size": 1874,
+      "sha256": "987b54325f5a0024cddb092d361220b98b198e51e3a472ab9f5d5c9411ee9bbd"
+    },
+    {
+      "path": "tools/test_miles_play_contract.py",
+      "size": 2594,
+      "sha256": "aabd5aecbd7f3deef25b4f3ac723f568d1de22f46779f677ff96c5c704cad826"
+    },
+    {
+      "path": "tools/test_pcm_buffer_contract.py",
+      "size": 916,
+      "sha256": "45057db550260156e0a287baec2650f05230688e6b5664793d83126e4f4bac7f"
+    },
+    {
+      "path": "tools/test_pcm_native.c",
+      "size": 3595,
+      "sha256": "35588ab31a1a993d89fde5de1a5210f8242108bf232207a5eb11358bf44c805e"
+    },
+    {
+      "path": "tools/test_pe.py",
+      "size": 1180,
+      "sha256": "6fe780a40b68917dedf33f33e09df42f6bc47c2a0582e877752497610885ef09"
+    },
+    {
+      "path": "tools/test_playback_position_v065.py",
+      "size": 2584,
+      "sha256": "140bded036e6dee2dafba2b28ea5e522c9300ee75e050ad0eadff367aa89b4a8"
+    },
+    {
+      "path": "tools/test_provider_probe.py",
+      "size": 921,
+      "sha256": "bf39df20196c5ff7c284cc95563284b201a9fca78097568daa5c004e851f9626"
+    },
+    {
+      "path": "tools/test_quake3_lock_contract.py",
+      "size": 1318,
+      "sha256": "61422f546b03e71283df2dbd1dbf1f54f7287951ad60b0ca2edd9eb7c81913c0"
+    },
+    {
+      "path": "tools/test_quake3_stream_hf2.py",
+      "size": 2286,
+      "sha256": "99795412f0a9c8cfda233ff734afca86d9eba499d17e3b3c5e0abe52863e8a46"
+    },
+    {
+      "path": "tools/test_quake3_stream_hf3.py",
+      "size": 1186,
+      "sha256": "8488f0785385bf5c3fe1851e746bf7c9fe7b4a62a29e3cc6ea78a412659ea725"
+    },
+    {
+      "path": "tools/test_quake3_stream_hf4.py",
+      "size": 2393,
+      "sha256": "99c493e4f87358335819038ad94f2074a625a8404a9a4d6632df0bb640331e0c"
+    },
+    {
+      "path": "tools/test_quake_default_v069.py",
+      "size": 1429,
+      "sha256": "67387dbcc873044db17054320a6b6ef0b0cf61eb39deaa4e46d1414460daa4c9"
+    },
+    {
+      "path": "tools/test_reflection_balance_native.c",
+      "size": 2227,
+      "sha256": "0e9133e57c3765e0aebaf6cfc9ff67da18e7235e91e05ad17a86ae68c8d1d044"
+    },
+    {
+      "path": "tools/test_snapshot_profiles.py",
+      "size": 2243,
+      "sha256": "127f9decc870b930051e39964affcc79015174caaed65acb53cf50d7e8f716c9"
+    },
+    {
+      "path": "tools/test_source_contract.py",
+      "size": 1620,
+      "sha256": "18244e2a9848e58460b91f66246233eefe3613046d4f3a563d97e4c1d99be23b"
+    },
+    {
+      "path": "tools/test_spatial_contract.py",
+      "size": 1525,
+      "sha256": "938638fbf6785bf7e77a5867477ce7003657fb451c70f4ce1d4ff006253c3a91"
+    },
+    {
+      "path": "tools/test_spatial_native.c",
+      "size": 2555,
+      "sha256": "b6a8145f6d6b31713387a148b093592d06be531e3b206624014a39277a39e8e4"
+    },
+    {
+      "path": "tools/test_staff_diag_v0610.py",
+      "size": 2083,
+      "sha256": "32ba4070c701b21be784cd48e954fdb8b1a5488cdf09593623c1a2baa7e28fa8"
+    },
+    {
+      "path": "tools/test_stream_contract.py",
+      "size": 2399,
+      "sha256": "0a7c7dd0d827c3153ece31677c7459659ca25b739b291790a07fa2c5b19ef98e"
+    },
+    {
+      "path": "tools/test_stream_native.c",
+      "size": 2577,
+      "sha256": "bce63711243c46596e069e5229186e12d97ef63db05d5c4e8ed91dc312509786"
+    },
+    {
+      "path": "tools/test_stream_scene_native.c",
+      "size": 1984,
+      "sha256": "9bb9bd22ed79b86ac4bc684a51985d99e4197109149a006729abcc6a7c860b86"
+    },
+    {
+      "path": "tools/test_unified_v069.py",
+      "size": 5433,
+      "sha256": "764ffb81c0d606b0e7989c3ed5d165aa9ebccd82ab61621df115a009ef842687"
+    },
+    {
+      "path": "tools/test_voice128_hf5.py",
+      "size": 1396,
+      "sha256": "c679c8210d4aa61e96ebab69a6af86925e29ac01752e7ff7ca3a1490c3d2c199"
+    },
+    {
+      "path": "tools/test_wave_contract.py",
+      "size": 2266,
+      "sha256": "938720677e189eee18724bcd1393df090f999dbd88449d29be0f7ff19013e9c8"
+    },
+    {
+      "path": "tools/test_waveout_contract.py",
+      "size": 1480,
+      "sha256": "1bde09b7e5a9d0476934efa5522332f4c02b5c7b93cb230c563bff0f0ad11724"
+    },
+    {
+      "path": "tools/test_weapon_clarity_v0612.py",
+      "size": 3678,
+      "sha256": "ae5e0a32d1308321095cc84d8a5bdfdcc9633c9565db5a8da2b5825c3e8ca396"
+    },
+    {
+      "path": "tools/test_weapon_forensics_v0611.py",
+      "size": 3729,
+      "sha256": "6a2194fe38eab5f9ee22605720fe4676a796389f059888ec9b691c3f1a244fce"
+    },
+    {
+      "path": "tools/verify_all.sh",
+      "size": 2045,
+      "sha256": "48f44c1ed55dffd9cfd04ae95cd834e369877b407f9237507c9fc916e549d037"
+    },
+    {
+      "path": "tools/weapon_reference_catalog_v0611.json",
+      "size": 21600,
+      "sha256": "24c115cdd3968534f6e0ade6a71f1f4c74b416bb8af4ee96f25064b6b82fd65c"
+    },
+    {
+      "path": "tools/wine_alice_probe.sh",
+      "size": 4742,
+      "sha256": "0cb02c09ef07455b6c60887743fc63836e8b4d5698088e25c15bcacea49bf871"
+    },
+    {
+      "path": "tools/wine_binaural_probe.sh",
+      "size": 4473,
+      "sha256": "d381de44c44a165d0d9ebf9e2ba77b8792663af254b1533dac0876a3a2d97233"
+    },
+    {
+      "path": "tools/wine_com_probe.sh",
+      "size": 2755,
+      "sha256": "c4d66b626cdf982a68a7b93862c5909435d8abecd6a232c51fc47c5822f93271"
+    },
+    {
+      "path": "tools/wine_miles_enum.sh",
+      "size": 2379,
+      "sha256": "6ec01ac5a645d475d8df646bde69696b7e97551f74e85dffad977c090b5a8ba9"
+    },
+    {
+      "path": "tools/wine_miles_open.sh",
+      "size": 3940,
+      "sha256": "3c3a3c2ad60e813ec71c49eb3140efc3ea88d8f0ceef22816efd67d01a6adee7"
+    },
+    {
+      "path": "tools/wine_miles_play.sh",
+      "size": 4232,
+      "sha256": "922a97603bec648fba3593f655fd120dde40f5d331eef15113362cf2865b3dba"
+    },
+    {
+      "path": "tools/wine_miles_sample.sh",
+      "size": 3960,
+      "sha256": "d572f8224c3f2362493aac0b66a9ab3d01643bb452f8168d4f7654abe14d3e88"
+    },
+    {
+      "path": "tools/wine_miles_wave.sh",
+      "size": 4047,
+      "sha256": "39ddd89bc59904cbce8c66034cff9c7012233e563a1691bec2851091bdbc5b1a"
+    },
+    {
+      "path": "tools/wine_playback_demo.sh",
+      "size": 2211,
+      "sha256": "dccf981745105123f995672a45703391dee9c9d9cfdc3b5841e0bd86e65fe5a2"
+    },
+    {
+      "path": "tools/wine_probe.sh",
+      "size": 2136,
+      "sha256": "f24a9ffe35edee7868311d31d9ad9dee5d32b688cced1bf98317306c9e10c663"
+    },
+    {
+      "path": "tools/wine_provider_probe.sh",
+      "size": 6196,
+      "sha256": "ce6de2ac4173e72a81b2c7f0d270d16cd97f267f0cd2eacb45ca203f9b9776ed"
+    },
+    {
+      "path": "validation/build.log",
+      "size": 3031,
+      "sha256": "0ecc517ce47bc13bf8629e21aa68ec4f962088195019b5957c186a8806d67dc1"
+    },
+    {
+      "path": "validation/input-integrity.log",
+      "size": 841,
+      "sha256": "3fd9b4353c8b8e5c7b4a599b0542bb2940a49de746e7f9518504d8441d89ba51"
+    },
+    {
+      "path": "validation/regression.log",
+      "size": 19761,
+      "sha256": "78d2df2595f71ea2fb99830ac5c3e42a6d215883da811077f27451378af8b3b7"
+    },
+    {
+      "path": "validation/runtime-smoke.log",
+      "size": 2788,
+      "sha256": "445a88dd82572581017e7ebc6f22faab7953a7b6870af6553bf33cfdf927a1ae"
+    },
+    {
+      "path": "validation/unchanged-dsp-previous-alpha.log",
+      "size": 66889,
+      "sha256": "0a96fc372277a6ccff8dfd25a2562c280e06dc42fd60e62465377e62b47400e6"
+    },
+    {
+      "path": "VERIFICATION_v031.md",
+      "size": 1556,
+      "sha256": "901d665c664bf2e5228851159a6e98aaf586b0d959ba520f8078814ece6bd3fb"
+    },
+    {
+      "path": "verify_alpha_runtime.py",
+      "size": 1792,
+      "sha256": "91e59e6da0c5ab9b33f3983b6cb021c4ed2354011ac13184fa2ff726bec10397"
+    },
+    {
+      "path": "verify_release_runtime.py",
+      "size": 1735,
+      "sha256": "f627912a2891cc72e3bbb46cc18772c34b427ca88420b0e7fd587b2f0fb842ff"
+    },
+    {
+      "path": "VERSION",
+      "size": 13,
+      "sha256": "2ee4c0a2924be20f09721075307b798ce451fe6d5393db0db50a19cf8351e067"
+    },
+    {
+      "path": "WAVETRACING_AND_ALICE_ROADMAP.md",
+      "size": 5360,
+      "sha256": "3f3d07e6bb07e81e8b7cffd219de15ab9034434e9b93c0ab53e4039df2defa75"
+    },
+    {
+      "path": "win32/a3d_legacy_bridge.c",
+      "size": 4824,
+      "sha256": "4698e34db090f6b59eebfc43dce216f1e47a54c82dd3615e23bf1ea629fc7dcc"
+    },
+    {
+      "path": "win32/a3d_legacy_bridge.def",
+      "size": 291,
+      "sha256": "51e0a12f17d297ff70c20ba2454d97f3094af4e59ee5e77451b58d7f6901c77e"
+    },
+    {
+      "path": "win32/a3dapi.c",
+      "size": 20877,
+      "sha256": "81def9b9469b478d2faeb08f443f8234a784dd1908ab85840a4afb5c295f51a9"
+    },
+    {
+      "path": "win32/a3dapi.def",
+      "size": 188,
+      "sha256": "7aeb8d5b15b5018ae3ce8e51f472c8176a8617c32bee3090106f8b81721a61dc"
+    },
+    {
+      "path": "win32/acoustic_dsp.h",
+      "size": 3027,
+      "sha256": "296227a46ce35405e3b3a3fb2d77bc85509c115f4a4b8581954118965d67ca2f"
+    },
+    {
+      "path": "win32/acoustic_scene.h",
+      "size": 7984,
+      "sha256": "762ed0c84a6ce6aaa87483ae716d9556afd02dd79338d718ce7c122d5578c469"
+    },
+    {
+      "path": "win32/advapi32.def",
+      "size": 108,
+      "sha256": "50f6e5854374afdb2ea8cbc027267cfce1c545f69559e0abbfa6daddc8da78b4"
+    },
+    {
+      "path": "win32/binaural_approx.h",
+      "size": 4370,
+      "sha256": "fa11fb97a88155c3498e87d7c58877720796c06aeab99f60191e55faec522234"
+    },
+    {
+      "path": "win32/build/a3d-comtest.exe",
+      "size": 3584,
+      "sha256": "23ce07a1e5b1ba3b9876cdae3406147e8995b2f92b9e6326dd47117e0a4ca908"
+    },
+    {
+      "path": "win32/build/a3d-miles-enum.exe",
+      "size": 7168,
+      "sha256": "f740f233328ce9de951c9a452c989073096a9d803cef18f4e1441ea204278c8b"
+    },
+    {
+      "path": "win32/build/a3d-miles-open.exe",
+      "size": 7680,
+      "sha256": "f0e47901051c94d2c151d6fa2992c5f3bb2c0471a89ca196754b33506c5a7da9"
+    },
+    {
+      "path": "win32/build/a3d-miles-wave.exe",
+      "size": 11776,
+      "sha256": "7fa070a77236b39decc781e32742d67e3c9a60ec18d6c78172f4397231a003f1"
+    },
+    {
+      "path": "win32/build/a3d-playback-demo.exe",
+      "size": 4096,
+      "sha256": "fb58c6d4b2534da4b2809ed5dd5f17562df67411f0eb63011656c6bfc8532646"
+    },
+    {
+      "path": "win32/build/a3d-quake3-lock-test.exe",
+      "size": 3072,
+      "sha256": "266ae087abe11f2d11794bef2bbad4610f69d05a0d88ba8685bef845872d98ac"
+    },
+    {
+      "path": "win32/build/a3d-register32.exe",
+      "size": 5632,
+      "sha256": "adc489475e0b81d8dd0670b2d2982c4bc71bc2c038330f89d303e6b8f3264a4a"
+    },
+    {
+      "path": "win32/build/a3d-selftest.exe",
+      "size": 4096,
+      "sha256": "ffa19e714ca84c663aae93b0955633949b3d2e6482acbc59b2a4df6775a356d3"
+    },
+    {
+      "path": "win32/build/a3d.dll",
+      "size": 3584,
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0"
+    },
+    {
+      "path": "win32/build/a3dapi.dll",
+      "size": 1103360,
+      "sha256": "1126f87bc55ad9a64ff885ec32dd1794bfb69d713cd93e5591cc2997a9cf0711"
+    },
+    {
+      "path": "win32/build.sh",
+      "size": 10728,
+      "sha256": "d9495d4aae03a04074d65ca44f7e085d71962d79aadd08a88b96806e4c0cf5a1"
+    },
+    {
+      "path": "win32/capability_contract.h",
+      "size": 1450,
+      "sha256": "49573d59e602c988c9e838c9e8653a044e9533dab9b4df7f2a0f664e4f129eed"
+    },
+    {
+      "path": "win32/com_test.c",
+      "size": 3008,
+      "sha256": "94532d8d243efdd0ae0752b74dc14bb50919d2c2803c85950eb7eb457f7d9657"
+    },
+    {
+      "path": "win32/geom_trace.inc",
+      "size": 15568,
+      "sha256": "e488bc32c0f28c84d48f000ecbb6f34c984d7c2b8bcb0fa46fae8ff39e44856f"
+    },
+    {
+      "path": "win32/geometry_lists.inc",
+      "size": 4536,
+      "sha256": "3dad56ae2f9b3879843876fa6babf14d327264f6a51be9b189a8a0bbc9fa53a7"
+    },
+    {
+      "path": "win32/hrtf_fast24_window.h",
+      "size": 3310,
+      "sha256": "dbec0101afdc874e088194651d437a191c96486224dffd371766e033ea130a12"
+    },
+    {
+      "path": "win32/kernel32.def",
+      "size": 523,
+      "sha256": "e0024ab0d320e4277af7d0ae4b3336c6254104a5efce9704d815ba0d7ad33706"
+    },
+    {
+      "path": "win32/legacy_probe.c",
+      "size": 1900,
+      "sha256": "bb18aa7e14d4bdb6b6898c3aaa56122fcc81e0eabb1c196a1930a4280c744c7c"
+    },
+    {
+      "path": "win32/listener_trace.inc",
+      "size": 5446,
+      "sha256": "8bad17712ccfc15cbe0949e0ff1b3138946288d3fb6edde3cbab55b30ff2c2c8"
+    },
+    {
+      "path": "win32/measured_hrir_data.h",
+      "size": 4629717,
+      "sha256": "b6d53419c16e7927e01232c28d5185b9ed7686e320194a56b720975a41e3ac8a"
+    },
+    {
+      "path": "win32/measured_hrtf.h",
+      "size": 3002,
+      "sha256": "221181492c49ec50569282601b4d2c4b3c3c913abf3293ab102ebabb3a8f8849"
+    },
+    {
+      "path": "win32/miles_enum.c",
+      "size": 4917,
+      "sha256": "216fe62cd8547f2a997794b53ac27a8d976a9cde31c943011c83aace98e1a4ff"
+    },
+    {
+      "path": "win32/miles_open.c",
+      "size": 6791,
+      "sha256": "3c98869b6645f0d8db79c9d4857eeb0483f535959fef561dabe1c88576d328b0"
+    },
+    {
+      "path": "win32/miles_wave.c",
+      "size": 13007,
+      "sha256": "41e50e59dfc5dedfbb2b47e94c25328475e2eabd5486daf6cfc3987c574f7d3e"
+    },
+    {
+      "path": "win32/ole32.def",
+      "size": 74,
+      "sha256": "1637dede2b738978e69142176e42627eaeae7a5287f7be9bbb6b6816d76cabf2"
+    },
+    {
+      "path": "win32/pcm_diagnostics.inc",
+      "size": 1752,
+      "sha256": "277cd97c69378b17986c733154af2b5cc62444efb989a4f8ac7357417f586c04"
+    },
+    {
+      "path": "win32/playback_demo.c",
+      "size": 4655,
+      "sha256": "a71d1837f63f0ea27d64019d22e6bf91f7e4780b193d996b0d0110172d63b5b5"
+    },
+    {
+      "path": "win32/quake3_lock_test.c",
+      "size": 3346,
+      "sha256": "6db0fee94b6505301ad790416131ac770bb8c8aa07395523558ed9d0428a96ee"
+    },
+    {
+      "path": "win32/reg32.c",
+      "size": 4159,
+      "sha256": "fe6ca760a39fd0852f3fa1e3305c92581346b8870c61b359fde723fbfee5a750"
+    },
+    {
+      "path": "win32/selftest.c",
+      "size": 5961,
+      "sha256": "fdd11e109c0b5dbd72f854a9be417bba459f969ed10f667c6479d2767aff9a9e"
+    },
+    {
+      "path": "win32/source_probe.inc",
+      "size": 26062,
+      "sha256": "5cf3fa890a929fd0c24c10387217a313beddbb23a8d2dd4b4f5dfaddb068b639"
+    },
+    {
+      "path": "win32/spatial_stereo.h",
+      "size": 2484,
+      "sha256": "eec9ffaff6489fb79368a8039873ac1aaa601585770475c7daf020f8925261c9"
+    },
+    {
+      "path": "win32/staff_diag.inc",
+      "size": 9248,
+      "sha256": "cc2162e42293ae330942770412a4178aa59b3435d3eb4f1b53baaec37d3f5c22"
+    },
+    {
+      "path": "win32/stream_core.h",
+      "size": 20579,
+      "sha256": "ed9a25c3ee4288d837c53253990d494ee9e44a5c1d249035396344752672c64f"
+    },
+    {
+      "path": "win32/stream_winmm.inc",
+      "size": 51841,
+      "sha256": "2a80e2094cda9af3d52d22022c0d4ff0e7b268e6ef4c5e3ea42e674a1b62798c"
+    },
+    {
+      "path": "win32/test_clarity_v0612_native.c",
+      "size": 2600,
+      "sha256": "1b70779494289c9341ba1f7d2c10a3d910bacd666e6bd0fa41053a1fe29029ef"
+    },
+    {
+      "path": "win32/test_fast24_native.c",
+      "size": 1325,
+      "sha256": "46fdfab4f565fa5e6d3b60492777efcb6faba80dd0d1510a7412f90345e64849"
+    },
+    {
+      "path": "win32/test_geometry_cache_hf9_native.c",
+      "size": 2043,
+      "sha256": "5c6b0ef4e9fd325a3a5efa833a5ec4c5c35383bed5dd804f408e7cb5c3f1eba1"
+    },
+    {
+      "path": "win32/test_list_polygon_count_hf10_native.c",
+      "size": 3039,
+      "sha256": "03eaf86da89eebadf27c4b928389f1e0e6fc9ccd4025bb006a454073c5836f28"
+    },
+    {
+      "path": "win32/test_snapshot_pcm_native.c",
+      "size": 2376,
+      "sha256": "545ce6b0cb9f6861c96362190e4806b51b8e1461124034bfc2502c83e47c3fc5"
+    },
+    {
+      "path": "win32/test_voice128_native.c",
+      "size": 1503,
+      "sha256": "724f0f273d71631c89f6dbec81b9aa6897d8d92032456be5ee6b3f37c966a473"
+    },
+    {
+      "path": "win32/waveout_renderer.inc",
+      "size": 1984,
+      "sha256": "2072f122bd3b65ac4c60d2c2b9847197cbe56c531fa3e9ddcb49d9d97b5d5d2f"
+    },
+    {
+      "path": "win32/weapon_signatures_v0612.inc",
+      "size": 1517,
+      "sha256": "2fb3558e9438b0b2a23cdb1f924d98b1cfee3665bf41ca7863ecba419f6967ae"
+    },
+    {
+      "path": "windows-build-recipe.json",
+      "size": 28892,
+      "sha256": "7b5258a3cdd5a8b7476e32ecdd62de29e6b3c1fd721a26cecaed2d9c0904cf98"
+    },
+    {
+      "path": "WINE_NEXT_STEPS.md",
+      "size": 774,
+      "sha256": "2089c6b4e2f3b68ed100b4f06e5e0aa1eb43ae886540d4b8045a9964b5ef0289"
+    }
+  ]
+}

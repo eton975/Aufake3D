@@ -1,0 +1,59 @@
+{
+  "Alice2000": {
+    "game_exe": "alice.exe",
+    "bridge_exe": "alice-a3d2000-native.exe",
+    "bridge_src": "classic2000/alice-a3d2000-native.exe",
+    "render_snapshot": 1,
+    "subblocks": 1,
+    "queue_headers": 6,
+    "thread_priority": 0,
+    "extra_args": [
+      "+set",
+      "s_milesdriver",
+      "a3d2"
+    ],
+    "required": [],
+    "notes": "USER-VALIDATED: 6 x 256 = 32ms fixed queue, tower2/hedge1/hedge2; no crackle or perceptible positional lag."
+  },
+  "Alice2011-VorpalFix": {
+    "game_exe": "alice.exe",
+    "bridge_exe": "alice-a3d2011-native.exe",
+    "bridge_src": "remaster2011/alice-a3d2011-native.exe",
+    "render_snapshot": 0,
+    "subblocks": 1,
+    "queue_headers": 6,
+    "thread_priority": 0,
+    "extra_args": [
+      "+set",
+      "s_milesdriver",
+      "a3d2"
+    ],
+    "required": [
+      "winmm.dll",
+      "SndDrivers/mssa3d2.m3d"
+    ],
+    "notes": "USER-TESTED on Windows v0.6.8: legacy renderer, fixed 6 x 256 = 32ms reported works great. 4 x 512 = 42.7ms fallback remains; default FPS respects VorpalFix; separate 144 FPS override."
+  },
+  "QuakeIII-117": {
+    "game_exe": "quake3.exe",
+    "bridge_exe": "quake3-a3d-native.exe",
+    "bridge_src": "native/quake3-a3d-native.exe",
+    "render_snapshot": 1,
+    "subblocks": 1,
+    "queue_headers": 6,
+    "thread_priority": 0,
+    "extra_args": [
+      "+set",
+      "s_enable_a3d",
+      "1",
+      "+set",
+      "s_mixahead",
+      "0.35",
+      "+set",
+      "s_mixPreStep",
+      "0.05"
+    ],
+    "required": [],
+    "notes": "USER-VALIDATED on Windows v0.6.8: 6 x 256 = 32ms fixed WaveOut queue eliminates severe stutter observed with 3 x 512. Snapshot renderer and prior thread priority preserved; requires genuine matching Quake III 1.17 PK3s."
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "policy": "A3D v0.7.2 standard runtime (static imports only)",
+  "passed": true,
+  "issues": [],
+  "files": [
+    {
+      "file": "a3d-abi-survey.exe",
+      "arch": "x86",
+      "sha256": "6392e9da4ee9d890fbee5f1ff0c6a1cc758cd8f4b05f7d5f964ddd56740248b1",
+      "import_count": 8,
+      "imports": [
+        "OLE32.dll!CoCreateInstance",
+        "OLE32.dll!CoInitialize",
+        "OLE32.dll!CoUninitialize",
+        "KERNEL32.dll!ExitProcess",
+        "KERNEL32.dll!GetProcAddress",
+        "KERNEL32.dll!GetStdHandle",
+        "KERNEL32.dll!LoadLibraryA",
+        "KERNEL32.dll!WriteFile"
+      ],
+      "restricted_imports": []
+    },
+    {
+      "file": "a3d-direct.exe",
+      "arch": "x86",
+      "sha256": "23f88222cf3f1e091e5f58da259e4261e67b3fd9bc062464e4db3579a25fda48",
+      "import_count": 12,
+      "imports": [
+        "KERNEL32.dll!CloseHandle",
+        "KERNEL32.dll!CreateFileA",
+        "KERNEL32.dll!CreateProcessA",
+        "KERNEL32.dll!ExitProcess",
+        "KERNEL32.dll!GetCommandLineA",
+        "KERNEL32.dll!GetExitCodeProcess",
+        "KERNEL32.dll!GetModuleFileNameA",
+        "KERNEL32.dll!GetStdHandle",
+        "KERNEL32.dll!ReadFile",
+        "KERNEL32.dll!SetFilePointer",
+        "KERNEL32.dll!WaitForSingleObject",
+        "KERNEL32.dll!WriteFile"
+      ],
+      "restricted_imports": []
+    },
+    {
+      "file": "a3d.dll",
+      "arch": "x86",
+      "sha256": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0",
+      "import_count": 6,
+      "imports": [
+        "KERNEL32.dll!CloseHandle",
+        "KERNEL32.dll!CreateFileA",
+        "KERNEL32.dll!GetEnvironmentVariableA",
+        "KERNEL32.dll!GetProcAddress",
+        "KERNEL32.dll!LoadLibraryA",
+        "KERNEL32.dll!WriteFile"
+      ],
+      "restricted_imports": []
+    },
+    {
+      "file": "a3dapi.dll",
+      "arch": "x86",
+      "sha256": "1126f87bc55ad9a64ff885ec32dd1794bfb69d713cd93e5591cc2997a9cf0711",
+      "import_count": 25,
+      "imports": [
+        "KERNEL32.dll!CloseHandle",
+        "KERNEL32.dll!CreateEventA",
+        "KERNEL32.dll!CreateFileA",
+        "KERNEL32.dll!CreateThread",
+        "KERNEL32.dll!DeleteFileA",
+        "KERNEL32.dll!EnterCriticalSection",
+        "KERNEL32.dll!GetEnvironmentVariableA",
+        "KERNEL32.dll!GetFileAttributesA",
+        "KERNEL32.dll!GetProcAddress",
+        "KERNEL32.dll!GetProcessHeap",
+        "KERNEL32.dll!GetTickCount",
+        "KERNEL32.dll!HeapAlloc",
+        "KERNEL32.dll!HeapFree",
+        "KERNEL32.dll!InitializeCriticalSection",
+        "KERNEL32.dll!InterlockedCompareExchange",
+        "KERNEL32.dll!InterlockedDecrement",
+        "KERNEL32.dll!InterlockedExchange",
+        "KERNEL32.dll!InterlockedIncrement",
+        "KERNEL32.dll!LeaveCriticalSection",
+        "KERNEL32.dll!LoadLibraryA",
+        "KERNEL32.dll!SetEvent",
+        "KERNEL32.dll!SetThreadPriority",
+        "KERNEL32.dll!Sleep",
+        "KERNEL32.dll!WaitForSingleObject",
+        "KERNEL32.dll!WriteFile"
+      ],
+      "restricted_imports": []
+    }
+  ],
+  "disclaimer": "Not a malware, behavior, or anti-cheat approval test."
+}

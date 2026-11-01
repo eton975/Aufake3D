@@ -1,0 +1,33 @@
+{
+  "version": "0.7.0-alpha",
+  "profiles": {
+    "HalfLife-Retail": {
+      "game_exe": "hl.exe",
+      "launcher": "halflife-a3d-alpha.exe",
+      "install_beside": "hl.exe in the installed Half-Life directory",
+      "args": [
+        "+s_eax",
+        "0",
+        "+s_a3d",
+        "1"
+      ],
+      "required": [
+        "hl.exe"
+      ],
+      "status": "unverified candidate; retail A3D-capable build required"
+    },
+    "Unreal-Galaxy": {
+      "game_exe": "Unreal.exe",
+      "launcher": "unreal-a3d-alpha.exe",
+      "install_beside": "Unreal.exe in the installed game System directory",
+      "args": [],
+      "required": [
+        "Unreal.exe",
+        "Galaxy.dll",
+        "Core.dll",
+        "Engine.dll"
+      ],
+      "status": "unverified candidate; Galaxy and Use3dHardware=True required"
+    }
+  }
+}

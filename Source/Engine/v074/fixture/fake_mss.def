@@ -1,0 +1,5 @@
+LIBRARY mss32.dll
+EXPORTS
+ _AIL_open_3D_provider@4=_fake_open@4 @1
+ _AIL_enumerate_3D_providers@12=_fake_enum@12 @2
+ _AIL_shutdown@0=_fake_other@0 @3

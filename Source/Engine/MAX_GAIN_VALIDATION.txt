@@ -1,0 +1,22 @@
+A3D v0.6.1 — MAXIMUM DIGITAL GAIN PRESET (31 Oct 2026)
+
+Change: All six platform/game launchers now set A3D_MASTER_GAIN=5.0 by default.
+The existing PE32 DLLs are unchanged from the prior v0.6.1 candidate.
+
+Intrinsic DLL max gain: 5.0 (first mixer init and IA3d4.Init)
+Existing stereo-linked output sample-peak limiter: 0.95 full scale
+No true-peak, analogue speaker SPL, or input distortion guarantee.
+
+Verification in this environment:
+ - Six launchers static contract and Linux shell mock-run with default 5.0 and manual override 1.0: PASS
+ - Synthetic 16-voice PCM mixer test at 5.0: peak 31128/32768, limiter activated: PASS
+ - Build-from-source Clang/LLD PE32: 30/30 steps PASS, five PE32 architecture checks PASS
+ - Existing Python regression suites: 15 portable + 9 dropin + 78 tools PASS; remaster2011 suite has 1 skipped
+ - All three game profiles use byte-identical PE32 a3dapi.dll and a3d.dll: PASS
+ - Rebuilt audio DLL hashes differ from original only at PE-header linker timestamp byte: PASS
+ - Wine launcher bash syntax and preservation of game-specific WaveOut queue (3/3/8): PASS
+ - Actual Windows/Wine gameplay or listening tests: NOT PERFORMED in this environment
+
+Upgrade from prior v0.6.1: replace only RUN_A3D_WINDOWS.cmd and RUN_A3D_WINE.sh in each game folder, after backup.
+Optional override: Windows environment A3D_MASTER_GAIN=1.0 or Wine A3D_MASTER_GAIN=1.0 bash RUN_A3D_WINE.sh
+IMPORTANT: lower hardware/headphone volume before running gain 5.0. Digital sample limiting does not ensure safe acoustic volume.
