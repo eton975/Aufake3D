@@ -227,7 +227,18 @@ static const A3DVtbl av;
 static A3D root={&av,1,{0,0,0},0,0,0,0,0.0f,0.0f,1.0f,0.5f,1.0f,1.0f,1.0f,0.0f};
 static ULONG WINAPI aadd(A3D*s){return (ULONG)InterlockedIncrement(&s->ref);}
 static void mixer_shutdown(void);
-static ULONG WINAPI arel(A3D*s){long n=InterlockedDecrement(&s->ref);if(n<1){s->ref=1;return 1;}if(n==1)mixer_shutdown();return (ULONG)n;}
+static ULONG WINAPI arel(A3D*s){
+ long n=InterlockedDecrement(&s->ref);
+ if(n<1){s->ref=1;return 1;}
+ if(n==1){
+  /* v0.8.17 provider-transition probe: log is opt-in and bounded; this
+   * does not change release order or the actual mixer teardown. */
+  logline("A3D.Root final external Release; mixer shutdown requested");
+  mixer_shutdown();
+  logline("A3D.Root final external Release; shutdown returned");
+ }
+ return (ULONG)n;
+}
 static void mix_enter(void);
 static void mix_leave(void);
 static void mixer_update_listener(void);

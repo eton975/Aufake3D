@@ -62,7 +62,8 @@ The following files must result (the original files remain alongside them):
 <Alice2011 folder>/
   alice.exe                    <-- original, NOT supplied or changed
   a3d.dll                     a3dapi.dll
-  mss32.dll                   <-- Aufake3D name-fix proxy
+  mss32.dll                   <-- Aufake3D 331-export proxy
+  alice-a3d2011-native.exe   <-- Aufake3D RAM-only A3D2 selector bridge
   a3d_mss_real.dll            <-- your saved ORIGINAL Miles DLL
   a3d-miles-local.manifest
   RUN_AUFAKE3D_WINDOWS.cmd    RUN_AUFAKE3D_WINE.sh
@@ -89,7 +90,13 @@ experimental **additional** helper; never rename it to `hl.exe`.
 
 Open the game directory and double-click **`RUN_AUFAKE3D_WINDOWS.cmd`**.
 This is a *launcher*, not an installer. It sets appropriate A3D environment variables
-and runs the existing original game (or the Alice 2000 child-process bridge).
+and runs the existing original game (via the Alice 2000 or Alice 2011
+signature-checked child-process selector bridge).
+
+For Alice 2011, the launch script must create a temporary `alice.exe.manifest`
+for app-local A3D COM activation. It refuses to overwrite an existing file and
+removes its own temporary file on normal exit. If the launcher is forcibly
+closed, inspect/remove the leftover manifest before the next launch.
 
 ## 5. Launch on Linux/Wine
 
@@ -125,7 +132,7 @@ For automated backed-up installs and rollback, see [AUTOMATED_INSTALLATION.md](A
 
 - All four kits contain the **same exact** universal A3D DLL pair. Duplicate copies are for convenience.
 - The Alice 2011 name-fix proxy is only appropriate for the exact pinned build.
-- The Alice 2000 bridge can modify its **child's runtime memory** but not the on-disk game EXE.
+- The Alice 2000 and 2011 bridges can modify their **child's runtime memory** but not the on-disk game EXE.
 - A3D 3.0 implementation is incomplete; Unreal, Unreal Tournament, Unreal II and Halo PC are research targets, not supported profiles.
 - Default master gain is `5.0`; start with your speaker/headphone volume low.
 - The external original Miles DLL, games, VorpalFix and any copyrighted vendor SDKs are **not included**.

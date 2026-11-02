@@ -1,4 +1,4 @@
-# Aufake3D v0.8.16 — GitHub source edition
+# Aufake3D v0.8.18 — GitHub source edition (release candidate)
 
 **Source-only package**, with no precompiled PE32 EXEs or DLLs. This source tree merges the latest uploaded GitHub snapshot (commit `0d74797`)
 with the one-click build system. It does **not** represent a newly tested full
@@ -12,7 +12,7 @@ The scripts compile the PE32 core, game bridges, Miles proxy and helpers,
 run applicable tests, and assemble a local ZIP with four ready-to-copy game kits.
 See [the one-click build guide](Docs/ONE_CLICK_BUILD.md). No old binary ZIP is needed.
 
-See [v0.8.16 release notes](RELEASE_NOTES_V0816.md) and
+See [v0.8.18 release notes](RELEASE_NOTES_V0818.md), [v0.8.16 build fixes](RELEASE_NOTES_V0816.md), and
 [GitHub merge provenance](Docs/GITHUB_SOURCE_INTEGRATION_V0816.md).
 
 ## Entry points

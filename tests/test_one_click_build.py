@@ -10,12 +10,12 @@ import unittest
 ROOT=Path(__file__).resolve().parents[1]
 
 class OneClickBuild(unittest.TestCase):
-    def test_active_v0816_release_labels(self):
+    def test_active_v0818_release_labels(self):
         # A release bump must reach the actual packaged runtime and installer.
-        self.assertIn("VERSION = '0.8.16'", (ROOT/'scripts/build.py').read_text())
-        self.assertEqual(json.loads((ROOT/'packaging/Game_Kits/INSTALL_MAP.json').read_text())['version'], '0.8.16')
-        self.assertIn("0.8.16", (ROOT/'packaging/Tools/aufake3d.py').read_text())
-        self.assertIn("Aufake3D_v0.8.16_Local_Runtime.zip", (ROOT/'.github/workflows/source-ci.yml').read_text())
+        self.assertIn("VERSION = '0.8.18'", (ROOT/'scripts/build.py').read_text())
+        self.assertEqual(json.loads((ROOT/'packaging/Game_Kits/INSTALL_MAP.json').read_text())['version'], '0.8.18')
+        self.assertIn("0.8.18", (ROOT/'packaging/Tools/aufake3d.py').read_text())
+        self.assertIn("Aufake3D_v0.8.18_Local_Runtime.zip", (ROOT/'.github/workflows/source-ci.yml').read_text())
         self.assertTrue((ROOT/'Docs/GITHUB_SOURCE_INTEGRATION_V0815.md').is_file())
 
     def test_entrypoints_exist(self):

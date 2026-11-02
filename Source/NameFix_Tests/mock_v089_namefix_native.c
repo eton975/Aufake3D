@@ -169,6 +169,56 @@ int main(void){
  check(act_created>0 && act_on==act_off && act_release==act_on,"activation cleanup counts");
  check(co_created==0,"no unrequested COM probe");
 
+ /* v0.8.17: exercise BOTH directions of live provider selection at the
+  * original Miles ABI boundary. The mock cannot prove game-driven teardown
+  * of COM objects or WaveOut, only that handles remain distinct and forwarded. */
+ clear_runtime();setting="activate";prefer=1;require_cli=1;
+ cli="alice.exe +set s_milesdriver a3d2";
+ enumeration_index=0;
+ check(a3d_hook_enumerate(&next,&prov,&name)==1 && (ULONG_PTR)prov==4,
+       "transition enum real A3D2 handle");
+ check(a3d_hook_enumerate(&next,&prov,&name)==1 && (ULONG_PTR)prov==8,
+       "transition enum real 2D handle");
+ check(a3d_hook_open((void*)4)==0 && calls4==1 && calls8==0,
+       "transition A3D2 opened through original Miles");
+ a3d_hook_close((void*)4);
+ check(closes4==1 && closes8==0,"transition A3D2 close forwarded");
+ check(a3d_hook_open((void*)8)==0 && calls8==1 && calls4==1,
+       "transition 2D opened without A3D2 substitution");
+ a3d_hook_close((void*)8);
+ check(closes8==1 && closes4==1,"transition 2D close forwarded");
+ check(a3d_hook_open((void*)4)==0 && calls4==2 && calls8==1,
+       "transition A3D2 reopen without 2D substitution");
+ a3d_hook_close((void*)4);
+ check(closes4==2 && closes8==1,"transition reopened A3D2 closed");
+ check(strstr(output,"AIL_OPEN_A3D2_CONFIRMED") &&
+       strstr(output,"AIL_OPEN_2D_CONFIRMED") &&
+       strstr(output,"AIL_CLOSE_A3D2_BEGIN") &&
+       strstr(output,"AIL_CLOSE_2D_BEGIN"),"transition trace records both providers");
+
+ /* Default Alice 2011 launcher no longer forces +set at startup.
+  * The alias must remain discoverable across 2D -> A3D2 -> 2D -> A3D2.
+  * This validates the exact reported reverse-switch regression. */
+ clear_runtime();setting="activate";prefer=1;require_cli=0;
+ cli="alice.exe";enumeration_index=0;
+ check(a3d_hook_enumerate(&next,&prov,&name)==1 && (ULONG_PTR)prov==4
+       && !strcmp(name,"unknown"),"no-CLI A3D2 must remain discoverable");
+ check(a3d_hook_enumerate(&next,&prov,&name)==1 && (ULONG_PTR)prov==8
+       && !strcmp(name,"Miles Fast 2D Positional Audio"),"no-CLI Miles stays real 2D");
+ check(a3d_hook_open((void*)8)==0 && calls8==1 && calls4==0,"no-CLI select Miles");
+ a3d_hook_close((void*)8);
+ check(a3d_hook_open((void*)4)==0 && calls4==1,"no-CLI switch Miles to A3D2");
+ a3d_hook_close((void*)4);
+ enumeration_index=0;
+ check(a3d_hook_enumerate(&next,&prov,&name)==1 && !strcmp(name,"unknown"),
+       "no-CLI A3D2 re-enumeration");
+ check(a3d_hook_open((void*)8)==0 && calls8==2,"no-CLI return to Miles");
+ a3d_hook_close((void*)8);
+ check(a3d_hook_open((void*)4)==0 && calls4==2,"no-CLI return to A3D2");
+ a3d_hook_close((void*)4);
+ check(closes8==2 && closes4==2,"no-CLI provider shutdowns balanced");
+ require_cli=1;cli="alice.exe +set s_milesdriver a3d2";
+
  /* v089 specifically: game captures *name pointer on enum, prints it AFTER
   * open. Verify pointer identity, buffer lifetime and conditional mutation. */
  ctx_failed=0;setting="activate";prefer=1;require_cli=1;display_flag=1;

@@ -16,8 +16,8 @@ if not defined A3D_GEOMETRY_RETRACE_BLOCKS set "A3D_GEOMETRY_RETRACE_BLOCKS=4"
 if not defined A3D_REVERB_WET set "A3D_REVERB_WET=0.14"
 if not defined A3D_HRTF_TAPS set "A3D_HRTF_TAPS=48"
 if not defined A3D_VOICE_LIMIT set "A3D_VOICE_LIMIT=128"
-if not defined A3D_WAVEOUT_QUEUE_HEADERS set "A3D_WAVEOUT_QUEUE_HEADERS=3"
-if not defined A3D_WAVEOUT_SUBBLOCKS set "A3D_WAVEOUT_SUBBLOCKS=2"
+if not defined A3D_WAVEOUT_QUEUE_HEADERS set "A3D_WAVEOUT_QUEUE_HEADERS=6"
+if not defined A3D_WAVEOUT_SUBBLOCKS set "A3D_WAVEOUT_SUBBLOCKS=1"
 echo Aufake3D Quake III 1.17: select A3D using the in-game s_enable_a3d command.
 "quake3.exe" +set s_mixahead 0.35 +set s_mixPreStep 0.05 %*
 exit /b %ERRORLEVEL%

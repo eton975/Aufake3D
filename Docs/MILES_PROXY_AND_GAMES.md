@@ -1,9 +1,13 @@
 # Miles adapter, provider identity and game integration
 
-## Alice 2011 v0.8.9 scoped naming adaptation
+## Alice 2011 v0.8.18 RAM selector (replaces unsafe v0.8.9 alias in default kit)
 
 The original game selector doesn't natively map the string `a3d2` to an A3D2
-provider name. The optional app-local `mss32.dll` proxy forwards 331 Miles
+provider name. **The v0.8.18 launcher uses the version-pinned, signature-checked
+`alice-a3d2011-native.exe` RAM selector bridge and disables the `unknown` alias.**
+This enables in-game switching Miles 2D ↔ A3D2 ↔ Dolby, tested in an isolated Windows game installation.
+
+The following description is retained for historical explanation of the older name-fix: The optional app-local `mss32.dll` proxy forwards 331 Miles
 exports and wraps only the required selection/activation entrypoints. It
 returns a temporary proxy-owned `unknown` string to satisfy the game's
 hardcoded lookup, **using the genuine enumerated A3D 2.0 provider handle**.
@@ -38,7 +42,7 @@ distributed. At runtime, a compatible user-provided original is preserved as
 
 | Game | Integration | Status |
 |---|---|---|
-| Alice 2011 with VorpalFix 4.2.1 | Pinned Miles name/COM adapter | User-reported good Windows playback with unchanged core |
+| Alice 2011 with VorpalFix 4.2.1 | RAM-only selector bridge plus existing Miles proxy | Isolated Windows provider round-trip user-tested; integrated release candidate awaiting gameplay check |
 | Alice (2000) | Legacy bridge path | Needs independent A3D2 naming and gameplay verification |
 | Quake III Arena 1.17 | Game-local A3D core; optional experimental launcher | Previously worked on earlier builds; current release retest needed |
 | Half-Life 1.0.1.1 | Experimental activation/bridge | Not validated end-to-end on current runtime |

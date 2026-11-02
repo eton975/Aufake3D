@@ -11,19 +11,30 @@ set "A3D_SHORT_SFX_DECLICK=1"
 
 if not defined A3D_MASTER_GAIN set "A3D_MASTER_GAIN=5.0"
 if not defined A3D_MILES_MODE set "A3D_MILES_MODE=activate"
-set "A3D_MILES_ALIAS_UNKNOWN=1"
+set "A3D_MILES_ALIAS_UNKNOWN=0"
+rem The RAM selector recognises a3d2 directly; never advertise the unsafe unknown alias.
 set "A3D_MILES_REQUIRE_CLI_A3D2=1"
 set "A3D_MILES_DISPLAY_CANONICAL=1"
 set "A3D_MILES_COM_PROBE=0"
-set "A3D_WAVEOUT_QUEUE_HEADERS=3"
-set "A3D_WAVEOUT_SUBBLOCKS=2"
+set "A3D_WAVEOUT_QUEUE_HEADERS=6"
+set "A3D_WAVEOUT_SUBBLOCKS=1"
 set "A3D_RENDER_SNAPSHOT=0"
 set "A3D_WAVEOUT_ADAPTIVE=0"
 set "A3D_WAVEOUT_EVENT=1"
 set "A3D_WAVEOUT_PRIORITY=1"
 if not exist "alice.exe" (echo Missing alice.exe & exit /b 2)
+if not exist "alice-a3d2011-native.exe" (echo Missing RAM selector bridge & exit /b 2)
+if not exist "a3d-miles-local.manifest" (echo Missing local COM manifest & exit /b 2)
+if exist "alice.exe.manifest" (echo Existing alice.exe.manifest: refusing to overwrite & exit /b 5)
 if not exist "SndDrivers\a3d_mss_real.dll" (echo Missing original Miles copy & exit /b 2)
 echo Aufake3D v0.8.16: Alice 2011 VorpalFix A3D2 name-fix profile.
 echo Warning: default audio gain 5.0. Lower device volume before running.
-"alice.exe" +set s_milesdriver a3d2 %*
-exit /b %ERRORLEVEL%
+rem Use the signature-checked, child-RAM-only selector bridge. Do not alter alice.exe on disk.
+rem The temporary manifest is required to activate the app-local A3D COM server.
+copy /Y "a3d-miles-local.manifest" "alice.exe.manifest" >nul
+if errorlevel 1 (echo Failed to create temporary alice.exe.manifest & exit /b 5)
+"alice-a3d2011-native.exe" %*
+set "A3D_EXIT_STATUS=%ERRORLEVEL%"
+del /Q "alice.exe.manifest" >nul 2>nul
+if exist "alice.exe.manifest" echo WARNING: Failed to remove temporary alice.exe.manifest; remove manually.
+exit /b %A3D_EXIT_STATUS%

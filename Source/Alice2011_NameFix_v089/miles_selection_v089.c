@@ -303,6 +303,15 @@ int STDCALL a3d_hook_open(void*provider){
  module_status("AIL_OPEN_PRE_A3DAPI_NOT_LOADED");
  int r=f(provider); /* never silently redirect 2D provider */
  result("AIL_OPEN_RETURN",(DWORD)r);
+ /* Diagnostics only: identify which REAL Miles provider successfully opened.
+  * A menu label or string alias does not prove that the selected provider
+  * changed. Never redirect handles or tear down somebody else's COM object. */
+ if(r==0 && provider){
+  if(provider==__atomic_load_n(&detected_2d,__ATOMIC_ACQUIRE))
+   trace("AIL_OPEN_2D_CONFIRMED");
+  if(provider==__atomic_load_n(&detected_a3d2,__ATOMIC_ACQUIRE))
+   trace("AIL_OPEN_A3D2_CONFIRMED");
+ }
  /* The original game's 0x004675e4 uses the provider NAME POINTER returned
   * by Miles enumeration to print "%s provider opened."  The comparison at
   * 0x0046757b has already completed when this hook runs.  Thus the display
@@ -348,8 +357,15 @@ void* STDCALL a3d_hook_listener(void*provider){
 void STDCALL a3d_hook_close(void*provider){
  PClose f=(PClose)a3d_resolve(CLOSE_ORDINAL);
  void*actual=translate(provider);
- if(mode()!=0)result("AIL_CLOSE_EFFECTIVE_PROVIDER",(DWORD)(ULONG_PTR)actual);
+ if(mode()!=0){
+  result("AIL_CLOSE_EFFECTIVE_PROVIDER",(DWORD)(ULONG_PTR)actual);
+  if(actual && actual==__atomic_load_n(&detected_a3d2,__ATOMIC_ACQUIRE))
+   trace("AIL_CLOSE_A3D2_BEGIN");
+  if(actual && actual==__atomic_load_n(&detected_2d,__ATOMIC_ACQUIRE))
+   trace("AIL_CLOSE_2D_BEGIN");
+ }
  f(actual);
+ if(mode()!=0)trace("AIL_CLOSE_RETURNED");
 
 }
 typedef void* (STDCALL *PObject)(void*);

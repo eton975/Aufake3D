@@ -42,7 +42,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Aufake3D-Win32-${{ runner.os }}-${{ github.run_number }}
-          path: dist/Aufake3D_v0.8.16_Local_Runtime.zip
+          path: dist/Aufake3D_v0.8.18_Local_Runtime.zip
           if-no-files-found: error
       - name: Upload individual DLLs for inspection
         uses: actions/upload-artifact@v4

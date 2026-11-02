@@ -1,5 +1,5 @@
 {
-  "version": "0.8.16",
+  "version": "0.8.18",
   "format_revision": "layout1-doc-polish-v0814rc1",
   "profiles": {
     "alice2000": {
@@ -21,6 +21,7 @@
       "files": [
         "RUN_AUFAKE3D_WINDOWS.cmd",
         "RUN_AUFAKE3D_WINE.sh",
+        "alice-a3d2011-native.exe",
         "SndDrivers/a3d-miles-local.manifest",
         "SndDrivers/a3d.dll",
         "SndDrivers/a3dapi.dll",

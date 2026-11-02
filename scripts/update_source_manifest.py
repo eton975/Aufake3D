@@ -26,7 +26,7 @@ for p in paths:
         raise SystemExit('Case-insensitive filename collision: '+names[folded]+' vs '+rel)
     names[folded]=rel
 files={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
-(ROOT/'SOURCE_MANIFEST_SHA256.json').write_text(json.dumps({'release':'0.8.16',
+(ROOT/'SOURCE_MANIFEST_SHA256.json').write_text(json.dumps({'release':'0.8.18',
     'type':'source-only', 'files':files},indent=2,sort_keys=True)+'\n')
 (ROOT/'SHA256SUMS.txt').write_text(''.join(f'{h}  {name}\n' for name,h in sorted(files.items(),key=lambda x:x[1])))
 print('Frozen source manifest updated:',len(files),'files. Review diff before commit.')

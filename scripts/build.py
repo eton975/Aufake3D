@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from scripts.host_toolchain import program, native_mock_ready, windows_complete_msvc_toolset
 
-VERSION = '0.8.16'
+VERSION = '0.8.18'
 DIST = ROOT / 'dist'
 ENGINE = ROOT / 'Source' / 'Engine'
 TEMPLATES = ROOT / 'packaging' / 'Game_Kits'
@@ -121,6 +121,7 @@ def stage_release(proxy: Path, bridge: Path) -> Path:
         'a3dapi.dll': core / 'a3dapi.dll',
         'mss32.dll': proxy,
         'alice-a3d-bridge.exe': bridge,
+        'alice-a3d2011-native.exe': ENGINE/'remaster2011/alice-a3d2011-native.exe',
         'halflife-a3d-alpha.exe': ENGINE/'experimental/build/halflife-a3d-alpha.exe',
         'quake3-a3d-native.exe': ENGINE/'native/quake3-a3d-native.exe',
         'unreal-a3d-alpha.exe': ENGINE/'experimental/build/unreal-a3d-alpha.exe',

@@ -1,4 +1,4 @@
-# One-command Windows and Linux build (v0.8.16 tooling revision)
+# One-command Windows and Linux build (v0.8.18 packaging revision)
 
 **Windows 10/11:** double-click **`BUILD_WINDOWS.cmd`** in the repository root.
 **Linux:** run **`./BUILD_LINUX.sh`** in the repository root.
@@ -45,14 +45,14 @@ these tools are installed. If the optional MSVC CRT is absent, the test reports
 an explicit `SKIP` rather than a confusing linker failure. To require this
 test in automation, use `--require-native-mock`.
 
-### Multiple installed MSVC versions (the v0.8.16 fix)
+### Multiple installed MSVC versions (the v0.8.18 fix)
 
 Windows sometimes has a usable `cl.exe` on PATH from an **incomplete**
 older MSVC installation. For example, MSVC 14.31 can supply `cl.exe` but have
 only ARM CRT libraries, while MSVC 14.44 also supplies the required x64 CRT.
 `cl /Bv` does **not** establish that the matching x64 libraries are installed.
 
-The v0.8.16 builder uses `windows_complete_msvc_toolset()` to find a **single
+The v0.8.18 builder uses `windows_complete_msvc_toolset()` to find a **single
 matching version** containing `Hostx64/x64/cl.exe`, `link.exe`, its own x64
 `msvcrt.lib`, `oldnames.lib` and `vcruntime.lib`, plus SDK `ucrt.lib`,
 `kernel32.lib` and `stdio.h`. When CMake is installed, it configures the
@@ -110,7 +110,7 @@ PowerShell uses `py -3 scripts\build.py --doctor` (or `python scripts\build.py`)
 - `dist/miles-local/mss32.dll` — independently authored 331-export Miles proxy
 - `Source/Engine/classic2000/alice-a3d-bridge.exe` — checked Alice 2000 launcher
 - The other 39-step recipe outputs, including Half-Life, Quake III and Unreal helpers
-- `dist/Aufake3D_v0.8.16_Local_Runtime.zip` — assembled from **source-only**
+- `dist/Aufake3D_v0.8.18_Local_Runtime.zip` — assembled from **source-only**
   launcher/manifests templates in `packaging/Game_Kits/`, not from an old binary ZIP.
   Includes ready-to-copy kits for Alice 2000, Alice 2011, Quake III 1.17 and
   Half-Life, plus universal DLLs, the reversible installer scripts, manual
@@ -161,6 +161,6 @@ an unexpected file change.
   a suitable Wine installation. Wine is not required to build.
 
 - **CMake selects old MSVC and reports `MSVCRT.lib` / `MSVCRTD.lib`:**
-  v0.8.16 automatically chooses the newest *complete* compiler+CRT toolset,
+  v0.8.18 automatically chooses the newest *complete* compiler+CRT toolset,
   and isolates the CMake cache by version. Avoid manually mixing a 14.31
   compiler with 14.44 libraries. Check `scripts/build.py --doctor` output.

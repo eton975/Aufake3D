@@ -10,8 +10,11 @@ set "A3D_WAVEOUT_SCHEDULE_TEST="
 set "A3D_SHORT_SFX_DECLICK=1"
 
 if not defined A3D_MASTER_GAIN set "A3D_MASTER_GAIN=5.0"
+if not defined A3D_WAVEOUT_QUEUE_HEADERS set "A3D_WAVEOUT_QUEUE_HEADERS=6"
+if not defined A3D_WAVEOUT_SUBBLOCKS set "A3D_WAVEOUT_SUBBLOCKS=1"
 if not exist "alice-a3d-bridge.exe" (echo Missing Alice classic compatibility bridge & exit /b 2)
 if not exist "alice.exe" (echo Missing original Alice & exit /b 2)
 echo Aufake3D classic Alice; bridge may modify checked selector in CHILD RAM only.
-"alice-a3d-bridge.exe" +set s_milesdriver a3d2 %*
+rem Respect the persisted sound-provider choice (miles/dolby/a3d/a3d2).
+"alice-a3d-bridge.exe" %*
 exit /b %ERRORLEVEL%

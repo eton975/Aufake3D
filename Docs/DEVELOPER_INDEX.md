@@ -1,6 +1,6 @@
-# Developer documentation — Aufake3D v0.8.16
+# Developer documentation — Aufake3D v0.8.18
 
-**Start here for current behavior.** v0.8.16 is a source, build-system and
+**Start here for current behavior.** v0.8.18 is a source, build-system and
 packaging release. The engine and proxy C implementations are unchanged from the
 previous baseline; their compiled bytes are only guaranteed to match the known-good
 hashes when the reproducible toolchain is used. Neither a local build nor this

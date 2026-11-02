@@ -1,0 +1,146 @@
+--- a/packaging/Game_Kits/Alice_2000/COPY_TO_GAME_FOLDER/RUN_AUFAKE3D_WINDOWS.cmd
++++ b/packaging/Game_Kits/Alice_2000/COPY_TO_GAME_FOLDER/RUN_AUFAKE3D_WINDOWS.cmd
+@@ -13,5 +13,6 @@
+ if not exist "alice-a3d-bridge.exe" (echo Missing Alice classic compatibility bridge & exit /b 2)
+ if not exist "alice.exe" (echo Missing original Alice & exit /b 2)
+ echo Aufake3D classic Alice; bridge may modify checked selector in CHILD RAM only.
+-"alice-a3d-bridge.exe" +set s_milesdriver a3d2 %*
++rem Respect the persisted sound-provider choice (miles/dolby/a3d/a3d2).
++"alice-a3d-bridge.exe" %*
+ exit /b %ERRORLEVEL%
+--- a/packaging/Game_Kits/Alice_2000/COPY_TO_GAME_FOLDER/RUN_AUFAKE3D_WINE.sh
++++ b/packaging/Game_Kits/Alice_2000/COPY_TO_GAME_FOLDER/RUN_AUFAKE3D_WINE.sh
+@@ -8,4 +8,4 @@
+ [[ -f alice.exe && -f alice-a3d-bridge.exe ]] || { echo 'Missing classic Alice or compatibility bridge' >&2; exit 2; }
+ export A3D_MASTER_GAIN="${A3D_MASTER_GAIN:-5.0}"
+ export WINEDLLOVERRIDES="a3dapi=n,b;a3d=n,b${WINEDLLOVERRIDES:+;$WINEDLLOVERRIDES}"
+-exec "${A3D_WINE_EXECUTABLE:-wine}" ./alice-a3d-bridge.exe +set s_milesdriver a3d2 "$@"
++exec "${A3D_WINE_EXECUTABLE:-wine}" ./alice-a3d-bridge.exe "$@"
+--- a/packaging/Game_Kits/Alice_2011_VorpalFix/COPY_TO_GAME_FOLDER/RUN_AUFAKE3D_WINDOWS.cmd
++++ b/packaging/Game_Kits/Alice_2011_VorpalFix/COPY_TO_GAME_FOLDER/RUN_AUFAKE3D_WINDOWS.cmd
+@@ -12,7 +12,8 @@
+ if not defined A3D_MASTER_GAIN set "A3D_MASTER_GAIN=5.0"
+ if not defined A3D_MILES_MODE set "A3D_MILES_MODE=activate"
+ set "A3D_MILES_ALIAS_UNKNOWN=1"
+-set "A3D_MILES_REQUIRE_CLI_A3D2=1"
++rem Allow A3D2 to be selected in-game even when no CLI +set was supplied.
++set "A3D_MILES_REQUIRE_CLI_A3D2=0"
+ set "A3D_MILES_DISPLAY_CANONICAL=1"
+ set "A3D_MILES_COM_PROBE=0"
+ set "A3D_WAVEOUT_QUEUE_HEADERS=3"
+@@ -25,5 +26,6 @@
+ if not exist "SndDrivers\a3d_mss_real.dll" (echo Missing original Miles copy & exit /b 2)
+ echo Aufake3D v0.8.16: Alice 2011 VorpalFix A3D2 name-fix profile.
+ echo Warning: default audio gain 5.0. Lower device volume before running.
+-"alice.exe" +set s_milesdriver a3d2 %*
++rem Respect the persisted sound-provider choice (Miles 2D / Dolby / A3D2).
++"alice.exe" %*
+ exit /b %ERRORLEVEL%
+--- a/packaging/Game_Kits/Alice_2011_VorpalFix/COPY_TO_GAME_FOLDER/RUN_AUFAKE3D_WINE.sh
++++ b/packaging/Game_Kits/Alice_2011_VorpalFix/COPY_TO_GAME_FOLDER/RUN_AUFAKE3D_WINE.sh
+@@ -7,10 +7,10 @@
+ cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
+ [[ -f alice.exe && -f 'SndDrivers/a3d_mss_real.dll' ]] || { echo 'Missing Alice or saved original Miles' >&2; exit 2; }
+ export A3D_MASTER_GAIN="${A3D_MASTER_GAIN:-5.0}"
+-export A3D_MILES_MODE=activate A3D_MILES_ALIAS_UNKNOWN=1 A3D_MILES_REQUIRE_CLI_A3D2=1
++export A3D_MILES_MODE=activate A3D_MILES_ALIAS_UNKNOWN=1 A3D_MILES_REQUIRE_CLI_A3D2=0
+ export A3D_MILES_DISPLAY_CANONICAL=1 A3D_MILES_COM_PROBE=0
+ export A3D_WAVEOUT_QUEUE_HEADERS=3 A3D_WAVEOUT_SUBBLOCKS=2 A3D_RENDER_SNAPSHOT=0
+ export A3D_WAVEOUT_ADAPTIVE=0 A3D_WAVEOUT_EVENT=1 A3D_WAVEOUT_PRIORITY=1
+ export WINEDLLOVERRIDES="mss32=n,b;a3dapi=n,b;a3d=n,b;winmm=n,b${WINEDLLOVERRIDES:+;$WINEDLLOVERRIDES}"
+ echo 'Aufake3D Alice2011 A3D2 (Wine test not yet validated); gain 5.0 default.' >&2
+-exec "${A3D_WINE_EXECUTABLE:-wine}" ./alice.exe +set s_milesdriver a3d2 "$@"
++exec "${A3D_WINE_EXECUTABLE:-wine}" ./alice.exe "$@"
+--- a/Source/NameFix_Tests/mock_v089_namefix_native.c
++++ b/Source/NameFix_Tests/mock_v089_namefix_native.c
+@@ -196,6 +196,29 @@
+        strstr(output,"AIL_CLOSE_A3D2_BEGIN") &&
+        strstr(output,"AIL_CLOSE_2D_BEGIN"),"transition trace records both providers");
+ 
++ /* Default Alice 2011 launcher no longer forces +set at startup.
++  * The alias must remain discoverable across 2D -> A3D2 -> 2D -> A3D2.
++  * This validates the exact reported reverse-switch regression. */
++ clear_runtime();setting="activate";prefer=1;require_cli=0;
++ cli="alice.exe";enumeration_index=0;
++ check(a3d_hook_enumerate(&next,&prov,&name)==1 && (ULONG_PTR)prov==4
++       && !strcmp(name,"unknown"),"no-CLI A3D2 must remain discoverable");
++ check(a3d_hook_enumerate(&next,&prov,&name)==1 && (ULONG_PTR)prov==8
++       && !strcmp(name,"Miles Fast 2D Positional Audio"),"no-CLI Miles stays real 2D");
++ check(a3d_hook_open((void*)8)==0 && calls8==1 && calls4==0,"no-CLI select Miles");
++ a3d_hook_close((void*)8);
++ check(a3d_hook_open((void*)4)==0 && calls4==1,"no-CLI switch Miles to A3D2");
++ a3d_hook_close((void*)4);
++ enumeration_index=0;
++ check(a3d_hook_enumerate(&next,&prov,&name)==1 && !strcmp(name,"unknown"),
++       "no-CLI A3D2 re-enumeration");
++ check(a3d_hook_open((void*)8)==0 && calls8==2,"no-CLI return to Miles");
++ a3d_hook_close((void*)8);
++ check(a3d_hook_open((void*)4)==0 && calls4==2,"no-CLI return to A3D2");
++ a3d_hook_close((void*)4);
++ check(closes8==2 && closes4==2,"no-CLI provider shutdowns balanced");
++ require_cli=1;cli="alice.exe +set s_milesdriver a3d2";
++
+  /* v089 specifically: game captures *name pointer on enum, prints it AFTER
+   * open. Verify pointer identity, buffer lifetime and conditional mutation. */
+  ctx_failed=0;setting="activate";prefer=1;require_cli=1;display_flag=1;
+--- /dev/null
++++ b/tests/test_provider_switch_launchers.py
+@@ -0,0 +1,37 @@
++"""Regression contracts for Alice's in-game 2D/A3D2 provider selection."""
++from pathlib import Path
++import unittest
++
++ROOT = Path(__file__).resolve().parents[1]
++KITS = ROOT / 'packaging' / 'Game_Kits'
++
++
++class AliceProviderSwitch(unittest.TestCase):
++    def test_alice_launchers_respect_persisted_provider(self):
++        for game in ('Alice_2000', 'Alice_2011_VorpalFix'):
++            base = KITS / game / 'COPY_TO_GAME_FOLDER'
++            for fname in ('RUN_AUFAKE3D_WINDOWS.cmd', 'RUN_AUFAKE3D_WINE.sh'):
++                with self.subTest(game=game, launcher=fname):
++                    script = (base / fname).read_text()
++                    self.assertNotIn(' +set s_milesdriver a3d2', script,
++                                     'Launcher must not force the A3D2 choice')
++                    self.assertIn('alice-a3d-bridge.exe' if game == 'Alice_2000'
++                                  else 'alice.exe', script)
++
++    def test_alice_2011_a3d2_alias_does_not_require_cli_override(self):
++        base = KITS / 'Alice_2011_VorpalFix' / 'COPY_TO_GAME_FOLDER'
++        for fname in ('RUN_AUFAKE3D_WINDOWS.cmd', 'RUN_AUFAKE3D_WINE.sh'):
++            with self.subTest(launcher=fname):
++                script = (base / fname).read_text()
++                self.assertIn('A3D_MILES_ALIAS_UNKNOWN=1', script)
++                self.assertIn('A3D_MILES_REQUIRE_CLI_A3D2=0', script)
++                self.assertNotIn('A3D_MILES_REQUIRE_CLI_A3D2=1', script)
++
++    def test_classic_selector_bridge_is_based_on_game_token_not_cli(self):
++        bridge = (ROOT / 'Source/Engine/classic2000/alice_a3d_bridge.c').read_text()
++        self.assertIn('a3d2', bridge)
++        self.assertIn('mov al, [ebx]', bridge)
++
++
++if __name__ == '__main__':
++    unittest.main()
+--- /dev/null
++++ b/Docs/ALICE_PROVIDER_SWITCH_FIX_V0817.md
+@@ -0,0 +1,18 @@
++# Alice 2000 / 2011: bidirectional A3D2 and Miles 2D switching (candidate)
++
++## Observed failure
++
++With the old `RUN_AUFAKE3D_WINDOWS.cmd` launcher, a forced `+set s_milesdriver a3d2` overrides Alice's saved audio choice on launch. Removing this override without updating the Alice 2011 Miles proxy configuration causes `Could not find 3D provider a3d2`: the proxy has a strict `A3D_MILES_REQUIRE_CLI_A3D2=1` gate that checks only the process's startup command line, not subsequent menu selections.
++
++## Candidate correction
++
++- Neither Alice launcher injects `+set s_milesdriver a3d2` anymore. The game receives the real user configuration, and callers can still provide explicit command-line arguments with `%*` or `"$@"`.
++- The Alice 2011 launcher retains `A3D_MILES_ALIAS_UNKNOWN=1` while setting `A3D_MILES_REQUIRE_CLI_A3D2=0`. Its real A3D2 provider can then be enumerated using the established `unknown` compatibility alias even without a startup `+set`. Provider handles are not substituted; Miles/Dolby still open their genuine drivers.
++- Alice 2000 continues to use its RAM-only selector bridge; the bridge already checks the selected `a3d2` token dynamically.
++- No DSP/COM/WaveOut source is modified. No game executable is modified on disk.
++
++## Limitations and acceptance
++
++The original proxy's `unknown` alias is necessarily less narrowly scoped when strict command-line gating is disabled. An unrelated unrecognised `s_milesdriver` value could select the real A3D2 provider. Test the game default (`auto`) and the supported selections before shipping a release.
++
++Run `BUILD_WINDOWS.cmd`, deploy the updated Alice game kit, then try `Miles -> A3D2 -> Dolby -> Miles -> A3D2` in-game. Account for Alice's restart-required/latching message. Confirm the *Sound Initialization* console message and a fresh Miles trace for every transition. As of preparing this patch, the corrected Windows launcher has not been exercised in the retail games; native mock and source tests are not gameplay validation.
