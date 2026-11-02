@@ -93,7 +93,7 @@ def build_alice_bridge(clang: str, ld: str) -> Path:
              'GetThreadContext':8, 'SetThreadContext':8,
              'CreateActCtxA':4, 'ActivateActCtx':8}
     args = [ld, '/subsystem:console', '/entry:mainCRTStartup', '/nodefaultlib',
-            '/machine:x86', 'alice_a3d_bridge.obj', 'kernel32.lib']
+            '/machine:x86', '/timestamp:0', 'alice_a3d_bridge.obj', 'kernel32.lib']
     args += [f'/alternatename:__imp__{key}@{size}=__imp__{key}' for key, size in names.items()]
     args.append('/out:alice-a3d-bridge.exe')
     run(args, cwd)

@@ -1,0 +1,295 @@
+diff --git a/.github/workflows/source-ci.yml b/.github/workflows/source-ci.yml
+index 540d23c..bf63022 100644
+--- a/.github/workflows/source-ci.yml
++++ b/.github/workflows/source-ci.yml
+@@ -38,6 +38,8 @@ jobs:
+         run: python Tools/verify_source_only.py
+       - name: Build all Win32 components, run tests, assemble game kits
+         run: python scripts/build.py --require-native-mock --require-acoustics
++      - name: Verify byte-identical independent builds on this runner
++        run: python scripts/verify_reproducible.py --self-test
+       - name: Upload compiled Windows runtime
+         uses: actions/upload-artifact@v7
+         with:
+diff --git a/Docs/REPRODUCIBLE_BUILDS_V090.md b/Docs/REPRODUCIBLE_BUILDS_V090.md
+new file mode 100644
+index 0000000..df0bc56
+--- /dev/null
++++ b/Docs/REPRODUCIBLE_BUILDS_V090.md
+@@ -0,0 +1,66 @@
++# Aufake3D v0.9.0 byte-for-byte reproducible builds
++
++## Reproducibility standard
++
++For one exact source revision, unchanged source bytes and a **pinned** Clang/LLD
++installation, the complete locally generated runtime ZIP and all generated PE32
++executables/DLLs should have identical SHA-256 digests when compiled independently
++in different directories. This standard is stricter than "the same exports" or
++"the same compiler options".
++
++Run the two-clean-tree proof locally:
++
++```sh
++python scripts/verify_reproducible.py --self-test
++```
++
++The command makes two fresh source copies, builds the same source twice (with
++normal tests and optional CMake acoustics disabled **only for the duplicate
++builds**), compares every generated `.exe` and `.dll`, and then compares the
++**complete** runtime ZIP. It exits nonzero if any byte differs. In ordinary
++`BUILD_WINDOWS.cmd`/`BUILD_LINUX.sh` builds, Python and acoustic test suites
++still run normally. GitHub CI runs this reproducibility check after its usual
++full build, so it is not a replacement for test coverage.
++
++To compare runtime ZIPs generated on different machines:
++
++```sh
++python scripts/verify_reproducible.py --compare path/to/windows-runtime.zip path/to/linux-runtime.zip
++```
++
++Failures report the differing ZIP entries. Identical inner entries but different
++ZIP metadata/compression are also reported as a failure.
++
++## Issues fixed and already controlled
++
++- The Alice 2000 bridge's separate link step previously omitted `/timestamp:0`.
++  This allowed its PE header timestamp to change between otherwise identical
++  builds, changing the runtime ZIP checksum. The bridge now uses a fixed zero
++  timestamp just like the core and Miles proxy.
++- The runtime packager sorts paths and explicitly controls ZIP timestamps,
++  file permissions, compression mode and member content. It also writes a
++  `LOCAL_BUILD_SHA256.json` manifest of every packaged file.
++- Repository `.gitattributes` disables Git's implicit text conversion so that
++  tracked source files are checked out with the same bytes on Windows and Linux.
++
++## What is **not yet proven**
++
++**Cross-platform reproducibility is not yet guaranteed.** Two installations of
++Clang/LLD may emit different bytes when their versions or build flags differ,
++even if both succeed and pass tests. Hosted GitHub Actions images can update
++LLVM, Python and ZIP/zlib versions without changing the workflow YAML.
++
++Before making Windows/Linux matching hashes a blocking release requirement:
++
++1. Pin **exact** Clang and LLD versions (and distributions) on both platforms;
++   record their versions and source revision with released checksums.
++2. Ensure the same checkout bytes, architecture, flags, exported ABI and
++   generator outputs; rerun clean-tree comparisons across two machines.
++3. Compare full ZIP SHA-256 and all component hashes across Windows/Linux.
++   Investigate any mismatches rather than updating expected hashes blindly.
++4. Verify that an identical binary still passes real-game compatibility and
++   the normal CI tests. Reproducible does not mean correct or safe.
++
++CMake acoustics test executables are not currently included in the runtime ZIP.
++They require a separate cross-toolchain reproducibility evaluation; the present
++checker covers release PE components and the packaged runtime.
+diff --git a/scripts/build.py b/scripts/build.py
+index b19068c..81a1aa5 100644
+--- a/scripts/build.py
++++ b/scripts/build.py
+@@ -93,7 +93,7 @@ def build_alice_bridge(clang: str, ld: str) -> Path:
+              'GetThreadContext':8, 'SetThreadContext':8,
+              'CreateActCtxA':4, 'ActivateActCtx':8}
+     args = [ld, '/subsystem:console', '/entry:mainCRTStartup', '/nodefaultlib',
+-            '/machine:x86', 'alice_a3d_bridge.obj', 'kernel32.lib']
++            '/machine:x86', '/timestamp:0', 'alice_a3d_bridge.obj', 'kernel32.lib']
+     args += [f'/alternatename:__imp__{key}@{size}=__imp__{key}' for key, size in names.items()]
+     args.append('/out:alice-a3d-bridge.exe')
+     run(args, cwd)
+diff --git a/scripts/verify_reproducible.py b/scripts/verify_reproducible.py
+new file mode 100644
+index 0000000..ba51253
+--- /dev/null
++++ b/scripts/verify_reproducible.py
+@@ -0,0 +1,141 @@
++#!/usr/bin/env python3
++"""Verify Aufake3D release-artifact bit-for-bit reproducibility.
++
++Use two independent clean source-tree copies with the SAME compiler/linker
++installation. This is a local same-toolchain guarantee, not proof that two
++arbitrarily different Clang/LLD versions produce identical machine code.
++
++  python scripts/verify_reproducible.py --self-test
++  python scripts/verify_reproducible.py --compare first.zip second.zip
++"""
++from __future__ import annotations
++
++import argparse
++import hashlib
++import os
++from pathlib import Path
++import shutil
++import subprocess
++import sys
++import tempfile
++import zipfile
++
++ROOT = Path(__file__).resolve().parents[1]
++OUTPUT = 'dist/Aufake3D_v0.9.0_Local_Runtime.zip'
++IGNORED_DIRS = {'.git', 'build', 'dist', '__pycache__', '.pytest_cache', '.mypy_cache', '.venv', 'venv'}
++IGNORED_EXTENSIONS = {'.dll', '.exe', '.lib', '.obj', '.o', '.exp', '.pdb', '.pyc'}
++
++
++def sha256(data: bytes) -> str:
++    return hashlib.sha256(data).hexdigest()
++
++
++def file_hash(path: Path) -> str:
++    return sha256(path.read_bytes())
++
++
++def zip_differences(left: Path, right: Path) -> list[str]:
++    """List differences in entry bytes, even when ZIP compression differs."""
++    with zipfile.ZipFile(left) as za, zipfile.ZipFile(right) as zb:
++        a, b = set(za.namelist()), set(zb.namelist())
++        result = [f'Only in first archive: {n}' for n in sorted(a - b)]
++        result += [f'Only in second archive: {n}' for n in sorted(b - a)]
++        result += [f'Entry differs: {n}' for n in sorted(a & b)
++                   if sha256(za.read(n)) != sha256(zb.read(n))]
++        if not result and file_hash(left) != file_hash(right):
++            result.append('All entries match; container metadata/compression differs')
++        return result
++
++
++def compare_zips(first: Path, second: Path) -> bool:
++    if not first.is_file() or not second.is_file():
++        raise FileNotFoundError('Both runtime ZIP files must exist')
++    a, b = file_hash(first), file_hash(second)
++    print('FIRST: ', a, first, flush=True)
++    print('SECOND:', b, second, flush=True)
++    if a == b:
++        print('PASS: complete runtime ZIPs are SHA-256 identical')
++        return True
++    print('FAIL: runtime ZIP SHA-256 mismatch')
++    for item in zip_differences(first, second)[:30]:
++        print(' -', item)
++    return False
++
++
++def copy_clean_source(destination: Path) -> None:
++    """Copy the same source inputs into a separate build directory."""
++    def ignore(_directory: str, names: list[str]) -> set[str]:
++        return {name for name in names if name in IGNORED_DIRS or
++                Path(name).suffix.lower() in IGNORED_EXTENSIONS or name.endswith('.log')}
++    shutil.copytree(ROOT, destination, ignore=ignore)
++
++
++def build(source: Path) -> None:
++    cmd = [sys.executable, str(source/'scripts/build.py'), '--no-tests', '--no-acoustics']
++    print('BUILD:', source, flush=True)
++    subprocess.run(cmd, cwd=source, check=True)
++
++
++def compiled_pe_hashes(source: Path) -> dict[str, str]:
++    """Include all generated PE files, not only the two core DLLs."""
++    roots = (source/'dist', source/'Source/Engine')
++    results = {}
++    for base in roots:
++        for p in base.rglob('*'):
++            if p.is_file() and p.suffix.lower() in ('.exe', '.dll'):
++                data = p.read_bytes()
++                if data[:2] == b'MZ':
++                    results[p.relative_to(source).as_posix()] = sha256(data)
++    return results
++
++
++def self_test(work_dir: Path) -> bool:
++    alpha, beta = work_dir/'source-a', work_dir/'source-b'
++    if alpha.exists() or beta.exists():
++        raise RuntimeError('Refusing to overwrite existing source-a or source-b')
++    for name in ('clang', 'lld-link'):
++        p = shutil.which(name)
++        if p:
++            completed = subprocess.run([p, '--version'], capture_output=True, text=True)
++            print(name, completed.stdout.splitlines()[0] if completed.stdout else p, flush=True)
++    copy_clean_source(alpha)
++    copy_clean_source(beta)
++    build(alpha)
++    build(beta)
++    a, b = compiled_pe_hashes(alpha), compiled_pe_hashes(beta)
++    differences = [name for name in sorted(a.keys() | b.keys()) if a.get(name) != b.get(name)]
++    if differences:
++        print('FAIL: generated PE files differ:')
++        for name in differences[:30]:
++            print(' -', name, a.get(name, '(missing)'), b.get(name, '(missing)'))
++    else:
++        print(f'PASS: {len(a)} generated PE executables and DLLs SHA-256 identical')
++    return not differences and compare_zips(alpha/OUTPUT, beta/OUTPUT)
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser(description=__doc__)
++    group = parser.add_mutually_exclusive_group(required=True)
++    group.add_argument('--self-test', action='store_true', help='Rebuild twice in fresh, separate directories and compare')
++    group.add_argument('--compare', nargs=2, type=Path, metavar=('FIRST.zip', 'SECOND.zip'),
++                       help='Compare two previously built complete runtime ZIPs')
++    parser.add_argument('--keep-dir', type=Path, help='Retain fresh self-test source copies/logs under this NEW directory')
++    args = parser.parse_args()
++    try:
++        if args.compare:
++            if args.keep_dir:
++                parser.error('--keep-dir is only valid with --self-test')
++            return 0 if compare_zips(*args.compare) else 1
++        if args.keep_dir:
++            directory = args.keep_dir.resolve()
++            directory.mkdir(parents=True, exist_ok=False)
++            return 0 if self_test(directory) else 1
++        with tempfile.TemporaryDirectory(prefix='aufake3d-repro-') as temp:
++            return 0 if self_test(Path(temp)) else 1
++    except (OSError, RuntimeError, subprocess.CalledProcessError, zipfile.BadZipFile) as exc:
++        print('REPRODUCIBILITY CHECK FAILED:', exc, file=sys.stderr)
++        return 1
++
++
++if __name__ == '__main__':
++    sys.exit(main())
+diff --git a/tests/test_reproducible_build.py b/tests/test_reproducible_build.py
+new file mode 100644
+index 0000000..ac0715c
+--- /dev/null
++++ b/tests/test_reproducible_build.py
+@@ -0,0 +1,44 @@
++"""Regression tests for byte-identical release packaging and PE timestamps."""
++import importlib.util
++from pathlib import Path
++import tempfile
++import unittest
++import zipfile
++
++ROOT = Path(__file__).resolve().parents[1]
++spec = importlib.util.spec_from_file_location('verify_reproducible', ROOT/'scripts/verify_reproducible.py')
++repro = importlib.util.module_from_spec(spec)
++spec.loader.exec_module(repro)
++
++
++class TestReproducibleBuild(unittest.TestCase):
++    def test_alice2000_bridge_has_fixed_linker_timestamp(self):
++        build = (ROOT/'scripts/build.py').read_text(encoding='utf-8')
++        section = build.split('def build_alice_bridge(', 1)[1].split('\ndef ', 1)[0]
++        self.assertIn("'/timestamp:0'", section)
++
++    def test_zip_comparison_detects_content_difference(self):
++        with tempfile.TemporaryDirectory() as td:
++            a, b = [Path(td)/name for name in ('a.zip', 'b.zip')]
++            for p, content in ((a, b'one'), (b, b'two')):
++                with zipfile.ZipFile(p, 'w') as z:
++                    z.writestr('sample.txt', content)
++            self.assertFalse(repro.compare_zips(a, b))
++            self.assertIn('Entry differs: sample.txt', repro.zip_differences(a, b))
++
++    def test_zip_comparison_accepts_identical_archives(self):
++        with tempfile.TemporaryDirectory() as td:
++            a, b = [Path(td)/name for name in ('a.zip', 'b.zip')]
++            with zipfile.ZipFile(a, 'w') as z:
++                z.writestr('sample.txt', b'content')
++            b.write_bytes(a.read_bytes())
++            self.assertTrue(repro.compare_zips(a, b))
++
++    def test_copy_excludes_build_outputs(self):
++        self.assertIn('dist', repro.IGNORED_DIRS)
++        self.assertIn('build', repro.IGNORED_DIRS)
++        self.assertIn('.dll', repro.IGNORED_EXTENSIONS)
++
++
++if __name__ == '__main__':
++    unittest.main()
