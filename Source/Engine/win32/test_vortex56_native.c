@@ -1,6 +1,7 @@
 /* Hardware-reference format/DSP integration tests; no game or sound device. */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "stream_core.h"
 static A3DMix m;
 static A3DMixVoice v;
@@ -16,6 +17,27 @@ static unsigned long long signal_energy(void){
   e+=(unsigned long long)(n*n);
  }
  return e;
+}
+/* Keep one copy of each 256-frame output to compare both modes during
+ * direction changes, not just while their HRTFs are stationary. */
+static void prepare(unsigned mode);
+static unsigned char moving_pcm[2][6][1024];
+static int capture_moving(unsigned mode,unsigned slot){
+ for(unsigned i=0;i<sizeof(data)/2u;i++){
+  int sample=(int)((i*97u+13u)%22001u)-11000;
+  data[2*i]=(unsigned char)sample;
+  data[2*i+1]=(unsigned char)((unsigned short)sample>>8);
+ }
+ prepare(mode);
+ for(unsigned block=0;block<6u;block++){
+  v.pos[0]=(block&1u)?-3.0f:3.0f;
+  v.pos[2]=(block&2u)?1.0f:-1.0f;
+  a3dmix_render(&m,out,256u);
+  memcpy(moving_pcm[slot][block],out,sizeof(out));
+  if(block==1u && aufake_v2_abs(v.v2_target[0][0]-v.v2_coeff[0][0])<0.01f)
+   return fail("56-tap move incorrectly jumped to target");
+ }
+ return 0;
 }
 static void prepare(unsigned mode){
  a3dmix_init(&m);a3dmix_voice_init(&v);
@@ -52,6 +74,24 @@ int main(void){
  float target=v.v2_target[0][0];
  if(closef(target,before,1.0f))return fail("movement did not change target");
  if(!(aufake_v2_abs(v.v2_coeff[0][0]-before)<aufake_v2_abs(target-before)))return fail("tracking jumped too far");
- printf("PASS: corrected HRTF 56 taps, channel ITD, wrap, impulse render, reference tracking\n");
+ /* The physical AU8830 delays the *mono input* separately for each ear and
+  * then applies each ear's FIR. Verify both ear-specific post-ITD histories. */
+ for(unsigned i=0;i<sizeof(data);i++)data[i]=0;
+ data[0]=0xff;data[1]=0x7f;
+ prepare(2u);v.pos[0]=1.0f;v.pos[2]=0.0f;
+ aufake_v2_lookup(90.0f,0.0f,c,d);
+ a3dmix_render(&m,out,64u);
+ unsigned far_delay=(unsigned)d[0];
+ if(far_delay<30u||far_delay>40u)return fail("unexpected hardware far-ear ITD");
+ if(v.v2_fir_history[0][0]!=0.0f)return fail("far-ear FIR input was not delayed");
+ if(v.v2_fir_history[0][far_delay]<0.8f ||
+    v.v2_fir_history[1][0]<0.8f)
+  return fail("per-ear ITD must precede 56-tap convolution");
+ /* FAST is a performance setting, not permission to change the HRTF result.
+  * Identical moving sources must have matching PCM in both 56-tap modes. */
+ if(capture_moving(1u,0u)||capture_moving(2u,1u))return 1;
+ if(memcmp(moving_pcm[0],moving_pcm[1],sizeof(moving_pcm[0]))!=0)
+  return fail("fast/reference diverged on moving 3D sources");
+ printf("PASS: corrected HRTF 56 taps, pre-FIR ITD, moving fast/reference parity, measured 64-frame glides\n");
  return 0;
 }

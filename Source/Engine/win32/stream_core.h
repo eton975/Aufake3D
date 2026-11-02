@@ -59,10 +59,14 @@ typedef struct {
  float cache_src[3],cache_lis[3];
  int prev_hrir_direction;
  unsigned hrir_initialized;
- /* AU8830 56-tap mode: per-voice target/current, tracking and ear delays. */
+ /* AU8830 56-tap mode: per-voice target/current, tracking and ear delays.
+  * Real AU8830 processes mono -> per-ear ITD -> per-ear 56-tap HRTF FIR.
+  * Retain a separate post-ITD FIR history for each ear; delaying the already
+  * filtered stereo output gives different transients when the HRTF moves. */
  unsigned v2_initialized,v2_delay_cursor,v2_track_pos;
  float v2_coeff[2][56],v2_target[2][56],v2_itd[2],v2_itd_target[2];
  float v2_delay_line[2][AUFAKE_V2_DELAY_SIZE];
+ float v2_fir_history[2][AUFAKE_V2_DELAY_SIZE];
  /* Optional bounded, worker-owned PCM capture. The source's actual byte count
   * and cursor still describe the complete ring; sample_at maps a frame into
   * this immutable capture when it is present. Never dereference game PCM in
@@ -381,11 +385,13 @@ static void a3dmix_render(A3DMix*m,unsigned char*out,unsigned frames){
    v->h[v->hist_cursor]=x;
    float l=0,r=0;
    if(m->hrtf_mode){
-    /* Hardware-style parameter tracking steps on a 64-sample boundary.
-     * Reference alpha = 0x147*64/2^21 for HRTF and 0xc8*64/2^19 for ITD.
-     * Fast mode skips tracking for fast direction changes and lower latency.
-     */
-    if(m->hrtf_mode==2u && (v->v2_track_pos&63u)==0u){
+    /* Both 56-tap modes must reproduce the same hardware-derived acoustic
+     * response. v0.9.0 FAST previously jumped straight to the new filter and
+     * ITD once every 256 samples, producing abrupt timbre/position changes.
+     * A performance mode may optimize *how* the DSP computes the result, not
+     * discard the AU8830's measured 64-sample target-to-current glide.
+     * HRTF alpha = 0x147*64/2^21; ITD alpha = 0xc8*64/2^19. */
+    if((v->v2_track_pos&63u)==0u){
      const float h_alpha=(327.0f*64.0f)/2097152.0f;
      const float d_alpha=(200.0f*64.0f)/524288.0f;
      for(unsigned ear=0;ear<2u;ear++){
@@ -394,24 +400,21 @@ static void a3dmix_render(A3DMix*m,unsigned char*out,unsigned frames){
       v->v2_itd[ear]+=d_alpha*(v->v2_itd_target[ear]-v->v2_itd[ear]);
      }
     }
-    if(m->hrtf_mode==1u){
-     /* Fast mode interpolation already happened once per block. */
-     if(n==0u){
-      for(unsigned ear=0;ear<2u;ear++){
-       for(unsigned k=0;k<56u;k++)v->v2_coeff[ear][k]=v->v2_target[ear][k];
-       v->v2_itd[ear]=v->v2_itd_target[ear];
-      }
-     }
-    }
+    /* Real chip signal order: mono PCM -> fractional per-ear ITD -> FIR.
+     * Using a shared mono history and delaying the FIR output (old code)
+     * commutes only for stationary parameters, not for moving 3D sources.
+     * Both per-ear histories are advanced at the same sample position. */
+    unsigned cursor=v->v2_delay_cursor;
+    float dl=aufake_v2_delay(v->v2_delay_line[0],cursor,v->v2_itd[0],x);
+    float dr=aufake_v2_delay(v->v2_delay_line[1],cursor,v->v2_itd[1],x);
+    v->v2_fir_history[0][cursor]=dl;
+    v->v2_fir_history[1][cursor]=dr;
     for(unsigned k=0;k<56u;k++){
-     unsigned h=v->hist_cursor+A3DMIX_HISTORY-k;
-     if(h>=A3DMIX_HISTORY)h-=A3DMIX_HISTORY;
-     float q=v->h[h];
-     l+=q*v->v2_coeff[0][k];r+=q*v->v2_coeff[1][k];
+     unsigned hist=(cursor+AUFAKE_V2_DELAY_SIZE-k)&(AUFAKE_V2_DELAY_SIZE-1u);
+     l+=v->v2_fir_history[0][hist]*v->v2_coeff[0][k];
+     r+=v->v2_fir_history[1][hist]*v->v2_coeff[1][k];
     }
-    l=aufake_v2_delay(v->v2_delay_line[0],v->v2_delay_cursor,v->v2_itd[0],l);
-    r=aufake_v2_delay(v->v2_delay_line[1],v->v2_delay_cursor,v->v2_itd[1],r);
-    v->v2_delay_cursor=(v->v2_delay_cursor+1u)&63u;
+    v->v2_delay_cursor=(cursor+1u)&(AUFAKE_V2_DELAY_SIZE-1u);
     v->v2_track_pos++;
    } else for(unsigned k=0;k<m->hrtf_taps && k<A3DMIX_FIR;k++){
     unsigned nk=new_start+k;

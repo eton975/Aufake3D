@@ -48,6 +48,32 @@ class Vortex2Reference(unittest.TestCase):
         self.assertIn('524288.0f',engine)
         self.assertIn('aufake_v2_delay',engine)
 
+    def test_56_tap_glides_and_per_ear_fir_order(self):
+        engine=(ROOT/'Source/Engine/win32/stream_core.h').read_text()
+        self.assertIn('if((v->v2_track_pos&63u)==0u)',engine)
+        self.assertNotIn('if(m->hrtf_mode==1u)',engine)
+        self.assertIn('v2_fir_history[2][AUFAKE_V2_DELAY_SIZE]',engine)
+        self.assertLess(engine.index('float dl=aufake_v2_delay('),
+                        engine.index('l+=v->v2_fir_history[0][hist]'))
+
+    @unittest.skipIf(sys.platform.startswith('win'),
+                     'Host-native C regression is exercised on Linux CI; Windows uses Clang/MSVC PE build')
+    def test_native_56_tap_moving_source(self):
+        import shutil
+        import subprocess
+        import tempfile
+        cc=shutil.which('clang') or shutil.which('cc')
+        if not cc:
+            self.skipTest('No host-native C compiler available')
+        source=ROOT/'Source/Engine/win32/test_vortex56_native.c'
+        with tempfile.TemporaryDirectory(prefix='aufake-v2-') as temp:
+            binary=Path(temp)/'test_vortex56'
+            subprocess.run([cc,'-O2',str(source),'-lm','-o',str(binary)],
+                           check=True,cwd=ROOT,timeout=90)
+            result=subprocess.run([str(binary)],capture_output=True,text=True,
+                                  check=True,timeout=15)
+        self.assertIn('moving fast/reference parity',result.stdout)
+
     def test_performance_policy(self):
         for folder in ('Alice_2000','Alice_2011_VorpalFix','Quake_III_117','Half_Life_1011',
                        'Unreal_Classic','Return_to_Castle_Wolfenstein'):

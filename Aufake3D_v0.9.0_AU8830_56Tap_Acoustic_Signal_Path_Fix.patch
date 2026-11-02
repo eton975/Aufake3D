@@ -1,0 +1,370 @@
+diff --git a/Docs/AU8830_HRTF_PERFORMANCE_MODES.md b/Docs/AU8830_HRTF_PERFORMANCE_MODES.md
+index 2a9b3f4..7e49aa0 100644
+--- a/Docs/AU8830_HRTF_PERFORMANCE_MODES.md
++++ b/Docs/AU8830_HRTF_PERFORMANCE_MODES.md
+@@ -6,7 +6,7 @@ A contributor-provided Vortex 2 Windows-driver register capture, corrected at
+ exactly 180 degrees, supplies 217 positions and two **56-tap signed Q15** FIR
+ filters per position, plus two interaural delay values in units of 1/512 sample.
+ `data/vortex2_hrtf_grid_15deg_fixed180.csv` is validated and converted into the
+-source header by `python tools/generate_vortex2_hrtf.py`. The full table uses
++source header by `python Tools/generate_vortex2_hrtf.py`. The full table uses
+ bilinear angular interpolation, with a single top-pole elevation at 90 degrees.
+ This is a candidate for greater spatial faithfulness, **not a reconstructed
+ AU8830 board emulator**. See the original reverse-engineering project:
+@@ -14,8 +14,8 @@ https://github.com/z2k-retro/aureal-vortex2-tools
+ 
+ | `A3D_HRTF_MODE` | Implementation | Intended use |
+ |---|---|---|
+-| `fast` (default in game launchers) | 56 taps/ear, 1 bilinear lookup per voice/256-frame block; fractional linear ITD; immediate direction updates | Normal gameplay; low scheduling overhead; A/B performance |
+-| `reference` | Same 56 taps and ITD, coefficient targets smoothed once per 64 samples; hardware-measured time-constant scaling | Accuracy research; can sound less responsive because the original card smoothed by about 130 ms |
++| `fast` (default in game launchers) | Full 56 taps/ear; bilinear target update per block; 64-sample HRTF/ITD tracking; per-ear input ITD before FIR | Normal gameplay; currently matches reference acoustically while optimization is validated |
++| `reference` | Same 56 taps, ITD and 64-sample coefficient/ITD glides as `fast` | Reference for future *output-preserving* FAST optimizations |
+ | `legacy` | Previous 24/48/96-tap KEMAR-based renderer (default 48 if selected); unchanged processing path | Rollback and regression testing |
+ | `bitexact` | **Not implemented**; explicitly warns when logging enabled and uses `reference` | Never claim bit-exact output without digital hardware comparisons |
+ 
+@@ -33,6 +33,22 @@ to `s_milesdriver`; it must **never** force the game to select A3D2 or retain
+ A3D2 when the player chooses Miles or Dolby. The original Alice selector bridges
+ remain in place. Master gain still defaults to 5.0 with a stereo-linked limiter.
+ 
++### 0.9.0 56-tap acoustic correction candidate
++
++User listening comparisons in Alice 2000 and Quake III 1.17 rated the prior
++renderer `legacy` > `reference` > `fast`. A code audit located two concrete
++errors: `fast` discarded the measured parameter glide on every 256-frame
++block, and both 56-tap modes delayed each ear's **FIR output** instead of
++feeding the FIR its delayed mono input. Both are now corrected. A native
++moving-source test exercises parameter changes across render blocks and
++requires identical `fast`/`reference` PCM. This fixes identifiable DSP
++architecture errors, **not** yet the perceptual gap versus `legacy`.
++
++The full 56-tap output, ITD scaling and angular lookup still need comparison
++against physical SQ2500/AU8830 output. A result that sounds better is not
++proof of hardware accuracy, and a synthetic host-CPU benchmark is not an
++FX-6300 or dense-game CPU measurement. All game modes remain user-selectable.
++
+ ### What we matched and what remains approximate
+ 
+ - Full signed Q15 **coefficient values** and the two-ear ITD target words are
+@@ -40,8 +56,10 @@ remain in place. Master gain still defaults to 5.0 with a stereo-linked limiter.
+ - HRTF/ITD interpolation is **float bilinear**. Input angle conversion uses a
+   lightweight atan2 approximation; this has not been checked against the
+   historical Aureal driver's exact angle quantization.
+-- HRTF smoothing in `reference` uses `0x147*64/2^21` per 64 samples; ITD uses
+-  `0xC8*64/2^19` per 64 samples. The **gain and atmospheric two-pole filters
++- Both 56-tap modes now use `0x147*64/2^21` HRTF tracking and
++  `0xC8*64/2^19` ITD tracking per 64 samples. The per-ear ITD is applied
++  to source PCM **before** that ear's FIR, matching the chip signal order.
++  The **gain and atmospheric two-pole filters
+   are still Aufake3D's existing models**, not copied AU8830 registers.
+ - FIR and fractional delays run as float, ITD uses linear fractional-delay
+   interpolation. The AU8830's per-product integer rounding/saturation and
+@@ -55,8 +73,10 @@ remain in place. Master gain still defaults to 5.0 with a stereo-linked limiter.
+ The renderer performs approximately 112 multiply-accumulates per active voice
+ per sample for its direct HRTF (two 56-tap filters). At 48 kHz that is about
+ **5.38 million MACs/voice/second** (excluding input/resampling, reflections,
+-geometry, ITD, reverb and mixing). FAST and REFERENCE have essentially the
+-same convolution count. REFERENCE adds small 64-sample tracking updates.
++geometry, ITD, reverb and mixing). FAST and REFERENCE currently have the **same**
++convolution and tracking arithmetic, by design: a speed preset must not
++remove hardware tracking. SIMD or other optimizations should be introduced
++only with a moving-source output-parity test.
+ The older 48-tap mode performs 96 direct HRTF MACs/sample. SIMD and benchmark
+ work are appropriate only after verifying that each mode preserves sound.
+ 
+@@ -68,7 +88,8 @@ output, then expose it as a separate, explicitly expensive research option.
+ 
+ On the Windows FX-6300 (and Linux/Wine), test at least Alice 2000 tower2/hedge2,
+ Alice 2011 dialogue plus provider round trips, and Quake III 1.17 dense battle
+-sounds at both `fast` and `reference`. Record dropouts, clipping and CPU load,
++sounds at `legacy` and `reference`, and verify `fast` matches `reference`
++acoustically. Record dropouts, clipping and CPU load,
+ compare all with `legacy`, and confirm `A3D.Mixer.waveOut.queue_empty_events=0`
+ where possible. In-game listening and timing are not replaceable by an offline
+ impulse test.
+diff --git a/README.md b/README.md
+index f51696f..f6d89d8 100644
+--- a/README.md
++++ b/README.md
+@@ -65,7 +65,8 @@ VirusTotal reported individual detections on several components of the earlier f
+ The 56-tap Vortex 2 filter table is included for local evaluation. See
+ [AU8830 HRTF modes](Docs/AU8830_HRTF_PERFORMANCE_MODES.md) and
+ [game compatibility status](Docs/GAME_COMPATIBILITY_V090.md).
+-`A3D_HRTF_MODE=fast` is the normal default, `reference` models measured
+-64-sample HRTF/ITD smoothing, and `legacy` restores the original renderer.
++`A3D_HRTF_MODE=fast` is the normal default; both `fast` and `reference`
++now use measured 64-sample HRTF/ITD smoothing and per-ear input delay
++before the 56-tap FIR. `legacy` restores the original renderer.
+ **No bit-exact claim or new game gameplay pass is made.**
+ 
+diff --git a/RELEASE_NOTES_V090.md b/RELEASE_NOTES_V090.md
+index eef740c..1c011e5 100644
+--- a/RELEASE_NOTES_V090.md
++++ b/RELEASE_NOTES_V090.md
+@@ -9,8 +9,12 @@ This is **not a final, gameplay-verified release**.
+   remains unavailable. Fast is the default for new game kits; legacy is an easy
+   rollback to the v0.8.18 KEMAR renderer.
+ - New bilinear lookup once per source/render block, float 56-tap FIR per ear,
+-  fractional ITD line, and hardware-style 64-sample filter/ITD smoothing in
+-  `reference`. Full hardware arithmetic, atmosphere and gain are not exact.
++  fractional input ITD before each ear's FIR, and hardware-style 64-sample
++  filter/ITD smoothing in both `fast` and `reference`. This corrects two
++  moving-source signal-path problems found during listening regression work.
++  The two 56-tap modes currently produce matching PCM; audio-performance
++  optimizations must preserve parity. Full hardware arithmetic, atmosphere
++  and gain are not exact.
+ - Retained 6×256 WaveOut buffering, 5.0 maximum gain default with limiter,
+   and correct Alice provider-switching bridges. A3D2 remains an initial
+   game preference, not a compulsory per-launch override.
+diff --git a/Source/Engine/win32/benchmark_hrtf_modes_native.c b/Source/Engine/win32/benchmark_hrtf_modes_native.c
+index 02a1836..6ea7f56 100644
+--- a/Source/Engine/win32/benchmark_hrtf_modes_native.c
++++ b/Source/Engine/win32/benchmark_hrtf_modes_native.c
+@@ -3,9 +3,11 @@
+  * Benchmarks direct DSP with identical sources, buffers and fixed listener.
+  */
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <time.h>
+ #include "stream_core.h"
+-#define BENCH_VOICES 8u
++#define BENCH_VOICES 32u
++static unsigned bench_voices=8u;
+ #define BENCH_BLOCKS 200u
+ static A3DMix m;
+ static A3DMixVoice v[BENCH_VOICES];
+@@ -13,7 +15,7 @@ static unsigned char pcm[8192],out[1024];
+ static void setup(unsigned mode){
+  a3dmix_init(&m);m.hrtf_mode=mode;m.hrtf_taps=mode?56u:48u;
+  m.master_boost=1.0f;m.reverb_wet=0.0f;m.geometry_enabled=0u;
+- for(unsigned i=0;i<BENCH_VOICES;i++){
++ for(unsigned i=0;i<bench_voices;i++){
+   a3dmix_voice_init(&v[i]);
+   v[i].active=1u;v[i].looping=1u;v[i].pos[0]=(float)(i%4u)-1.5f;
+   v[i].pos[2]=-(float)(i/4u+2u);v[i].pcm=pcm;v[i].bytes=sizeof(pcm);
+@@ -21,7 +23,14 @@ static void setup(unsigned mode){
+   a3dmix_add(&m,&v[i]);
+  }
+ }
+-int main(void){
++int main(int argc,char**argv){
++ if(argc>1){
++  char *end=0;unsigned long n=strtoul(argv[1],&end,10);
++  if(!argv[1][0]||*end||n<1u||n>BENCH_VOICES){
++   fprintf(stderr,"Usage: hrtfbench [voice_count: 1..32]\n");return 2;
++  }
++  bench_voices=(unsigned)n;
++ }
+  for(unsigned i=0;i<sizeof(pcm);i+=2){pcm[i]=(unsigned char)i;pcm[i+1]=(unsigned char)(i>>4);}
+  const char *names[3]={"legacy48","fast56","reference56"};
+  for(unsigned mode=0;mode<3;mode++){
+@@ -33,8 +42,8 @@ int main(void){
+   clock_t end=clock();
+   double seconds=(double)(end-start)/(double)CLOCKS_PER_SEC;
+   printf("%s: %.4f s CPU for %u voices x %u frames (%.1f simulated voice sec); CPU/render ratio %.3f\n",
+-    names[mode],seconds,BENCH_VOICES,BENCH_BLOCKS*256u,
+-    BENCH_VOICES*(BENCH_BLOCKS*256.0)/48000.0,
++    names[mode],seconds,bench_voices,BENCH_BLOCKS*256u,
++    bench_voices*(BENCH_BLOCKS*256.0)/48000.0,
+     seconds/((BENCH_BLOCKS*256.0)/48000.0));
+  }
+  return 0;
+diff --git a/Source/Engine/win32/stream_core.h b/Source/Engine/win32/stream_core.h
+index a23b318..fd600c4 100644
+--- a/Source/Engine/win32/stream_core.h
++++ b/Source/Engine/win32/stream_core.h
+@@ -59,10 +59,14 @@ typedef struct {
+  float cache_src[3],cache_lis[3];
+  int prev_hrir_direction;
+  unsigned hrir_initialized;
+- /* AU8830 56-tap mode: per-voice target/current, tracking and ear delays. */
++ /* AU8830 56-tap mode: per-voice target/current, tracking and ear delays.
++  * Real AU8830 processes mono -> per-ear ITD -> per-ear 56-tap HRTF FIR.
++  * Retain a separate post-ITD FIR history for each ear; delaying the already
++  * filtered stereo output gives different transients when the HRTF moves. */
+  unsigned v2_initialized,v2_delay_cursor,v2_track_pos;
+  float v2_coeff[2][56],v2_target[2][56],v2_itd[2],v2_itd_target[2];
+  float v2_delay_line[2][AUFAKE_V2_DELAY_SIZE];
++ float v2_fir_history[2][AUFAKE_V2_DELAY_SIZE];
+  /* Optional bounded, worker-owned PCM capture. The source's actual byte count
+   * and cursor still describe the complete ring; sample_at maps a frame into
+   * this immutable capture when it is present. Never dereference game PCM in
+@@ -381,11 +385,13 @@ static void a3dmix_render(A3DMix*m,unsigned char*out,unsigned frames){
+    v->h[v->hist_cursor]=x;
+    float l=0,r=0;
+    if(m->hrtf_mode){
+-    /* Hardware-style parameter tracking steps on a 64-sample boundary.
+-     * Reference alpha = 0x147*64/2^21 for HRTF and 0xc8*64/2^19 for ITD.
+-     * Fast mode skips tracking for fast direction changes and lower latency.
+-     */
+-    if(m->hrtf_mode==2u && (v->v2_track_pos&63u)==0u){
++    /* Both 56-tap modes must reproduce the same hardware-derived acoustic
++     * response. v0.9.0 FAST previously jumped straight to the new filter and
++     * ITD once every 256 samples, producing abrupt timbre/position changes.
++     * A performance mode may optimize *how* the DSP computes the result, not
++     * discard the AU8830's measured 64-sample target-to-current glide.
++     * HRTF alpha = 0x147*64/2^21; ITD alpha = 0xc8*64/2^19. */
++    if((v->v2_track_pos&63u)==0u){
+      const float h_alpha=(327.0f*64.0f)/2097152.0f;
+      const float d_alpha=(200.0f*64.0f)/524288.0f;
+      for(unsigned ear=0;ear<2u;ear++){
+@@ -394,24 +400,21 @@ static void a3dmix_render(A3DMix*m,unsigned char*out,unsigned frames){
+       v->v2_itd[ear]+=d_alpha*(v->v2_itd_target[ear]-v->v2_itd[ear]);
+      }
+     }
+-    if(m->hrtf_mode==1u){
+-     /* Fast mode interpolation already happened once per block. */
+-     if(n==0u){
+-      for(unsigned ear=0;ear<2u;ear++){
+-       for(unsigned k=0;k<56u;k++)v->v2_coeff[ear][k]=v->v2_target[ear][k];
+-       v->v2_itd[ear]=v->v2_itd_target[ear];
+-      }
+-     }
+-    }
++    /* Real chip signal order: mono PCM -> fractional per-ear ITD -> FIR.
++     * Using a shared mono history and delaying the FIR output (old code)
++     * commutes only for stationary parameters, not for moving 3D sources.
++     * Both per-ear histories are advanced at the same sample position. */
++    unsigned cursor=v->v2_delay_cursor;
++    float dl=aufake_v2_delay(v->v2_delay_line[0],cursor,v->v2_itd[0],x);
++    float dr=aufake_v2_delay(v->v2_delay_line[1],cursor,v->v2_itd[1],x);
++    v->v2_fir_history[0][cursor]=dl;
++    v->v2_fir_history[1][cursor]=dr;
+     for(unsigned k=0;k<56u;k++){
+-     unsigned h=v->hist_cursor+A3DMIX_HISTORY-k;
+-     if(h>=A3DMIX_HISTORY)h-=A3DMIX_HISTORY;
+-     float q=v->h[h];
+-     l+=q*v->v2_coeff[0][k];r+=q*v->v2_coeff[1][k];
++     unsigned hist=(cursor+AUFAKE_V2_DELAY_SIZE-k)&(AUFAKE_V2_DELAY_SIZE-1u);
++     l+=v->v2_fir_history[0][hist]*v->v2_coeff[0][k];
++     r+=v->v2_fir_history[1][hist]*v->v2_coeff[1][k];
+     }
+-    l=aufake_v2_delay(v->v2_delay_line[0],v->v2_delay_cursor,v->v2_itd[0],l);
+-    r=aufake_v2_delay(v->v2_delay_line[1],v->v2_delay_cursor,v->v2_itd[1],r);
+-    v->v2_delay_cursor=(v->v2_delay_cursor+1u)&63u;
++    v->v2_delay_cursor=(cursor+1u)&(AUFAKE_V2_DELAY_SIZE-1u);
+     v->v2_track_pos++;
+    } else for(unsigned k=0;k<m->hrtf_taps && k<A3DMIX_FIR;k++){
+     unsigned nk=new_start+k;
+diff --git a/Source/Engine/win32/test_vortex56_native.c b/Source/Engine/win32/test_vortex56_native.c
+index 8823461..b7f0c29 100644
+--- a/Source/Engine/win32/test_vortex56_native.c
++++ b/Source/Engine/win32/test_vortex56_native.c
+@@ -1,6 +1,7 @@
+ /* Hardware-reference format/DSP integration tests; no game or sound device. */
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <string.h>
+ #include "stream_core.h"
+ static A3DMix m;
+ static A3DMixVoice v;
+@@ -17,6 +18,27 @@ static unsigned long long signal_energy(void){
+  }
+  return e;
+ }
++/* Keep one copy of each 256-frame output to compare both modes during
++ * direction changes, not just while their HRTFs are stationary. */
++static void prepare(unsigned mode);
++static unsigned char moving_pcm[2][6][1024];
++static int capture_moving(unsigned mode,unsigned slot){
++ for(unsigned i=0;i<sizeof(data)/2u;i++){
++  int sample=(int)((i*97u+13u)%22001u)-11000;
++  data[2*i]=(unsigned char)sample;
++  data[2*i+1]=(unsigned char)((unsigned short)sample>>8);
++ }
++ prepare(mode);
++ for(unsigned block=0;block<6u;block++){
++  v.pos[0]=(block&1u)?-3.0f:3.0f;
++  v.pos[2]=(block&2u)?1.0f:-1.0f;
++  a3dmix_render(&m,out,256u);
++  memcpy(moving_pcm[slot][block],out,sizeof(out));
++  if(block==1u && aufake_v2_abs(v.v2_target[0][0]-v.v2_coeff[0][0])<0.01f)
++   return fail("56-tap move incorrectly jumped to target");
++ }
++ return 0;
++}
+ static void prepare(unsigned mode){
+  a3dmix_init(&m);a3dmix_voice_init(&v);
+  m.hrtf_mode=mode;m.master_boost=1.0f;m.reverb_wet=0.0f;m.hrtf_taps=56u;
+@@ -52,6 +74,24 @@ int main(void){
+  float target=v.v2_target[0][0];
+  if(closef(target,before,1.0f))return fail("movement did not change target");
+  if(!(aufake_v2_abs(v.v2_coeff[0][0]-before)<aufake_v2_abs(target-before)))return fail("tracking jumped too far");
+- printf("PASS: corrected HRTF 56 taps, channel ITD, wrap, impulse render, reference tracking\n");
++ /* The physical AU8830 delays the *mono input* separately for each ear and
++  * then applies each ear's FIR. Verify both ear-specific post-ITD histories. */
++ for(unsigned i=0;i<sizeof(data);i++)data[i]=0;
++ data[0]=0xff;data[1]=0x7f;
++ prepare(2u);v.pos[0]=1.0f;v.pos[2]=0.0f;
++ aufake_v2_lookup(90.0f,0.0f,c,d);
++ a3dmix_render(&m,out,64u);
++ unsigned far_delay=(unsigned)d[0];
++ if(far_delay<30u||far_delay>40u)return fail("unexpected hardware far-ear ITD");
++ if(v.v2_fir_history[0][0]!=0.0f)return fail("far-ear FIR input was not delayed");
++ if(v.v2_fir_history[0][far_delay]<0.8f ||
++    v.v2_fir_history[1][0]<0.8f)
++  return fail("per-ear ITD must precede 56-tap convolution");
++ /* FAST is a performance setting, not permission to change the HRTF result.
++  * Identical moving sources must have matching PCM in both 56-tap modes. */
++ if(capture_moving(1u,0u)||capture_moving(2u,1u))return 1;
++ if(memcmp(moving_pcm[0],moving_pcm[1],sizeof(moving_pcm[0]))!=0)
++  return fail("fast/reference diverged on moving 3D sources");
++ printf("PASS: corrected HRTF 56 taps, pre-FIR ITD, moving fast/reference parity, measured 64-frame glides\n");
+  return 0;
+ }
+diff --git a/Source/Engine/win32/vortex2_hrtf.h b/Source/Engine/win32/vortex2_hrtf.h
+index 63f9c42..2e3e672 100644
+--- a/Source/Engine/win32/vortex2_hrtf.h
++++ b/Source/Engine/win32/vortex2_hrtf.h
+@@ -1,10 +1,11 @@
+ /* Aufake3D 0.9.0: AU8830-derived 56-tap binaural reference path.
+  * Table provenance: user-supplied corrected register trace, see data/.
+  *
+- * FAST computes a bilinear 56-tap target once per 256-frame voice block,
+- * then performs exactly 112 FIR MACs per sample plus two fractional delays.
+- * REFERENCE uses the same FIR with the measured 64-sample coefficient and
+- * ITD glides. Neither mode claims bit-exact AU8830 integer DSP arithmetic.
++ * Both FAST and REFERENCE interpolate a 56-tap target once per 256-frame
++ * voice block and apply the measured AU8830 64-sample coefficient/ITD glides.
++ * Target tracking must not be skipped to gain speed. The per-ear fractional
++ * input delays precede the HRTF FIR, matching the original chip signal order.
++ * Neither mode claims bit-exact AU8830 integer DSP arithmetic.
+  * No heap, I/O, CRT math calls, trigonometry or interpolation in the
+  * sample-inner convolution loop. The rendering worker owns voice state.
+  */
+diff --git a/tests/test_vortex2_hrtf.py b/tests/test_vortex2_hrtf.py
+index 2817d25..8a93c48 100644
+--- a/tests/test_vortex2_hrtf.py
++++ b/tests/test_vortex2_hrtf.py
+@@ -41,6 +41,32 @@ class Vortex2Reference(unittest.TestCase):
+         self.assertIn('524288.0f',engine)
+         self.assertIn('aufake_v2_delay',engine)
+ 
++    def test_56_tap_glides_and_per_ear_fir_order(self):
++        engine=(ROOT/'Source/Engine/win32/stream_core.h').read_text()
++        self.assertIn('if((v->v2_track_pos&63u)==0u)',engine)
++        self.assertNotIn('if(m->hrtf_mode==1u)',engine)
++        self.assertIn('v2_fir_history[2][AUFAKE_V2_DELAY_SIZE]',engine)
++        self.assertLess(engine.index('float dl=aufake_v2_delay('),
++                        engine.index('l+=v->v2_fir_history[0][hist]'))
++
++    @unittest.skipIf(sys.platform.startswith('win'),
++                     'Host-native C regression is exercised on Linux CI; Windows uses Clang/MSVC PE build')
++    def test_native_56_tap_moving_source(self):
++        import shutil
++        import subprocess
++        import tempfile
++        cc=shutil.which('clang') or shutil.which('cc')
++        if not cc:
++            self.skipTest('No host-native C compiler available')
++        source=ROOT/'Source/Engine/win32/test_vortex56_native.c'
++        with tempfile.TemporaryDirectory(prefix='aufake-v2-') as temp:
++            binary=Path(temp)/'test_vortex56'
++            subprocess.run([cc,'-O2',str(source),'-lm','-o',str(binary)],
++                           check=True,cwd=ROOT,timeout=90)
++            result=subprocess.run([str(binary)],capture_output=True,text=True,
++                                  check=True,timeout=15)
++        self.assertIn('moving fast/reference parity',result.stdout)
++
+     def test_performance_policy(self):
+         for folder in ('Alice_2000','Alice_2011_VorpalFix','Quake_III_117','Half_Life_1011',
+                        'Unreal_Classic','Return_to_Castle_Wolfenstein'):

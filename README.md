@@ -65,7 +65,8 @@ VirusTotal reported individual detections on several components of the earlier f
 The 56-tap Vortex 2 filter table is included for local evaluation. See
 [AU8830 HRTF modes](Docs/AU8830_HRTF_PERFORMANCE_MODES.md) and
 [game compatibility status](Docs/GAME_COMPATIBILITY_V090.md).
-`A3D_HRTF_MODE=fast` is the normal default, `reference` models measured
-64-sample HRTF/ITD smoothing, and `legacy` restores the original renderer.
+`A3D_HRTF_MODE=fast` is the normal default; both `fast` and `reference`
+now use measured 64-sample HRTF/ITD smoothing and per-ear input delay
+before the 56-tap FIR. `legacy` restores the original renderer.
 **No bit-exact claim or new game gameplay pass is made.**
 

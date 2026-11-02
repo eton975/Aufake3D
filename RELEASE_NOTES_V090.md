@@ -9,8 +9,12 @@ This is **not a final, gameplay-verified release**.
   remains unavailable. Fast is the default for new game kits; legacy is an easy
   rollback to the v0.8.18 KEMAR renderer.
 - New bilinear lookup once per source/render block, float 56-tap FIR per ear,
-  fractional ITD line, and hardware-style 64-sample filter/ITD smoothing in
-  `reference`. Full hardware arithmetic, atmosphere and gain are not exact.
+  fractional input ITD before each ear's FIR, and hardware-style 64-sample
+  filter/ITD smoothing in both `fast` and `reference`. This corrects two
+  moving-source signal-path problems found during listening regression work.
+  The two 56-tap modes currently produce matching PCM; audio-performance
+  optimizations must preserve parity. Full hardware arithmetic, atmosphere
+  and gain are not exact.
 - Retained 6×256 WaveOut buffering, 5.0 maximum gain default with limiter,
   and correct Alice provider-switching bridges. A3D2 remains an initial
   game preference, not a compulsory per-launch override.

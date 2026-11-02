@@ -1,10 +1,11 @@
 /* Aufake3D 0.9.0: AU8830-derived 56-tap binaural reference path.
  * Table provenance: user-supplied corrected register trace, see data/.
  *
- * FAST computes a bilinear 56-tap target once per 256-frame voice block,
- * then performs exactly 112 FIR MACs per sample plus two fractional delays.
- * REFERENCE uses the same FIR with the measured 64-sample coefficient and
- * ITD glides. Neither mode claims bit-exact AU8830 integer DSP arithmetic.
+ * Both FAST and REFERENCE interpolate a 56-tap target once per 256-frame
+ * voice block and apply the measured AU8830 64-sample coefficient/ITD glides.
+ * Target tracking must not be skipped to gain speed. The per-ear fractional
+ * input delays precede the HRTF FIR, matching the original chip signal order.
+ * Neither mode claims bit-exact AU8830 integer DSP arithmetic.
  * No heap, I/O, CRT math calls, trigonometry or interpolation in the
  * sample-inner convolution loop. The rendering worker owns voice state.
  */
