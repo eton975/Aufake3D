@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from scripts.host_toolchain import program, native_mock_ready, windows_complete_msvc_toolset
 
-VERSION = '0.9.1'
+VERSION = '0.9.2'
 DIST = ROOT / 'dist'
 ENGINE = ROOT / 'Source' / 'Engine'
 TEMPLATES = ROOT / 'packaging' / 'Game_Kits'
@@ -199,6 +199,7 @@ def stage_release(proxy: Path, bridge: Path) -> Path:
             add_file(contents, 'Tools/'+source.relative_to(ROOT/'packaging/Tools').as_posix(), source)
     add_file(contents, 'Tools/check_game_identity.py', ROOT/'Tools/check_game_identity.py')
     add_file(contents, 'Tools/scan_game_a3d_markers.py', ROOT/'Tools/scan_game_a3d_markers.py')
+    add_file(contents, 'Tools/export_rtcw_bsp_acoustics.py', ROOT/'Tools/export_rtcw_bsp_acoustics.py')
     for name in ('a3d.dll','a3dapi.dll'):
         add_file(contents, 'Universal_Core/'+name, builds[name])
     for name in ('a3d-comtest.exe','a3d-miles-enum.exe','a3d-miles-open.exe'):
@@ -210,7 +211,7 @@ def stage_release(proxy: Path, bridge: Path) -> Path:
         add_file(contents, name, ROOT/name)
     for name in ('MANUAL_INSTALLATION.md','EASY_INSTALL_WINDOWS.md',
                  'Aufake3D_v0.8.18_Quick_Start.pdf','SECURITY_REVIEW_V0814_RC1.md','AU8830_HRTF_PERFORMANCE_MODES.md','GAME_COMPATIBILITY_V090.md',
-                 'UNIFIED_ENGINE_ALICE2011_MIGRATION.md', 'REPRODUCIBLE_BUILDS_V091.md'):
+                 'UNIFIED_ENGINE_ALICE2011_MIGRATION.md', 'REPRODUCIBLE_BUILDS_V091.md', 'RTCW_BSP_EXPORT_V092.md'):
         p=ROOT/'Docs'/name
         if p.is_file():add_file(contents, 'Docs/'+name, p)
     add_file(contents, 'START_HERE.txt', ROOT/'START_HERE.txt')

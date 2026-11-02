@@ -86,7 +86,7 @@ class Vortex2Reference(unittest.TestCase):
 
     def test_expanded_kits_are_probes_not_false_claims(self):
         j=json.loads((ROOT/'packaging/Game_Kits/INSTALL_MAP.json').read_text())
-        self.assertEqual(j['version'],'0.9.1')
+        self.assertEqual(j['version'],'0.9.2')
         self.assertEqual(set(j['profiles']),{'alice2000','alice2011','quake3','halflife','unreal','rtcw','gta3','gtavc'})
         for name in ('unreal','rtcw'):
             self.assertEqual(len(j['profiles'][name]['files']),5)

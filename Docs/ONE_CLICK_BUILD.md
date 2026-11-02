@@ -1,4 +1,4 @@
-# One-command Windows and Linux build (v0.9.1 reproducibility-gated candidate)
+# One-command Windows and Linux build (v0.9.2 reproducibility-gated candidate)
 
 **Windows 10/11:** double-click **`BUILD_WINDOWS.cmd`** in the repository root.
 **Linux:** run **`./BUILD_LINUX.sh`** in the repository root.
@@ -128,7 +128,7 @@ verified toolchains.
 - `dist/miles-local/mss32.dll` — independently authored 331-export Miles proxy
 - `Source/Engine/classic2000/alice-a3d-bridge.exe` — checked Alice 2000 launcher
 - The other 39-step recipe outputs, including Half-Life, Quake III and Unreal helpers
-- `dist/Aufake3D_v0.9.1_Local_Runtime.zip` — assembled from **source-only**
+- `dist/Aufake3D_v0.9.2_Local_Runtime.zip` — assembled from **source-only**
   launcher/manifests templates in `packaging/Game_Kits/`, not from an old binary ZIP.
   Includes ready-to-copy kits for Alice 2000, Alice 2011, Quake III 1.17 and
   Half-Life, plus universal DLLs, the reversible installer scripts, manual

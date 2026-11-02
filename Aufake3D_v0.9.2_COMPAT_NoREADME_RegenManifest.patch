@@ -1,0 +1,787 @@
+diff --git a/.github/workflows/source-ci.yml b/.github/workflows/source-ci.yml
+index 9e1e27b..e6769be 100644
+--- a/.github/workflows/source-ci.yml
++++ b/.github/workflows/source-ci.yml
+@@ -44,7 +44,7 @@ jobs:
+         uses: actions/upload-artifact@v7
+         with:
+           name: Aufake3D-Win32-${{ runner.os }}-${{ github.run_number }}
+-          path: dist/Aufake3D_v0.9.1_Local_Runtime.zip
++          path: dist/Aufake3D_v0.9.2_Local_Runtime.zip
+           if-no-files-found: error
+       - name: Upload individual DLLs for inspection
+         uses: actions/upload-artifact@v7
+diff --git a/Docs/ONE_CLICK_BUILD.md b/Docs/ONE_CLICK_BUILD.md
+index bae9e67..42b11a4 100644
+--- a/Docs/ONE_CLICK_BUILD.md
++++ b/Docs/ONE_CLICK_BUILD.md
+@@ -1,4 +1,4 @@
+-# One-command Windows and Linux build (v0.9.1 reproducibility-gated candidate)
++# One-command Windows and Linux build (v0.9.2 reproducibility-gated candidate)
+ 
+ **Windows 10/11:** double-click **`BUILD_WINDOWS.cmd`** in the repository root.
+ **Linux:** run **`./BUILD_LINUX.sh`** in the repository root.
+@@ -128,7 +128,7 @@ verified toolchains.
+ - `dist/miles-local/mss32.dll` — independently authored 331-export Miles proxy
+ - `Source/Engine/classic2000/alice-a3d-bridge.exe` — checked Alice 2000 launcher
+ - The other 39-step recipe outputs, including Half-Life, Quake III and Unreal helpers
+-- `dist/Aufake3D_v0.9.1_Local_Runtime.zip` — assembled from **source-only**
++- `dist/Aufake3D_v0.9.2_Local_Runtime.zip` — assembled from **source-only**
+   launcher/manifests templates in `packaging/Game_Kits/`, not from an old binary ZIP.
+   Includes ready-to-copy kits for Alice 2000, Alice 2011, Quake III 1.17 and
+   Half-Life, plus universal DLLs, the reversible installer scripts, manual
+diff --git a/Docs/RTCW_BSP_EXPORT_V092.md b/Docs/RTCW_BSP_EXPORT_V092.md
+new file mode 100644
+index 0000000..83c4339
+--- /dev/null
++++ b/Docs/RTCW_BSP_EXPORT_V092.md
+@@ -0,0 +1,79 @@
++# v0.9.2: deterministic RtCW BSP v47 surface-inventory exporter
++
++**Research-only intermediate — not a playable RtCW A3D mod.** This tool is for
++preparing data before we implement the real `IA3dGeom` / `IA3dMaterial` backend.
++The output is **not** imported by today's Aufake3D audio DLLs, and it is not
++accepted directly by the Aureal Vortex 2 drivers.
++
++## What it actually reads
++
++`Tools/export_rtcw_bsp_acoustics.py` reads **original Return to Castle
++Wolfenstein (`IBSP`, version 47)** map files, either as individual `.bsp`
++files or directly from an original user-owned `.pk3` archive. It validates
++lump bounds/overlap and index references, and extracts planar and triangle-soup
++**rendering-surface candidates** (not collision brush planes). Curved patches,
++flares and other unsupported surface types are counted but **not exported**.
++The resulting `.a3dmap.json` contains original BSP vertex coordinates,
++indexed candidate triangles, shader names, original surface/content flags,
++uncalibrated material hints, source BSP SHA-256, and explicit completeness
++warnings.
++
++**No acoustic absorption/transmission coefficients are invented.** RtCW
++surface flags describe game materials, not measured frequency-dependent
++acoustic properties. Visual triangles can also fail to represent collision
++walls or dynamic doors. The output must not be treated as an accurate
++acoustic scene until a validated geometry stage (brush clipping, patch
++conversion, deduplication and dynamic scene updates) is implemented.
++
++## Usage (modern Windows PowerShell / Debian terminal)
++
++Requires Python 3.10+; **the exporter itself is an offline developer tool and
++is not intended to run under Windows 95/98/ME/2000**.
++
++```powershell
++python Tools/export_rtcw_bsp_acoustics.py "C:\Games\RtCW\Main\pak0.pk3" --list-maps
++python Tools/export_rtcw_bsp_acoustics.py "C:\Games\RtCW\Main\pak0.pk3" --map "maps/escape1.bsp" -o "escape1.a3dmap.json"
++```
++
++The map name above is an *example only*; use the name printed by `--list-maps`
++for your particular archive. On Linux the same commands work with `python3`.
++For a single `.bsp` file:
++
++```bash
++python3 Tools/export_rtcw_bsp_acoustics.py /path/to/level.bsp -o level.a3dmap.json
++```
++
++By default the tool refuses to overwrite any output. Use `--overwrite` only
++when intentional. An invalid or unsupported map causes a nonzero exit, and
++input archives/maps are never modified. The default limit is 250,000 exported
++candidate triangles; oversized or malformed input is rejected, not silently
++truncated. Do not distribute commercial game maps or generated asset-derived
++geometry without verifying applicable rights.
++
++## Reproducibility and testing
++
++- The JSON is UTF-8/ASCII with sorted keys, stable vertex/triangle order, LF
++  line endings, no generated timestamps, and no absolute source path.
++- `source_bsp_sha256` binds output to the precise original game data.
++- `tests/test_rtcw_bsp_export_v092.py` uses synthetic BSP/PK3 assets to test
++  valid maps, malformed ranges, unsupported patches, non-overwrite safety and
++  byte-identical output from separate directories.
++- A matching result on different hosts has not yet been established for all
++  real game maps; Python/runtime versions should be pinned for strict release
++  qualification.
++
++## Next work for native AU8830/Vortex 2 compatibility
++
++1. Verify actual RtCW v47 structures against representative licensed maps.
++2. Derive a conservative acoustic scene from collision brushes and surfaces,
++   with explicit, calibratable material reflectance/transmission tables.
++3. Simplify and budget the geometry for actual Vortex 2 driver limits.
++4. Implement an optional RtCW engine audio backend calling **original Aureal
++   A3D 2.0 COM methods** on period Windows and Aufake3D on modern systems.
++5. Qualify hardware operation separately with proper v2041/v2048 Win9x drivers
++   and the distinct Windows 2000 driver series. No hardware functionality has
++   been demonstrated by this exporter.
++
++The current RtCW `Game_Kits/Return_to_Castle_Wolfenstein` folder remains
++**probe-only**. Copying those DLLs beside retail `WolfSP.exe` does not add
++A3D support to the original executable.
+diff --git a/RELEASE_NOTES_V092.md b/RELEASE_NOTES_V092.md
+new file mode 100644
+index 0000000..0bbe4f3
+--- /dev/null
++++ b/RELEASE_NOTES_V092.md
+@@ -0,0 +1,37 @@
++# Aufake3D v0.9.2 — deterministic RtCW BSP surface-export research candidate
++
++**Not a gameplay-certified or period-hardware-compatible RtCW mod.**
++
++## New
++
++- Added `Tools/export_rtcw_bsp_acoustics.py` for validated deterministic
++  extraction of *visual planar / triangle-soup candidate surfaces* from original
++  RtCW BSP v47 maps or user-owned PK3 archives, with source SHA-256 and shader
++  flag/material-hint provenance.
++- Refuses malformed geometry, non-finite vertex positions, unsafe output
++  overwrite and excessive triangle counts; counts unsupported curved patches.
++  Does not modify or distribute original game maps.
++- Added synthetic BSP/PK3 regression tests for parser safety, stable serialization,
++  and preserving source data. The exporter is included in runtime `Tools/` and
++  documented in `Docs/RTCW_BSP_EXPORT_V092.md`.
++- Bumped active build, runtime archive and installer metadata to v0.9.2.
++
++## Kept unchanged from v0.9.1
++
++- Shared 56-tap AU8830 Reference/Fast and 48-tap Legacy rendering, fixed
++  WaveOut 6 x 256 buffering, master gain 5.0 default, and existing geometry
++  diagnostic and provider-switch behavior.
++- The default packaging build remains gated by **three exact same-toolchain
++  builds**, comparing every generated PE binary and complete runtime ZIP.
++- The experimental GTA III/Vice City, Unreal, Half-Life and RtCW kits retain
++  their existing unverified status. The tested Alice and Quake III paths have
++  not been modified for this milestone.
++
++## Not yet delivered
++
++- Collision-brush reconstruction, curved surface tessellation, geometry
++  simplification, BSP->Aureal COM submission and driver material calibration.
++- A playable source-modified RtCW executable, physical Vortex 2 operation,
++  Windows 95/98/ME/2000 validation, or actual real-game map testing.
++- Demonstrated identical Windows-vs-Debian-vs-GitHub checksums; local identical
++  same-toolchain checks do not guarantee cross-platform bit identity.
+diff --git a/START_HERE.txt b/START_HERE.txt
+index 7490dfc..860be92 100644
+--- a/START_HERE.txt
++++ b/START_HERE.txt
+@@ -1,7 +1,12 @@
+-AUFAKE3D v0.9.0 - START HERE
++AUFAKE3D v0.9.2 - START HERE
+ =============================
+ Simple Windows 10/11 installation instructions
+ 
++New research-only tool: Tools\export_rtcw_bsp_acoustics.py
++This does NOT add A3D audio to unmodified Return to Castle Wolfenstein.
++See Docs\RTCW_BSP_EXPORT_V092.md.
++
++
+ 1. You need the BUILT RUNTIME ZIP, not the source-code ZIP.
+    Extract the entire runtime ZIP before installing anything.
+ 2. Back up your complete, working game folder. If Aufake3D was
+@@ -48,7 +53,7 @@ from the actual game folder. Wine support differs by game and is
+ still experimental for Alice 2011. See Docs/MANUAL_INSTALLATION.md
+ in the original runtime package for more information.
+ 
+-This v0.9.0 package is a release candidate, not a fully tested
++This v0.9.2 package is a development candidate, not a fully tested
+ universal compatibility release. Half-Life 1.0.1.1 has an
+ experimental kit; it is not covered by the main quick start.
+ 
+diff --git a/Source/Engine/README.md b/Source/Engine/README.md
+index d52e09e..a126f44 100644
+--- a/Source/Engine/README.md
++++ b/Source/Engine/README.md
+@@ -1,4 +1,4 @@
+-# Engine source — current guide for v0.9.1
++# Engine source — current guide for v0.9.2
+ 
+ The authoritative source map is [Docs/SOURCE_ARCHITECTURE.md](../../Docs/SOURCE_ARCHITECTURE.md).
+ Build from the repository root with `python3 scripts/build_engine.py`; do not
+diff --git a/Tools/export_rtcw_bsp_acoustics.py b/Tools/export_rtcw_bsp_acoustics.py
+new file mode 100644
+index 0000000..fbaef8a
+--- /dev/null
++++ b/Tools/export_rtcw_bsp_acoustics.py
+@@ -0,0 +1,258 @@
++#!/usr/bin/env python3
++"""Deterministic, *offline* RtCW (IBSP v47) surface inventory/export.
++
++This exports visual planar/triangle-soup mesh candidates, NOT a complete
++collision/acoustic mesh. No native A3D COM calls and no Vortex 2 integration.
++Original game/map assets are never modified or included in the distribution.
++"""
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++import math
++import os
++from pathlib import Path
++import struct
++import sys
++import tempfile
++import zipfile
++
++BSP_VERSION = 47
++LUMP_COUNT = 17
++HEADER_SIZE = 8 + 8 * LUMP_COUNT
++LUMP_SHADERS, LUMP_DRAWVERTS, LUMP_MESHVERTS, LUMP_SURFACES = 1, 10, 11, 13
++SHADER_SIZE, DRAWVERT_SIZE, SURFACE_SIZE = 72, 44, 104
++MAX_BSP_BYTES = 128 * 1024 * 1024
++MAX_TRIANGLES = 250000
++# RtCW surface flag names. These are *hints*, never calibrated acoustic values.
++SURFACE_HINTS = (
++    (0x02000000, 'carpet'), (0x00200000, 'glass'),
++    (0x00040000, 'wood'), (0x00001000, 'metal'),
++    (0x00100000, 'gravel'), (0x00080000, 'grass'),
++    (0x00400000, 'snow'), (0x00800000, 'roof'),
++    (0x01000000, 'rubble'), (0x00000040, 'ceramic'),
++)
++
++
++class BSPError(ValueError):
++    """Unsafe, unsupported or malformed map data."""
++
++
++def select_bsp(path: Path, map_name: str | None, list_only: bool = False) -> tuple[bytes, str]:
++    """Read a direct BSP or a single named map from a PK3 without extraction."""
++    if path.suffix.lower() == '.bsp':
++        if list_only:
++            return b'', path.name
++        if map_name:
++            raise BSPError('--map is only valid for a .pk3 archive')
++        if path.stat().st_size > MAX_BSP_BYTES:
++            raise BSPError('BSP exceeds the 128 MiB safety limit')
++        return path.read_bytes(), path.name
++    if path.suffix.lower() != '.pk3':
++        raise BSPError('Input must be a .bsp map or a .pk3 map archive')
++    try:
++        with zipfile.ZipFile(path) as archive:
++            maps = sorted((i for i in archive.infolist()
++                           if not i.is_dir() and i.filename.lower().startswith('maps/')
++                           and i.filename.lower().endswith('.bsp')),
++                          key=lambda i: i.filename)
++            if not maps:
++                raise BSPError('PK3 contains no maps/*.bsp files')
++            if list_only:
++                return b'', '\n'.join(i.filename for i in maps)
++            if map_name is None:
++                if len(maps) != 1:
++                    raise BSPError('PK3 has multiple maps; choose one with --map (see --list-maps)')
++                selected = maps[0]
++            else:
++                found = [i for i in maps if i.filename == map_name]
++                if len(found) != 1:
++                    raise BSPError('Named map not found (case-sensitive): ' + map_name)
++                selected = found[0]
++            if selected.file_size > MAX_BSP_BYTES:
++                raise BSPError('BSP exceeds the 128 MiB safety limit')
++            with archive.open(selected) as stream:
++                data = stream.read(MAX_BSP_BYTES + 1)
++            if len(data) > MAX_BSP_BYTES:
++                raise BSPError('Decompressed BSP exceeds the safety limit')
++            return data, selected.filename
++    except (zipfile.BadZipFile, RuntimeError, OSError) as exc:
++        raise BSPError('Invalid/unreadable PK3 archive: ' + str(exc)) from exc
++
++
++def checked_lumps(data: bytes) -> list[memoryview]:
++    if len(data) < HEADER_SIZE or data[:4] != b'IBSP':
++        raise BSPError('Missing or truncated IBSP header')
++    version = struct.unpack_from('<i', data, 4)[0]
++    if version != BSP_VERSION:
++        raise BSPError(f'Expected RtCW BSP v47, found v{version}')
++    regions: list[tuple[int, int, int]] = []
++    lumps: list[memoryview] = []
++    for i in range(LUMP_COUNT):
++        offset, length = struct.unpack_from('<ii', data, 8 + i * 8)
++        if offset < 0 or length < 0 or offset > len(data) or length > len(data) - offset:
++            raise BSPError(f'Lump {i} has invalid offset/size')
++        if length:
++            if offset < HEADER_SIZE:
++                raise BSPError(f'Lump {i} overlaps BSP header')
++            regions.append((offset, offset + length, i))
++        lumps.append(memoryview(data)[offset:offset + length])
++    regions.sort()
++    for left, right in zip(regions, regions[1:]):
++        if right[0] < left[1]:
++            raise BSPError(f'Lumps {left[2]} and {right[2]} overlap')
++    for i, size in ((LUMP_SHADERS, SHADER_SIZE), (LUMP_DRAWVERTS, DRAWVERT_SIZE),
++                    (LUMP_MESHVERTS, 4), (LUMP_SURFACES, SURFACE_SIZE)):
++        if len(lumps[i]) % size:
++            raise BSPError(f'Lump {i} is not a multiple of {size} bytes')
++    return lumps
++
++
++def decode_shader_name(raw: bytes) -> str:
++    name = raw.split(b'\x00', 1)[0]
++    if not name:
++        raise BSPError('Shader entry with empty name')
++    try:
++        return name.decode('ascii')
++    except UnicodeDecodeError as exc:
++        raise BSPError('Non-ASCII shader name; refusing ambiguous decoding') from exc
++
++
++def export_map(data: bytes, *, max_triangles: int = MAX_TRIANGLES) -> dict:
++    if max_triangles < 1 or max_triangles > 2000000:
++        raise BSPError('--max-triangles must be between 1 and 2000000')
++    lumps = checked_lumps(data)
++    shaders = []
++    for pos in range(0, len(lumps[LUMP_SHADERS]), SHADER_SIZE):
++        raw = lumps[LUMP_SHADERS][pos:pos + SHADER_SIZE]
++        name = decode_shader_name(bytes(raw[:64]))
++        flags, contents = struct.unpack_from('<II', raw, 64)
++        hints = [hint for flag, hint in SURFACE_HINTS if flags & flag]
++        shaders.append({'name': name, 'surface_flags': flags, 'content_flags': contents,
++                        'material_hints': hints})
++
++    drawverts = lumps[LUMP_DRAWVERTS]
++    total_verts = len(drawverts) // DRAWVERT_SIZE
++    vertices: list[list[float]] = []
++    for pos in range(0, len(drawverts), DRAWVERT_SIZE):
++        point = struct.unpack_from('<3f', drawverts, pos)
++        if not all(math.isfinite(v) for v in point):
++            raise BSPError('Non-finite draw vertex coordinate')
++        vertices.append([float(x) for x in point])
++
++    mesh = lumps[LUMP_MESHVERTS]
++    surfaces = lumps[LUMP_SURFACES]
++    triangles: list[dict] = []
++    skipped_degenerate = 0
++    skipped_types: dict[str, int] = {}
++    for off in range(0, len(surfaces), SURFACE_SIZE):
++        sid = off // SURFACE_SIZE
++        shader, _fog, typ, first_vert, num_vert, first_index, num_index = struct.unpack_from('<7i', surfaces, off)
++        if not 0 <= shader < len(shaders):
++            raise BSPError(f'Surface {sid} references missing shader {shader}')
++        if min(first_vert, num_vert, first_index, num_index) < 0:
++            raise BSPError(f'Surface {sid} has negative vertex/index range')
++        if first_vert > total_verts or num_vert > total_verts - first_vert:
++            raise BSPError(f'Surface {sid} has out-of-bounds draw vertices')
++        mesh_count = len(mesh) // 4
++        if first_index > mesh_count or num_index > mesh_count - first_index:
++            raise BSPError(f'Surface {sid} has out-of-bounds mesh indices')
++        # RtCW MST_PLANAR=1, MST_PATCH=2, MST_TRIANGLE_SOUP=3.
++        # Curved patches and flares require specialised tessellation; never
++        # silently present them as represented acoustic geometry.
++        if typ not in (1, 3):
++            key = str(typ)
++            skipped_types[key] = skipped_types.get(key, 0) + 1
++            continue
++        if num_index % 3:
++            raise BSPError(f'Surface {sid}: mesh index count not divisible by three')
++        for index in range(first_index, first_index + num_index, 3):
++            relative = struct.unpack_from('<3i', mesh, index * 4)
++            if not all(0 <= v < num_vert for v in relative):
++                raise BSPError(f'Surface {sid}: mesh vertex index outside its vertex span')
++            ids = [first_vert + v for v in relative]
++            a, b, c = (vertices[v] for v in ids)
++            e1 = [b[j] - a[j] for j in range(3)]
++            e2 = [c[j] - a[j] for j in range(3)]
++            cross = [e1[1]*e2[2] - e1[2]*e2[1],
++                     e1[2]*e2[0] - e1[0]*e2[2],
++                     e1[0]*e2[1] - e1[1]*e2[0]]
++            if sum(v*v for v in cross) < 1e-12:
++                skipped_degenerate += 1
++                continue
++            triangles.append({'vertex_indices': ids, 'shader_index': shader, 'surface_index': sid})
++            if len(triangles) > max_triangles:
++                raise BSPError(f'Candidate triangles exceed --max-triangles={max_triangles}; refusing to truncate')
++    return {
++        'format': 'aufake3d-rtcw-static-surface-candidates', 'format_version': 1,
++        'source_bsp_sha256': hashlib.sha256(data).hexdigest(),
++        'source_bsp_version': BSP_VERSION,
++        'coordinate_units': 'original RtCW/id Tech 3 game units; not converted to metres',
++        'geometry_complete': False,
++        'warning': ('VISUAL PLANAR/MESH SURFACES ONLY: collision brushes, curved patches, '
++                    'moving doors, correct acoustic mesh simplification and native A3D '
++                    'COM submission are NOT implemented; material hints are not coefficients.'),
++        'shaders': shaders, 'vertices': vertices, 'triangles': triangles,
++        'statistics': {'draw_vertices': len(vertices), 'surfaces': len(surfaces)//SURFACE_SIZE,
++                       'exported_triangles': len(triangles), 'skipped_degenerate': skipped_degenerate,
++                       'skipped_surface_types': skipped_types},
++    }
++
++
++def encode_map(model: dict) -> bytes:
++    # Always LF, no timestamp, path, locale or machine-specific values.
++    return (json.dumps(model, ensure_ascii=True, allow_nan=False, sort_keys=True,
++                       separators=(',', ':')) + '\n').encode('ascii')
++
++
++def main(argv: list[str] | None = None) -> int:
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('input', type=Path, help='An original map BSP or PK3 containing maps/*.bsp')
++    parser.add_argument('-o', '--output', type=Path, help='Output JSON acoustic candidate inventory')
++    parser.add_argument('--map', dest='map_name', help='Exact internal maps/*.bsp name from PK3')
++    parser.add_argument('--list-maps', action='store_true', help='List BSP entries in a PK3; write nothing')
++    parser.add_argument('--max-triangles', type=int, default=MAX_TRIANGLES)
++    parser.add_argument('--overwrite', action='store_true', help='Explicitly allow replacing an output JSON file')
++    args = parser.parse_args(argv)
++    try:
++        data, selected = select_bsp(args.input, args.map_name, args.list_maps)
++        if args.list_maps:
++            print(selected)
++            return 0
++        dst = args.output or args.input.with_name(Path(selected).stem + '.a3dmap.json')
++        if dst.resolve() == args.input.resolve():
++            raise BSPError('Refusing to overwrite the original BSP or PK3')
++        if dst.exists() and not args.overwrite:
++            raise BSPError('Output already exists; pass --overwrite explicitly')
++        model = export_map(data, max_triangles=args.max_triangles)
++        blob = encode_map(model)
++        dst.parent.mkdir(parents=True, exist_ok=True)
++        with tempfile.NamedTemporaryFile(dir=dst.parent, prefix='.a3dmap-', suffix='.tmp',
++                                         delete=False) as tmp:
++            temporary = Path(tmp.name)
++            try:
++                tmp.write(blob)
++                tmp.flush()
++                os.fsync(tmp.fileno())
++            except BaseException:
++                temporary.unlink(missing_ok=True)
++                raise
++        try:
++            os.replace(temporary, dst)
++        finally:
++            temporary.unlink(missing_ok=True)
++        print('Map:', selected)
++        print('Output:', dst)
++        print('Candidate triangles:', model['statistics']['exported_triangles'])
++        print('Skipped surface types:', model['statistics']['skipped_surface_types'])
++        print('SHA-256:', hashlib.sha256(blob).hexdigest())
++        print('CAUTION: Not a complete acoustic map and not compatible with original Aureal drivers directly.')
++        return 0
++    except (BSPError, OSError) as exc:
++        print('ERROR:', exc, file=sys.stderr)
++        return 2
++
++
++if __name__ == '__main__':
++    sys.exit(main())
+diff --git a/packaging/Game_Kits/INSTALL_MAP.json b/packaging/Game_Kits/INSTALL_MAP.json
+index 86a99b6..79480a3 100644
+--- a/packaging/Game_Kits/INSTALL_MAP.json
++++ b/packaging/Game_Kits/INSTALL_MAP.json
+@@ -1,5 +1,5 @@
+ {
+-  "version": "0.9.1",
++  "version": "0.9.2",
+   "format_revision": "layout1-doc-polish-v0814rc1",
+   "profiles": {
+     "alice2000": {
+diff --git a/packaging/Tools/aufake3d.py b/packaging/Tools/aufake3d.py
+index 3b03f2a..f568e21 100644
+--- a/packaging/Tools/aufake3d.py
++++ b/packaging/Tools/aufake3d.py
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""Aufake3D v0.9.1 reversible game-local installer; Python 3 stdlib only.
++"""Aufake3D v0.9.2 reversible game-local installer; Python 3 stdlib only.
+ Does not modify game executables or system registry. Profiles are not compatibility guarantees.
+ """
+ import argparse, hashlib, json, os, shutil, sys, time
+@@ -63,7 +63,7 @@ def install(profile, exe, dry_run=False):
+         """
+     exe=validate(profile,exe)
+     mapping=overlay(profile,exe)
+-    if (exe.parent/'.aufake3d_current.json').exists():raise ValueError('Existing v0.9.1 receipt found; roll back before reinstalling')
++    if (exe.parent/'.aufake3d_current.json').exists():raise ValueError('Existing v0.9.2 receipt found; roll back before reinstalling')
+     target_root=exe.parent
+     for dest,src in mapping.items():
+         if not src.is_file() or not dest.parent.is_dir():raise ValueError(f'Missing install input or target folder: {src} -> {dest}')
+@@ -80,7 +80,7 @@ def install(profile, exe, dry_run=False):
+     if dry_run:return
+     backup=target_root/'.aufake3d_backup_v090'/str(time.time_ns())
+     backup.mkdir(parents=True,exist_ok=False)
+-    receipt={'profile':profile,'game_exe':str(exe),'game_exe_sha256':sha(exe),'files':snapshot,'backup_dir':str(backup),'release':'0.9.1','created_at':time.strftime('%Y-%m-%dT%H:%M:%S%z')}
++    receipt={'profile':profile,'game_exe':str(exe),'game_exe_sha256':sha(exe),'files':snapshot,'backup_dir':str(backup),'release':'0.9.2','created_at':time.strftime('%Y-%m-%dT%H:%M:%S%z')}
+     try:
+         for item in snapshot:
+             dest=target_root/item['rel']
+@@ -111,7 +111,7 @@ def rollback(exe):
+         Refuse rollback if a user edited files after installation.
+         """
+     exe=exe.expanduser().resolve(strict=True);root=exe.parent;rp=root/'.aufake3d_current.json'
+-    if not rp.is_file():raise ValueError('No Aufake3D v0.9.1 install receipt found')
++    if not rp.is_file():raise ValueError('No Aufake3D v0.9.2 install receipt found')
+     r=json.loads(rp.read_text(encoding='utf-8-sig'))
+     if r['game_exe']!=str(exe) or sha(exe)!=r['game_exe_sha256']:
+         raise ValueError('Target EXE differs from original installation; refusing rollback')
+diff --git a/scripts/build.py b/scripts/build.py
+index 0f73399..0bf2c7d 100644
+--- a/scripts/build.py
++++ b/scripts/build.py
+@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
+ sys.path.insert(0, str(ROOT))
+ from scripts.host_toolchain import program, native_mock_ready, windows_complete_msvc_toolset
+ 
+-VERSION = '0.9.1'
++VERSION = '0.9.2'
+ DIST = ROOT / 'dist'
+ ENGINE = ROOT / 'Source' / 'Engine'
+ TEMPLATES = ROOT / 'packaging' / 'Game_Kits'
+@@ -199,6 +199,7 @@ def stage_release(proxy: Path, bridge: Path) -> Path:
+             add_file(contents, 'Tools/'+source.relative_to(ROOT/'packaging/Tools').as_posix(), source)
+     add_file(contents, 'Tools/check_game_identity.py', ROOT/'Tools/check_game_identity.py')
+     add_file(contents, 'Tools/scan_game_a3d_markers.py', ROOT/'Tools/scan_game_a3d_markers.py')
++    add_file(contents, 'Tools/export_rtcw_bsp_acoustics.py', ROOT/'Tools/export_rtcw_bsp_acoustics.py')
+     for name in ('a3d.dll','a3dapi.dll'):
+         add_file(contents, 'Universal_Core/'+name, builds[name])
+     for name in ('a3d-comtest.exe','a3d-miles-enum.exe','a3d-miles-open.exe'):
+@@ -210,7 +211,7 @@ def stage_release(proxy: Path, bridge: Path) -> Path:
+         add_file(contents, name, ROOT/name)
+     for name in ('MANUAL_INSTALLATION.md','EASY_INSTALL_WINDOWS.md',
+                  'Aufake3D_v0.8.18_Quick_Start.pdf','SECURITY_REVIEW_V0814_RC1.md','AU8830_HRTF_PERFORMANCE_MODES.md','GAME_COMPATIBILITY_V090.md',
+-                 'UNIFIED_ENGINE_ALICE2011_MIGRATION.md', 'REPRODUCIBLE_BUILDS_V091.md'):
++                 'UNIFIED_ENGINE_ALICE2011_MIGRATION.md', 'REPRODUCIBLE_BUILDS_V091.md', 'RTCW_BSP_EXPORT_V092.md'):
+         p=ROOT/'Docs'/name
+         if p.is_file():add_file(contents, 'Docs/'+name, p)
+     add_file(contents, 'START_HERE.txt', ROOT/'START_HERE.txt')
+diff --git a/scripts/update_source_manifest.py b/scripts/update_source_manifest.py
+index d026275..508d1f6 100644
+--- a/scripts/update_source_manifest.py
++++ b/scripts/update_source_manifest.py
+@@ -26,7 +26,7 @@ for p in paths:
+         raise SystemExit('Case-insensitive filename collision: '+names[folded]+' vs '+rel)
+     names[folded]=rel
+ files={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
+-(ROOT/'SOURCE_MANIFEST_SHA256.json').write_text(json.dumps({'release':'0.9.1',
++(ROOT/'SOURCE_MANIFEST_SHA256.json').write_text(json.dumps({'release':'0.9.2',
+     'type':'source-only', 'files':files},indent=2,sort_keys=True)+'\n')
+ (ROOT/'SHA256SUMS.txt').write_text(''.join(f'{h}  {name}\n' for name,h in sorted(files.items(),key=lambda x:x[1])))
+ print('Frozen source manifest updated:',len(files),'files. Review diff before commit.')
+diff --git a/tests/test_documentation_contract.py b/tests/test_documentation_contract.py
+index e7e59dd..9d5cbf3 100644
+--- a/tests/test_documentation_contract.py
++++ b/tests/test_documentation_contract.py
+@@ -29,7 +29,7 @@ class DocumentationContract(unittest.TestCase):
+                 with self.subTest(path=rel,phrase=word):self.assertIn(word,text)
+     def test_current_engine_source_not_legacy_readme(self):
+         s=(ROOT/'Source/Engine/README.md').read_text()
+-        self.assertIn('v0.9.1',s)
++        self.assertIn('v0.9.2',s)
+         self.assertNotIn('v0.7.0-alpha',s)
+         self.assertTrue((ROOT/'Docs/History/Engine_Notes/README_V070_ORIGINAL.md').exists())
+     def test_new_guide_links(self):
+@@ -45,5 +45,5 @@ class DocumentationContract(unittest.TestCase):
+     def test_release_version(self):
+         if (ROOT/'RELEASE_FREEZE.json').is_file():
+             import json
+-            self.assertEqual(json.loads((ROOT/'RELEASE_FREEZE.json').read_text())['version'],'0.9.1')
++            self.assertEqual(json.loads((ROOT/'RELEASE_FREEZE.json').read_text())['version'],'0.9.2')
+ if __name__=='__main__': unittest.main()
+diff --git a/tests/test_one_click_build.py b/tests/test_one_click_build.py
+index 997a8ef..f7d4366 100644
+--- a/tests/test_one_click_build.py
++++ b/tests/test_one_click_build.py
+@@ -12,10 +12,10 @@ ROOT=Path(__file__).resolve().parents[1]
+ class OneClickBuild(unittest.TestCase):
+     def test_active_v090_release_labels(self):
+         # A release bump must reach the actual packaged runtime and installer.
+-        self.assertIn("VERSION = '0.9.1'", (ROOT/'scripts/build.py').read_text())
+-        self.assertEqual(json.loads((ROOT/'packaging/Game_Kits/INSTALL_MAP.json').read_text())['version'], '0.9.1')
+-        self.assertIn("0.9.1", (ROOT/'packaging/Tools/aufake3d.py').read_text())
+-        self.assertIn("Aufake3D_v0.9.1_Local_Runtime.zip", (ROOT/'.github/workflows/source-ci.yml').read_text())
++        self.assertIn("VERSION = '0.9.2'", (ROOT/'scripts/build.py').read_text())
++        self.assertEqual(json.loads((ROOT/'packaging/Game_Kits/INSTALL_MAP.json').read_text())['version'], '0.9.2')
++        self.assertIn("0.9.2", (ROOT/'packaging/Tools/aufake3d.py').read_text())
++        self.assertIn("Aufake3D_v0.9.2_Local_Runtime.zip", (ROOT/'.github/workflows/source-ci.yml').read_text())
+         self.assertTrue((ROOT/'Docs/GITHUB_SOURCE_INTEGRATION_V0815.md').is_file())
+ 
+     def test_entrypoints_exist(self):
+diff --git a/tests/test_release_v090.py b/tests/test_release_v090.py
+index 63d7f84..6622ed1 100644
+--- a/tests/test_release_v090.py
++++ b/tests/test_release_v090.py
+@@ -1,4 +1,4 @@
+-"""v0.9.1 release integration: provider selection and queue defaults."""
++"""v0.9.2 release integration: provider selection and queue defaults."""
+ from pathlib import Path
+ import json
+ import unittest
+@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
+ class Release0818(unittest.TestCase):
+     def test_alice2011_bridge_source_and_kit_present(self):
+         m=json.loads((ROOT/'packaging/Game_Kits/INSTALL_MAP.json').read_text())
+-        self.assertEqual(m['version'],'0.9.1')
++        self.assertEqual(m['version'],'0.9.2')
+         self.assertIn('alice-a3d2011-native.exe',m['profiles']['alice2011']['files'])
+         self.assertTrue((ROOT/'Source/Engine/remaster2011/alice_a3d2011_bridge.c').is_file())
+         build=(ROOT/'scripts/build.py').read_text()
+diff --git a/tests/test_rtcw_bsp_export_v092.py b/tests/test_rtcw_bsp_export_v092.py
+new file mode 100644
+index 0000000..70871a3
+--- /dev/null
++++ b/tests/test_rtcw_bsp_export_v092.py
+@@ -0,0 +1,157 @@
++"""Synthetic, asset-free tests for deterministic RtCW BSP v47 geometry inventory."""
++from __future__ import annotations
++
++import importlib.util
++from pathlib import Path
++import hashlib
++import json
++import struct
++import subprocess
++import sys
++import tempfile
++import unittest
++import zipfile
++
++ROOT = Path(__file__).resolve().parents[1]
++MODULE = ROOT/'Tools/export_rtcw_bsp_acoustics.py'
++spec = importlib.util.spec_from_file_location('rtcw_exporter', MODULE)
++m = importlib.util.module_from_spec(spec)
++spec.loader.exec_module(m)
++
++
++def fixture(*, version=47, typ=1, flags=0x00040000, invalid_index=False, extra_patch=False, extra_planar=False):
++    shaders = struct.pack('<64sII', b'textures/test/wood', flags, 0)
++    vertices = b''.join(struct.pack('<3f2f2f3f4B', *xyz,
++                                     0.0, 0.0, 0.0, 0.0,
++                                     0.0, 0.0, 1.0, 255, 255, 255, 255)
++                        for xyz in ((0, 0, 0), (10, 0, 0), (0, 20, 0)))
++    mesh = struct.pack('<3i', 0, 1, 99 if invalid_index else 2)
++    surf = bytearray(104)
++    struct.pack_into('<7i', surf, 0, 0, -1, typ, 0, 3, 0, 3)
++    if extra_planar:
++        surf += surf[:104]
++    if extra_patch:
++        other = bytearray(104)
++        struct.pack_into('<7i', other, 0, 0, -1, 2, 0, 3, 0, 3)
++        surf += other
++    lumps = {1: shaders, 10: vertices, 11: mesh, 13: bytes(surf)}
++    header = bytearray(144)
++    header[:8] = b'IBSP' + struct.pack('<i', version)
++    data = header
++    for i in range(17):
++        content = lumps.get(i, b'')
++        offset = len(data)
++        if content:
++            data.extend(content)
++        struct.pack_into('<ii', data, 8 + 8*i, offset, len(content))
++    return bytes(data)
++
++
++class RtCWMapExportV092(unittest.TestCase):
++    def test_export_real_structure_with_material_hint(self):
++        b = fixture()
++        model = m.export_map(b)
++        self.assertEqual(model['source_bsp_sha256'], hashlib.sha256(b).hexdigest())
++        self.assertEqual(model['statistics']['exported_triangles'], 1)
++        self.assertEqual(model['shaders'][0]['material_hints'], ['wood'])
++        self.assertEqual(model['triangles'][0]['vertex_indices'], [0, 1, 2])
++        self.assertFalse(model['geometry_complete'])
++        self.assertIn(b'"source_bsp_sha256"', m.encode_map(model))
++        self.assertNotIn(b'/tmp', m.encode_map(model))
++
++    def test_identical_output_different_directories(self):
++        with tempfile.TemporaryDirectory() as td:
++            root = Path(td)
++            b = fixture()
++            outputs = []
++            for folder in ('a', 'b'):
++                (root/folder).mkdir()
++                p = root/folder/'test.bsp'
++                p.write_bytes(b)
++                dest = root/folder/'test.a3dmap.json'
++                result = subprocess.run([sys.executable,str(MODULE),str(p),'-o',str(dest)],
++                                        capture_output=True,text=True)
++                self.assertEqual(result.returncode,0,result.stderr)
++                outputs.append(dest.read_bytes())
++                self.assertEqual(p.read_bytes(),b)
++            self.assertEqual(outputs[0],outputs[1])
++
++    def test_pk3_single_and_multiple_map_selection(self):
++        with tempfile.TemporaryDirectory() as td:
++            p = Path(td)/'maps.pk3'
++            with zipfile.ZipFile(p,'w') as z:
++                z.writestr('maps/a.bsp',fixture())
++                z.writestr('maps/b.bsp',fixture(extra_patch=True))
++            with self.assertRaisesRegex(m.BSPError,'multiple maps'):
++                m.select_bsp(p,None)
++            self.assertEqual(m.select_bsp(p,None,True)[1], 'maps/a.bsp\nmaps/b.bsp')
++            data, label = m.select_bsp(p,'maps/b.bsp')
++            self.assertEqual(label,'maps/b.bsp')
++            self.assertEqual(m.export_map(data)['statistics']['skipped_surface_types']['2'],1)
++
++    def test_triangle_soup_type(self):
++        result = m.export_map(fixture(typ=3))
++        self.assertEqual(result['statistics']['exported_triangles'], 1)
++
++    def test_reject_nonfinite_coordinates(self):
++        b = bytearray(fixture())
++        offset = struct.unpack_from('<i', b, 8 + 10*8)[0]
++        struct.pack_into('<f', b, offset, float('nan'))
++        with self.assertRaisesRegex(m.BSPError, 'Non-finite'):
++            m.export_map(bytes(b))
++
++    def test_packaging_includes_tool_and_guide(self):
++        source = (ROOT/'scripts/build.py').read_text()
++        self.assertIn("'Tools/export_rtcw_bsp_acoustics.py'", source)
++        self.assertIn("'RTCW_BSP_EXPORT_V092.md'", source)
++
++    def test_reject_incorrect_version(self):
++        with self.assertRaisesRegex(m.BSPError,'BSP v47'):
++            m.export_map(fixture(version=46))
++
++    def test_reject_bad_indices(self):
++        with self.assertRaisesRegex(m.BSPError,'mesh vertex index'):
++            m.export_map(fixture(invalid_index=True))
++
++    def test_reject_truncated_or_corrupted_lump(self):
++        with self.assertRaises(m.BSPError):
++            m.export_map(fixture()[:10])
++        bad = bytearray(fixture())
++        struct.pack_into('<ii',bad,8+13*8, 4, 104)
++        with self.assertRaisesRegex(m.BSPError,'overlaps BSP header'):
++            m.export_map(bytes(bad))
++
++    def test_reject_overlapping_lumps(self):
++        bad = bytearray(fixture())
++        shader_off = struct.unpack_from('<i', bad, 8 + 1*8)[0]
++        struct.pack_into('<i', bad, 8 + 10*8, shader_off)
++        with self.assertRaisesRegex(m.BSPError,'overlap'):
++            m.export_map(bytes(bad))
++
++    def test_reject_triangle_overflow_without_truncation(self):
++        with self.assertRaisesRegex(m.BSPError,'exceed'):
++            m.export_map(fixture(extra_planar=True),max_triangles=1)
++
++    def test_skip_unsupported_patches_with_explicit_warning(self):
++        output = m.export_map(fixture(extra_patch=True))
++        self.assertEqual(output['statistics']['skipped_surface_types'],{'2':1})
++        self.assertIn('curved patches',output['warning'])
++
++    def test_output_refuses_overwrite(self):
++        with tempfile.TemporaryDirectory() as td:
++            p = Path(td)/'a.bsp'
++            p.write_bytes(fixture())
++            out = Path(td)/'a.a3dmap.json'
++            out.write_bytes(b'preexisting')
++            self.assertEqual(m.main([str(p), '-o', str(out)]),2)
++            self.assertEqual(out.read_bytes(),b'preexisting')
++
++    def test_source_is_offline_only(self):
++        source = MODULE.read_text()
++        self.assertNotIn('ctypes',source)
++        self.assertNotIn('LoadLibrary',source)
++        self.assertIn('geometry_complete',source)
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/tests/test_vortex2_hrtf.py b/tests/test_vortex2_hrtf.py
+index f035459..c26d1e8 100644
+--- a/tests/test_vortex2_hrtf.py
++++ b/tests/test_vortex2_hrtf.py
+@@ -86,7 +86,7 @@ class Vortex2Reference(unittest.TestCase):
+ 
+     def test_expanded_kits_are_probes_not_false_claims(self):
+         j=json.loads((ROOT/'packaging/Game_Kits/INSTALL_MAP.json').read_text())
+-        self.assertEqual(j['version'],'0.9.1')
++        self.assertEqual(j['version'],'0.9.2')
+         self.assertEqual(set(j['profiles']),{'alice2000','alice2011','quake3','halflife','unreal','rtcw','gta3','gtavc'})
+         for name in ('unreal','rtcw'):
+             self.assertEqual(len(j['profiles'][name]['files']),5)
