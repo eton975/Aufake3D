@@ -313,6 +313,17 @@ static HRESULT WINAPI init(A3D*s,GUID*g,DWORD flags,DWORD mode){(void)s;(void)g;
  char taps[8]={0};GetEnvironmentVariableA("A3D_HRTF_TAPS",taps,sizeof(taps));
  mixer.hrtf_taps=(taps[0]=='9' && taps[1]=='6' && !taps[2])?96u:
                  (taps[0]=='2' && taps[1]=='4' && !taps[2])?24u:48u;
+ /* v0.9.0 explicit performance modes. Default FAST on AU8830-derived 56
+  * taps; LEGACY restores the previous measured KEMAR renderer for A/B.
+  * REFERENCE models 64-sample, hardware-measured HRTF/ITD tracking; both
+  * remain floating-point (NOT bit exact). Do not silently accept a false
+  * 'bitexact' designation before fixed-point/output validation exists. */
+ char hmode[24]={0};GetEnvironmentVariableA("A3D_HRTF_MODE",hmode,sizeof(hmode));
+ mixer.hrtf_mode=(hmode[0]=='l' || hmode[0]=='L' || hmode[0]=='0')?0u:
+                 (hmode[0]=='r' || hmode[0]=='R' || hmode[0]=='2' || hmode[0]=='b' || hmode[0]=='B')?2u:1u;
+ if(mixer.hrtf_mode)mixer.hrtf_taps=56u;
+ if(hmode[0]=='b' || hmode[0]=='B')logline("AU8830 BIT-EXACT UNAVAILABLE: reference float mode used; never claim sample-exact reproduction");
+
  /* HF9: do not turn off HRTF or alter game audio-source lifetimes.
   * Geometry can be disabled to isolate acoustic scene tracing from PCM
   * streaming, and its cache age can be tuned without a new DLL. */
@@ -332,7 +343,7 @@ static HRESULT WINAPI init(A3D*s,GUID*g,DWORD flags,DWORD mode){(void)s;(void)g;
  }
  mixer.doppler_enabled=(flags&0x10UL)?1u:0u;
  mixer.distance_enabled=(flags&0x20UL)?1u:0u;
- mix_leave();sr_logu("IA3d4.Init requested_flags",flags);sr_logu("A3D.HRTF.taps",mixer.hrtf_taps);
+ mix_leave();sr_logu("IA3d4.Init requested_flags",flags);sr_logu("A3D.HRTF.taps",mixer.hrtf_taps);sr_logu("A3D.HRTF.mode",mixer.hrtf_mode);
  sr_logu("A3D.MasterGain.Init.x1000",(DWORD)(mixer.master_boost*1000.0f+0.5f));
  logline("A3D v0.7.0-alpha: shared core; new game profiles unverified");return S_OK;}
 static HRESULT WINAPI feature(A3D*s,DWORD f){(void)s;sr_logu("IA3d3.IsFeatureAvailable unsupported",f);return S_FALSE;}

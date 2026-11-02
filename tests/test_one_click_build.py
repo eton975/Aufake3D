@@ -10,12 +10,12 @@ import unittest
 ROOT=Path(__file__).resolve().parents[1]
 
 class OneClickBuild(unittest.TestCase):
-    def test_active_v0818_release_labels(self):
+    def test_active_v090_release_labels(self):
         # A release bump must reach the actual packaged runtime and installer.
-        self.assertIn("VERSION = '0.8.18'", (ROOT/'scripts/build.py').read_text())
-        self.assertEqual(json.loads((ROOT/'packaging/Game_Kits/INSTALL_MAP.json').read_text())['version'], '0.8.18')
-        self.assertIn("0.8.18", (ROOT/'packaging/Tools/aufake3d.py').read_text())
-        self.assertIn("Aufake3D_v0.8.18_Local_Runtime.zip", (ROOT/'.github/workflows/source-ci.yml').read_text())
+        self.assertIn("VERSION = '0.9.0'", (ROOT/'scripts/build.py').read_text())
+        self.assertEqual(json.loads((ROOT/'packaging/Game_Kits/INSTALL_MAP.json').read_text())['version'], '0.9.0')
+        self.assertIn("0.9.0", (ROOT/'packaging/Tools/aufake3d.py').read_text())
+        self.assertIn("Aufake3D_v0.9.0_Local_Runtime.zip", (ROOT/'.github/workflows/source-ci.yml').read_text())
         self.assertTrue((ROOT/'Docs/GITHUB_SOURCE_INTEGRATION_V0815.md').is_file())
 
     def test_entrypoints_exist(self):
@@ -25,7 +25,7 @@ class OneClickBuild(unittest.TestCase):
     def test_game_kit_templates_are_complete_without_binaries(self):
         base=ROOT/'packaging/Game_Kits'
         j=json.loads((base/'INSTALL_MAP.json').read_text())
-        self.assertEqual(set(j['profiles']),{'alice2000','alice2011','quake3','halflife'})
+        self.assertEqual(set(j['profiles']),{'alice2000','alice2011','quake3','halflife','unreal','rtcw'})
         for profile in j['profiles'].values():
             for filename in profile['files']:
                 if filename.lower().endswith(('.dll','.exe')):

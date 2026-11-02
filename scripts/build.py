@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from scripts.host_toolchain import program, native_mock_ready, windows_complete_msvc_toolset
 
-VERSION = '0.8.18'
+VERSION = '0.9.0'
 DIST = ROOT / 'dist'
 ENGINE = ROOT / 'Source' / 'Engine'
 TEMPLATES = ROOT / 'packaging' / 'Game_Kits'
@@ -166,9 +166,11 @@ def stage_release(proxy: Path, bridge: Path) -> Path:
     for name in ('LICENSE','LICENSE_SCOPE.md','LICENSE_STATUS.md','THIRD_PARTY_NOTICES.md',
                  'SECURITY_RELEASE_REVIEW.md','README.md'):
         add_file(contents, name, ROOT/name)
-    for name in ('MANUAL_INSTALLATION.md','SECURITY_REVIEW_V0814_RC1.md'):
+    for name in ('MANUAL_INSTALLATION.md','EASY_INSTALL_WINDOWS.md',
+                 'Aufake3D_v0.8.18_Quick_Start.pdf','SECURITY_REVIEW_V0814_RC1.md','AU8830_HRTF_PERFORMANCE_MODES.md','GAME_COMPATIBILITY_V090.md'):
         p=ROOT/'Docs'/name
         if p.is_file():add_file(contents, 'Docs/'+name, p)
+    add_file(contents, 'START_HERE.txt', ROOT/'START_HERE.txt')
     contents['LOCAL_BUILD_WARNING.txt'] = ('''
 Aufake3D locally compiled runtime — NOT a tested official release.
 Windows PE32 x86 components compiled from source on this machine.
@@ -262,6 +264,7 @@ def main():
         if args.doctor:return 0
         if args.require_native_mock and not native_mock_ready()[0]:
             raise RuntimeError(native_mock_ready()[1])
+        run([sys.executable,ROOT/'tools/generate_vortex2_hrtf.py','--check'])
         print('\n[1/5] Building core and experimental utilities')
         run([sys.executable, ROOT/'scripts/build_engine.py','--clang',clang,'--linker',ld])
         print('\n[2/5] Building original Alice 2000 bridge')

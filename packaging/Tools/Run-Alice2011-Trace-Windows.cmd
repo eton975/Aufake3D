@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableExtensions DisableDelayedExpansion
-echo Aufake3D v0.8.18 - opt-in Miles trace for an ALREADY INSTALLED Alice 2011 profile.
+echo Aufake3D v0.9.0 - opt-in Miles trace for an ALREADY INSTALLED Alice 2011 profile.
 set /p "AU_GAME=Full path to installed Alice 2011 alice.exe: "
 if not defined AU_GAME exit /b 2
 for %%I in ("%AU_GAME%") do set "AU_DIR=%%~dpI"

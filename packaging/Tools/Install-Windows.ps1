@@ -1,7 +1,7 @@
-# Aufake3D v0.8.18: reversible Windows game-local installer (no Python required)
+# Aufake3D v0.9.0: reversible Windows game-local installer (no Python required)
 [CmdletBinding()]
 param(
- [Alias('Profile')][ValidateSet('alice2011','alice2000','quake3','halflife')][string]$TargetProfile='alice2011',
+ [Alias('Profile')][ValidateSet('alice2011','alice2000','quake3','halflife','unreal','rtcw')][string]$TargetProfile='alice2011',
  [Parameter(Mandatory=$true)][string]$GameExe,
  [switch]$DryRun,
  [switch]$Rollback
@@ -34,7 +34,7 @@ if($Rollback){
  Write-Host 'Rolled back game-local files. Backup retained.' -ForegroundColor Green
  exit 0
 }
-if(Test-Path -LiteralPath $receiptPath){throw 'An existing v0.8.18 receipt exists. Roll back before reinstalling.'}
+if(Test-Path -LiteralPath $receiptPath){throw 'An existing v0.9.0 receipt exists. Roll back before reinstalling.'}
 $names=@{alice2011='alice.exe';alice2000='alice.exe';quake3='quake3.exe';halflife='hl.exe'}
 if([IO.Path]::GetFileName($exe) -ine $names[$TargetProfile]){throw "Expected $($names[$TargetProfile]) for profile $TargetProfile"}
 $shaExe=HashFile $exe
@@ -88,12 +88,12 @@ foreach($item in $items){
  Write-Host "$(if(Test-Path -LiteralPath $item.dest){'BACKUP+REPLACE'}else{'CREATE'}) $($item.rel)"
 }
 if($DryRun){Write-Host 'Dry-run complete. Nothing modified.';exit 0}
-$backup=Join-Path $dir ('.aufake3d_backup_v0818\'+(Get-Date -Format 'yyyyMMdd-HHmmss-fff'))
+$backup=Join-Path $dir ('.aufake3d_backup_v090\'+(Get-Date -Format 'yyyyMMdd-HHmmss-fff'))
 New-Item -ItemType Directory -Path $backup -Force|Out-Null
 foreach($item in $cached){if($item.exists){$dst=Join-Path $backup ('original\'+$item.rel);New-Item -ItemType Directory -Path (Split-Path -Parent $dst) -Force|Out-Null;Copy-Item -LiteralPath $item.dest -Destination $dst -Force}}
 try{
  foreach($item in $cached){[IO.File]::WriteAllBytes($item.dest,$item.bytes)}
- $receipt=[ordered]@{release='0.8.18';profile=$TargetProfile;game_exe=$exe;game_exe_sha256=$shaExe;backup_dir=$backup;files=@($cached | ForEach-Object {[ordered]@{rel=$_.rel;exists=$_.exists;original_sha256=$_.original_sha256;installed_sha256=$_.installed_sha256}})}
+ $receipt=[ordered]@{release='0.9.0';profile=$TargetProfile;game_exe=$exe;game_exe_sha256=$shaExe;backup_dir=$backup;files=@($cached | ForEach-Object {[ordered]@{rel=$_.rel;exists=$_.exists;original_sha256=$_.original_sha256;installed_sha256=$_.installed_sha256}})}
  $receipt|ConvertTo-Json -Depth 5|Set-Content -LiteralPath (Join-Path $backup 'receipt.json') -Encoding UTF8
  $receipt|ConvertTo-Json -Depth 5|Set-Content -LiteralPath $receiptPath -Encoding UTF8
 } catch {

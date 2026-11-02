@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Aufake3D v0.8.18 reversible game-local installer; Python 3 stdlib only.
+"""Aufake3D v0.9.0 reversible game-local installer; Python 3 stdlib only.
 Does not modify game executables or system registry. Profiles are not compatibility guarantees.
 """
 import argparse, hashlib, json, os, shutil, sys, time
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
-PROFILES={'alice2011': 'alice.exe','alice2000':'alice.exe','quake3':'quake3.exe','halflife':'hl.exe'}
+PROFILES={'alice2011': 'alice.exe','alice2000':'alice.exe','quake3':'quake3.exe','halflife':'hl.exe','unreal':'unreal.exe','rtcw':'wolfsp.exe'}
 PINNED_ALICE='08bcbe4b549633b24c90a1ab36bf516bd8873432c68b37248c98ee4225506e50'
 PINNED_MILES='14fb663762695a02e06b144c487254b08163185fa009efb32df733882cd570de'
 
@@ -63,7 +63,7 @@ def install(profile, exe, dry_run=False):
         """
     exe=validate(profile,exe)
     mapping=overlay(profile,exe)
-    if (exe.parent/'.aufake3d_current.json').exists():raise ValueError('Existing v0.8.18 receipt found; roll back before reinstalling')
+    if (exe.parent/'.aufake3d_current.json').exists():raise ValueError('Existing v0.9.0 receipt found; roll back before reinstalling')
     target_root=exe.parent
     for dest,src in mapping.items():
         if not src.is_file() or not dest.parent.is_dir():raise ValueError(f'Missing install input or target folder: {src} -> {dest}')
@@ -78,9 +78,9 @@ def install(profile, exe, dry_run=False):
     print('Profile:',profile,' Game EXE:',exe,'(sha256:',sha(exe),')')
     for d in mapping:print(' ', ('REPLACE' if d.exists() else 'CREATE'),d.relative_to(target_root))
     if dry_run:return
-    backup=target_root/'.aufake3d_backup_v0818'/str(time.time_ns())
+    backup=target_root/'.aufake3d_backup_v090'/str(time.time_ns())
     backup.mkdir(parents=True,exist_ok=False)
-    receipt={'profile':profile,'game_exe':str(exe),'game_exe_sha256':sha(exe),'files':snapshot,'backup_dir':str(backup),'release':'0.8.18','created_at':time.strftime('%Y-%m-%dT%H:%M:%S%z')}
+    receipt={'profile':profile,'game_exe':str(exe),'game_exe_sha256':sha(exe),'files':snapshot,'backup_dir':str(backup),'release':'0.9.0','created_at':time.strftime('%Y-%m-%dT%H:%M:%S%z')}
     try:
         for item in snapshot:
             dest=target_root/item['rel']
@@ -111,7 +111,7 @@ def rollback(exe):
         Refuse rollback if a user edited files after installation.
         """
     exe=exe.expanduser().resolve(strict=True);root=exe.parent;rp=root/'.aufake3d_current.json'
-    if not rp.is_file():raise ValueError('No Aufake3D v0.8.18 install receipt found')
+    if not rp.is_file():raise ValueError('No Aufake3D v0.9.0 install receipt found')
     r=json.loads(rp.read_text(encoding='utf-8-sig'))
     if r['game_exe']!=str(exe) or sha(exe)!=r['game_exe_sha256']:
         raise ValueError('Target EXE differs from original installation; refusing rollback')

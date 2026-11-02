@@ -22,6 +22,7 @@
 #include "measured_hrtf.h"
 #include "hrtf_fast24_window.h"
 #include "acoustic_scene.h"
+#include "vortex2_hrtf.h"
 #define A3DMIX_RATE 48000u
 #define A3DMIX_BLOCK 256u
 /* Hotfix 5: Quake III 1.17 creates at least 68 A3D source objects. The old
@@ -58,6 +59,10 @@ typedef struct {
  float cache_src[3],cache_lis[3];
  int prev_hrir_direction;
  unsigned hrir_initialized;
+ /* AU8830 56-tap mode: per-voice target/current, tracking and ear delays. */
+ unsigned v2_initialized,v2_delay_cursor,v2_track_pos;
+ float v2_coeff[2][56],v2_target[2][56],v2_itd[2],v2_itd_target[2];
+ float v2_delay_line[2][AUFAKE_V2_DELAY_SIZE];
  /* Optional bounded, worker-owned PCM capture. The source's actual byte count
   * and cursor still describe the complete ring; sample_at maps a frame into
   * this immutable capture when it is present. Never dereference game PCM in
@@ -78,6 +83,7 @@ typedef struct {
  float clarity_weapon_l[A3DMIX_BLOCK],clarity_weapon_r[A3DMIX_BLOCK];
  unsigned distance_enabled,doppler_enabled;
  unsigned coords,frames_rendered,underruns,clip_events,hrtf_taps,limiter_active_frames;
+ unsigned hrtf_mode; /* 0=legacy KEMAR, 1=AU8830 fast, 2=AU8830 reference */
  unsigned voice_limit,voice_peak,voice_rejections,voice_additions;
  /* HF9: acoustic geometry is computationally expensive when 2,000+ scene
   * triangles are resubmitted on every game frame. Rate-limit expensive
@@ -262,7 +268,16 @@ static void a3dmix_render(A3DMix*m,unsigned char*out,unsigned frames){
   float dist=a3d_sqrt(dist2);
   float amplitude=v->gain*m->output_gain;
   if(amplitude<0.0f)amplitude=0.0f;if(amplitude>1.0f)amplitude=1.0f;
-  A3DMeasuredPick pick=a3d_measured_pick(spos,lpos,front,up,m->coords,amplitude,A3DMIX_RATE);
+  /* Avoid the 710-direction KEMAR scan in the AU8830 fast/reference path.
+   * Preserve its exact historical distance/amplitude policy for A/B tests. */
+  A3DMeasuredPick pick;
+  if(!m->hrtf_mode)pick=a3d_measured_pick(spos,lpos,front,up,m->coords,amplitude,A3DMIX_RATE);
+  else {
+   float manhattan=a3dmix_abs(d[0])+a3dmix_abs(d[1])+a3dmix_abs(d[2])+0.01f;
+   pick.direction=0;pick.amplitude=amplitude*0.50f/(1.0f+manhattan*0.1f);
+   if(pick.amplitude>0.5f)pick.amplitude=0.5f;
+   pick.rate=A3DMIX_RATE;pick.taps=56u;
+  }
   if(m->distance_enabled){
    /* Blend A3D distance roll-off for research, leaving A3D_MUTE semantics
     * untouched; the default strength of 1.0 retains v0.4.2 behaviour. */
@@ -280,6 +295,22 @@ static void a3dmix_render(A3DMix*m,unsigned char*out,unsigned frames){
   const float reflected_amplitude=pick.amplitude;
   pick.amplitude*=m->direct_trim;
   v->doppler_factor=a3dmix_doppler(m,v,spos,lpos);
+  /* The new AU8830 backend uses the contributor's 56-tap target table,
+   * not KEMAR's delayed 48/96-tap impulse-response windows. All angular
+   * lookup/interpolation work occurs once per voice/block (never per sample).
+   */
+  if(m->hrtf_mode){
+   float az,el;
+   aufake_v2_orientation(spos,lpos,front,up,m->coords,&az,&el);
+   aufake_v2_lookup(az,el,v->v2_target,v->v2_itd_target);
+   if(!v->v2_initialized){
+    for(unsigned ear=0;ear<2u;ear++){
+     for(unsigned k=0;k<56u;k++)v->v2_coeff[ear][k]=v->v2_target[ear][k];
+     v->v2_itd[ear]=v->v2_itd_target[ear];
+    }
+    v->v2_initialized=1u;
+   }
+  }
   const signed short *hl=a3d_mhrir_48000[pick.direction][0],*hr=a3d_mhrir_48000[pick.direction][1];
   if(!v->hrir_initialized){v->prev_hrir_direction=pick.direction;v->hrir_initialized=1;}
   const signed short *old_l=a3d_mhrir_48000[v->prev_hrir_direction][0],
@@ -349,7 +380,40 @@ static void a3dmix_render(A3DMix*m,unsigned char*out,unsigned frames){
    x*=a3dmix_short_sfx_envelope(m,v);
    v->h[v->hist_cursor]=x;
    float l=0,r=0;
-   for(unsigned k=0;k<m->hrtf_taps && k<A3DMIX_FIR;k++){
+   if(m->hrtf_mode){
+    /* Hardware-style parameter tracking steps on a 64-sample boundary.
+     * Reference alpha = 0x147*64/2^21 for HRTF and 0xc8*64/2^19 for ITD.
+     * Fast mode skips tracking for fast direction changes and lower latency.
+     */
+    if(m->hrtf_mode==2u && (v->v2_track_pos&63u)==0u){
+     const float h_alpha=(327.0f*64.0f)/2097152.0f;
+     const float d_alpha=(200.0f*64.0f)/524288.0f;
+     for(unsigned ear=0;ear<2u;ear++){
+      for(unsigned k=0;k<56u;k++)v->v2_coeff[ear][k]+=
+       h_alpha*(v->v2_target[ear][k]-v->v2_coeff[ear][k]);
+      v->v2_itd[ear]+=d_alpha*(v->v2_itd_target[ear]-v->v2_itd[ear]);
+     }
+    }
+    if(m->hrtf_mode==1u){
+     /* Fast mode interpolation already happened once per block. */
+     if(n==0u){
+      for(unsigned ear=0;ear<2u;ear++){
+       for(unsigned k=0;k<56u;k++)v->v2_coeff[ear][k]=v->v2_target[ear][k];
+       v->v2_itd[ear]=v->v2_itd_target[ear];
+      }
+     }
+    }
+    for(unsigned k=0;k<56u;k++){
+     unsigned h=v->hist_cursor+A3DMIX_HISTORY-k;
+     if(h>=A3DMIX_HISTORY)h-=A3DMIX_HISTORY;
+     float q=v->h[h];
+     l+=q*v->v2_coeff[0][k];r+=q*v->v2_coeff[1][k];
+    }
+    l=aufake_v2_delay(v->v2_delay_line[0],v->v2_delay_cursor,v->v2_itd[0],l);
+    r=aufake_v2_delay(v->v2_delay_line[1],v->v2_delay_cursor,v->v2_itd[1],r);
+    v->v2_delay_cursor=(v->v2_delay_cursor+1u)&63u;
+    v->v2_track_pos++;
+   } else for(unsigned k=0;k<m->hrtf_taps && k<A3DMIX_FIR;k++){
     unsigned nk=new_start+k;
     unsigned nh=v->hist_cursor+A3DMIX_HISTORY-nk;
     if(nh>=A3DMIX_HISTORY)nh-=A3DMIX_HISTORY;

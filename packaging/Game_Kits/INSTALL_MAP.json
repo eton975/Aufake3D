@@ -1,5 +1,5 @@
 {
-  "version": "0.8.18",
+  "version": "0.9.0",
   "format_revision": "layout1-doc-polish-v0814rc1",
   "profiles": {
     "alice2000": {
@@ -8,6 +8,7 @@
       "files": [
         "RUN_AUFAKE3D_WINDOWS.cmd",
         "RUN_AUFAKE3D_WINE.sh",
+        "AUFAKE3D_SET_INITIAL_A3D2.ps1",
         "a3d.dll",
         "a3dapi.dll",
         "alice-a3d-bridge.exe",
@@ -21,6 +22,7 @@
       "files": [
         "RUN_AUFAKE3D_WINDOWS.cmd",
         "RUN_AUFAKE3D_WINE.sh",
+        "AUFAKE3D_SET_INITIAL_A3D2.ps1",
         "alice-a3d2011-native.exe",
         "SndDrivers/a3d-miles-local.manifest",
         "SndDrivers/a3d.dll",
@@ -53,6 +55,28 @@
         "a3dapi.dll",
         "halflife-a3d-alpha.exe",
         "hl.exe.manifest"
+      ]
+    },
+    "unreal": {
+      "folder": "Unreal_Classic",
+      "exe": "unreal.exe",
+      "files": [
+        "RUN_AUFAKE3D_WINDOWS.cmd",
+        "RUN_AUFAKE3D_WINE.sh",
+        "a3d.dll",
+        "a3dapi.dll",
+        "Unreal.exe.manifest"
+      ]
+    },
+    "rtcw": {
+      "folder": "Return_to_Castle_Wolfenstein",
+      "exe": "wolfsp.exe",
+      "files": [
+        "RUN_AUFAKE3D_WINDOWS.cmd",
+        "RUN_AUFAKE3D_WINE.sh",
+        "a3d.dll",
+        "a3dapi.dll",
+        "WolfSP.exe.manifest"
       ]
     }
   }

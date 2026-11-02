@@ -98,6 +98,20 @@ for app-local A3D COM activation. It refuses to overwrite an existing file and
 removes its own temporary file on normal exit. If the launcher is forcibly
 closed, inspect/remove the leftover manifest before the next launch.
 
+### Initial A3D2 default on Windows (Alice 2000 and Alice 2011)
+
+The Windows Alice kits include `AUFAKE3D_SET_INITIAL_A3D2.ps1` next to the
+normal launcher. The launcher calls this helper only until its first
+successful setup, writing a backup of the existing `config.cfg` and a
+`AUFAKE3D_A3D2_INITIAL_DEFAULT_DONE.txt` marker inside the game directory.
+The change uses the saved `s_milesdriver` variable, **not** a `+set` startup
+argument, and is never repeated after the marker exists. This leaves Miles,
+Dolby and A3D2 freely selectable after launch, including across game restarts.
+The one-time default is new and requires real-game testing; it is not a
+substitute for the verified provider-selection RAM bridges.
+
+On Linux/Wine the shell launchers still use the game's saved provider setting.
+
 ## 5. Launch on Linux/Wine
 
 Run from the game directory in a terminal:
