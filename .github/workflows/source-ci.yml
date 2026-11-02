@@ -17,8 +17,8 @@ jobs:
       matrix:
         os: [ubuntu-24.04, windows-2022]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - name: Install LLVM and CMake/Ninja (Linux)
@@ -39,13 +39,13 @@ jobs:
       - name: Build all Win32 components, run tests, assemble game kits
         run: python scripts/build.py --require-native-mock --require-acoustics
       - name: Upload compiled Windows runtime
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Aufake3D-Win32-${{ runner.os }}-${{ github.run_number }}
           path: dist/Aufake3D_v0.8.18_Local_Runtime.zip
           if-no-files-found: error
       - name: Upload individual DLLs for inspection
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Aufake3D-DLLs-${{ runner.os }}-${{ github.run_number }}
           path: |
