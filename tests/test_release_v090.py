@@ -1,4 +1,4 @@
-"""v0.9.0 release integration: provider selection and queue defaults."""
+"""v0.9.1 release integration: provider selection and queue defaults."""
 from pathlib import Path
 import json
 import unittest
@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class Release0818(unittest.TestCase):
     def test_alice2011_bridge_source_and_kit_present(self):
         m=json.loads((ROOT/'packaging/Game_Kits/INSTALL_MAP.json').read_text())
-        self.assertEqual(m['version'],'0.9.0')
+        self.assertEqual(m['version'],'0.9.1')
         self.assertIn('alice-a3d2011-native.exe',m['profiles']['alice2011']['files'])
         self.assertTrue((ROOT/'Source/Engine/remaster2011/alice_a3d2011_bridge.c').is_file())
         build=(ROOT/'scripts/build.py').read_text()

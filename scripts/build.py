@@ -4,7 +4,8 @@
 Default: check prerequisites, compile the freestanding x86 DLL/EXE recipe,
 compile the separate Alice 2000 bridge, build and ABI-check the Miles proxy,
 run source tests, optionally run available acoustics tests, and package the
-four game kits plus distributable diagnostics/experimental helpers.
+game kits plus distributable diagnostics/experimental helpers.
+The default packaged build is RELEASE-GATED by two clean independent rebuilds.
 
 This intentionally does NOT install a compiler, modify a game executable,
 copy proprietary Miles code, or claim that new binaries have passed gameplay
@@ -26,7 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from scripts.host_toolchain import program, native_mock_ready, windows_complete_msvc_toolset
 
-VERSION = '0.9.0'
+VERSION = '0.9.1'
 DIST = ROOT / 'dist'
 ENGINE = ROOT / 'Source' / 'Engine'
 TEMPLATES = ROOT / 'packaging' / 'Game_Kits'
@@ -197,6 +198,7 @@ def stage_release(proxy: Path, bridge: Path) -> Path:
         if source.is_file():
             add_file(contents, 'Tools/'+source.relative_to(ROOT/'packaging/Tools').as_posix(), source)
     add_file(contents, 'Tools/check_game_identity.py', ROOT/'Tools/check_game_identity.py')
+    add_file(contents, 'Tools/scan_game_a3d_markers.py', ROOT/'Tools/scan_game_a3d_markers.py')
     for name in ('a3d.dll','a3dapi.dll'):
         add_file(contents, 'Universal_Core/'+name, builds[name])
     for name in ('a3d-comtest.exe','a3d-miles-enum.exe','a3d-miles-open.exe'):
@@ -208,7 +210,7 @@ def stage_release(proxy: Path, bridge: Path) -> Path:
         add_file(contents, name, ROOT/name)
     for name in ('MANUAL_INSTALLATION.md','EASY_INSTALL_WINDOWS.md',
                  'Aufake3D_v0.8.18_Quick_Start.pdf','SECURITY_REVIEW_V0814_RC1.md','AU8830_HRTF_PERFORMANCE_MODES.md','GAME_COMPATIBILITY_V090.md',
-                 'UNIFIED_ENGINE_ALICE2011_MIGRATION.md'):
+                 'UNIFIED_ENGINE_ALICE2011_MIGRATION.md', 'REPRODUCIBLE_BUILDS_V091.md'):
         p=ROOT/'Docs'/name
         if p.is_file():add_file(contents, 'Docs/'+name, p)
     add_file(contents, 'START_HERE.txt', ROOT/'START_HERE.txt')
@@ -302,10 +304,14 @@ def main():
     parser.add_argument('--no-package',action='store_true',help='Compile components but do not assemble the ZIP')
     parser.add_argument('--strict-frozen-hashes',action='store_true',help='Require exact reference core and proxy bytes (release auditing only)')
     parser.add_argument('--require-native-mock',action='store_true',help='Fail if Windows CRT mock prerequisites are missing instead of skipping')
+    parser.add_argument('--skip-repro-check',action='store_true',help='UNVERIFIED development build only; used internally for independent replay')
     args=parser.parse_args()
     try:
         clang,ld=doctor()
         if args.doctor:return 0
+        # A previous verification must never survive a new or failed build.
+        report=DIST/'REPRODUCIBILITY_VERIFIED.json'
+        if report.exists():report.unlink()
         if args.require_native_mock and not native_mock_ready()[0]:
             raise RuntimeError(native_mock_ready()[1])
         run([sys.executable,ROOT/'Tools/generate_vortex2_hrtf.py','--check'])
@@ -331,10 +337,19 @@ def main():
             raise RuntimeError('--require-acoustics cannot be combined with --no-acoustics')
         if not args.no_acoustics:acoustic_tests(require=args.require_acoustics)
         print('\n[5/5] Assembling complete game kits')
-        if not args.no_package:stage_release(proxy,bridge)
+        if not args.no_package:
+            stage_release(proxy,bridge)
+            if not args.skip_repro_check:
+                print('\n[6/6] MANDATORY: two clean rebuilds plus exact local comparison')
+                run([sys.executable, ROOT/'scripts/verify_reproducible.py', '--verify-current'])
         else:print('Packaging explicitly skipped')
         print('\nBUILD COMPLETED. Outputs under:',DIST)
-        print('These are UNVERIFIED local binaries; test with Windows/Wine before deploying or publishing.')
+        if not args.no_package and not args.skip_repro_check:
+            print('REPRODUCIBILITY VERIFIED: current build matches two independent clean rebuilds.')
+            print('Host/toolchain-specific proof only; cross-platform checksum identity is not yet certified.')
+        else:
+            print('UNVERIFIED development build: do not publish as a reproducible release.')
+        print('Game compatibility, safety and hardware fidelity remain separately unverified.')
         return 0
     except (RuntimeError,subprocess.CalledProcessError,OSError) as exc:
         print('\nBUILD FAILED:',exc, file=sys.stderr)

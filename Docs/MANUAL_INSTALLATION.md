@@ -150,3 +150,19 @@ For automated backed-up installs and rollback, see [AUTOMATED_INSTALLATION.md](A
 - A3D 3.0 implementation is incomplete; Unreal, Unreal Tournament, Unreal II and Halo PC are research targets, not supported profiles.
 - Default master gain is `5.0`; start with your speaker/headphone volume low.
 - The external original Miles DLL, games, VorpalFix and any copyrighted vendor SDKs are **not included**.
+
+
+### Alice 2000 display settings and first-run configuration
+
+The one-time sound default helper does not restore a config backup each launch and
+must not create an incomplete `base/config.cfg` if the game has not written one.
+On a clean first run, the preference is saved after the game exits, so the
+second launch starts with A3D2 only when the game left `s_milesdriver`
+unset or `auto`. If the user explicitly chose Miles or Dolby on the
+first run, that selection is retained instead.
+The regular launcher never overrides saved `r_mode`, `r_customwidth`,
+`r_customheight`, `r_fullscreen` or other video settings. For users whose
+resolution was altered during an earlier installation, the optional
+`AUFAKE3D_RESTORE_DISPLAY_SETTINGS.ps1` next to `alice.exe` can restore
+only `r_*`, `vid_*` and `gl_*` settings from the initial backup. Close Alice
+before running it; it never executes automatically.

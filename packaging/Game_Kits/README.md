@@ -10,6 +10,10 @@ merge its contents into the original game's `SndDrivers` folder (do not replace 
 | Alice 2011 / VorpalFix 4.2.1 | `Alice_2011_VorpalFix` | `alice.exe` |
 | Quake III Arena 1.17 | `Quake_III_117` | `quake3.exe` |
 | Half-Life 1.0.1.1 | `Half_Life_1011` | `hl.exe` |
+| GTA III (experimental) | `GTA_III` | `gta3.exe` |
+| GTA Vice City (experimental) | `GTA_Vice_City` | `gta-vc.exe` |
+| Unreal classic (experimental) | `Unreal_Classic` | `Unreal.exe` |
+| Return to Castle Wolfenstein (probe only) | `Return_to_Castle_Wolfenstein` | `WolfSP.exe` |
 
 **Alice 2011 is a special case:** before copying the kit, preserve the original
 `SndDrivers/mss32.dll` as **both** `a3d_mss_real.dll` in the game root **and**
@@ -25,3 +29,5 @@ can be copied directly, and no game requires its own fork of the renderer.
 
 The automatic installers use [`INSTALL_MAP.json`](INSTALL_MAP.json), the same exact
 kit contents, and safe rollback receipts. No undocumented per-game files are added.
+
+GTA III/Vice City experimental kits preserve the original game-owned Miles libraries; see `Docs/GTA_III_VICE_CITY_EXPERIMENTAL.md`.

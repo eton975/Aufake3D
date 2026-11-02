@@ -1,5 +1,5 @@
 {
-  "version": "0.9.0",
+  "version": "0.9.1",
   "format_revision": "layout1-doc-polish-v0814rc1",
   "profiles": {
     "alice2000": {
@@ -9,6 +9,7 @@
         "RUN_AUFAKE3D_WINDOWS.cmd",
         "RUN_AUFAKE3D_WINE.sh",
         "AUFAKE3D_SET_INITIAL_A3D2.ps1",
+        "AUFAKE3D_RESTORE_DISPLAY_SETTINGS.ps1",
         "a3d.dll",
         "a3dapi.dll",
         "alice-a3d-bridge.exe",
@@ -77,6 +78,28 @@
         "a3d.dll",
         "a3dapi.dll",
         "WolfSP.exe.manifest"
+      ]
+    },
+    "gta3": {
+      "folder": "GTA_III",
+      "exe": "gta3.exe",
+      "files": [
+        "RUN_AUFAKE3D_WINDOWS.cmd",
+        "RUN_AUFAKE3D_WINE.sh",
+        "a3d.dll",
+        "a3dapi.dll",
+        "gta3.exe.manifest"
+      ]
+    },
+    "gtavc": {
+      "folder": "GTA_Vice_City",
+      "exe": "gta-vc.exe",
+      "files": [
+        "RUN_AUFAKE3D_WINDOWS.cmd",
+        "RUN_AUFAKE3D_WINE.sh",
+        "a3d.dll",
+        "a3dapi.dll",
+        "gta-vc.exe.manifest"
       ]
     }
   }

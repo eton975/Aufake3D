@@ -1,4 +1,4 @@
-# One-command Windows and Linux build (v0.9.0 packaging revision)
+# One-command Windows and Linux build (v0.9.1 reproducibility-gated candidate)
 
 **Windows 10/11:** double-click **`BUILD_WINDOWS.cmd`** in the repository root.
 **Linux:** run **`./BUILD_LINUX.sh`** in the repository root.
@@ -104,13 +104,31 @@ PowerShell uses `py -3 scripts\build.py --doctor` (or `python scripts\build.py`)
 | `--require-native-mock` | Fail if Windows MSVC CRT prerequisites aren't available, rather than skipping that test |
 | `--strict-frozen-hashes` | Historical release audit only; fail if core or Miles proxy differs from pinned bytes |
 
+### Reproducible-build release gate (v0.9.1)
+
+Every normal packaged build now builds all PE components and a deterministic runtime
+ZIP, then **rebuilds the same source in two independent clean directories**.
+All executables, DLLs, and ZIP bytes must match all three builds or the command
+fails. On success, `dist/REPRODUCIBILITY_VERIFIED.json` records checksums.
+To ensure no files changed since validation, run:
+
+```bash
+python3 scripts/verify_reproducible.py --check-report
+```
+
+`--skip-repro-check` is a **development-only, explicitly unverified** escape
+hatch; it must not be used for release candidates. Extra rebuilds increase
+build time. This proves **same-host and same-toolchain** determinism only;
+Windows versus Linux byte identity still requires separately controlled and
+verified toolchains.
+
 ### Results
 
 - `dist/core/a3d.dll` / `dist/core/a3dapi.dll` — universal **PE32/x86** audio core
 - `dist/miles-local/mss32.dll` — independently authored 331-export Miles proxy
 - `Source/Engine/classic2000/alice-a3d-bridge.exe` — checked Alice 2000 launcher
 - The other 39-step recipe outputs, including Half-Life, Quake III and Unreal helpers
-- `dist/Aufake3D_v0.9.0_Local_Runtime.zip` — assembled from **source-only**
+- `dist/Aufake3D_v0.9.1_Local_Runtime.zip` — assembled from **source-only**
   launcher/manifests templates in `packaging/Game_Kits/`, not from an old binary ZIP.
   Includes ready-to-copy kits for Alice 2000, Alice 2011, Quake III 1.17 and
   Half-Life, plus universal DLLs, the reversible installer scripts, manual

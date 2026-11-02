@@ -38,13 +38,13 @@ jobs:
         run: python Tools/verify_source_only.py
       - name: Build all Win32 components, run tests, assemble game kits
         run: python scripts/build.py --require-native-mock --require-acoustics
-      - name: Verify byte-identical independent builds on this runner
-        run: python scripts/verify_reproducible.py --self-test
+      - name: Assert verified runtime manifest was created and matches outputs
+        run: python scripts/verify_reproducible.py --check-report
       - name: Upload compiled Windows runtime
         uses: actions/upload-artifact@v7
         with:
           name: Aufake3D-Win32-${{ runner.os }}-${{ github.run_number }}
-          path: dist/Aufake3D_v0.9.0_Local_Runtime.zip
+          path: dist/Aufake3D_v0.9.1_Local_Runtime.zip
           if-no-files-found: error
       - name: Upload individual DLLs for inspection
         uses: actions/upload-artifact@v7
@@ -55,4 +55,5 @@ jobs:
             dist/core/a3dapi.dll
             dist/miles-local/mss32.dll
             dist/core/local-build-manifest.json
+            dist/REPRODUCIBILITY_VERIFIED.json
           if-no-files-found: error

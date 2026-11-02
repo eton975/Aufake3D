@@ -15,13 +15,28 @@ if not defined A3D_WAVEOUT_QUEUE_HEADERS set "A3D_WAVEOUT_QUEUE_HEADERS=6"
 if not defined A3D_WAVEOUT_SUBBLOCKS set "A3D_WAVEOUT_SUBBLOCKS=1"
 if not exist "alice-a3d-bridge.exe" (echo Missing Alice classic compatibility bridge & exit /b 2)
 if not exist "alice.exe" (echo Missing original Alice & exit /b 2)
+rem Safeguard: never restore the .bak or rewrite video variables at launch.
+rem The PowerShell helper only seeds the provider once and leaves existing r_* settings intact.
 rem One-time saved default: never supply +set s_milesdriver, which can reselect A3D2
 rem during a Miles/Dolby change. After first run, menu choices are untouched.
 if not exist "AUFAKE3D_A3D2_INITIAL_DEFAULT_DONE.txt" (
-  powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0AUFAKE3D_SET_INITIAL_A3D2.ps1" -Game Alice2000 -GameDir "%CD%"
-  if errorlevel 1 echo NOTE: Could not seed initial A3D2 setting. Select A3D2 once from the game menu.
+  if exist "base\config.cfg" (
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0AUFAKE3D_SET_INITIAL_A3D2.ps1" -Game Alice2000 -GameDir "%CD%"
+    if errorlevel 1 echo NOTE: Could not seed initial A3D2 setting. Select A3D2 once from the game menu.
+  ) else (
+    rem Let Alice generate its own complete configuration before writing ANY sound preference.
+    set "AUFAKE3D_DEFER_A3D2_SEED=1"
+    echo First Alice launch: allowing the game to create its own graphics and input config.
+  )
 )
 echo Aufake3D classic Alice; bridge may modify checked selector in CHILD RAM only.
 rem Respect the persisted sound-provider choice (miles/dolby/a3d/a3d2).
 "alice-a3d-bridge.exe" %*
-exit /b %ERRORLEVEL%
+set "AUFAKE3D_GAME_EXIT_STATUS=%ERRORLEVEL%"
+rem On a clean install, seed the sound preference ONLY after the first session
+rem has saved its complete config. This has no effect on that first session.
+if defined AUFAKE3D_DEFER_A3D2_SEED if exist "base\config.cfg" (
+  powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0AUFAKE3D_SET_INITIAL_A3D2.ps1" -Game Alice2000 -GameDir "%CD%" -OnlyIfAuto
+  if errorlevel 1 echo NOTE: Initial A3D2 setup was deferred; you can select it from the game menu.
+)
+exit /b %AUFAKE3D_GAME_EXIT_STATUS%

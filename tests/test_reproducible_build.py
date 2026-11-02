@@ -34,6 +34,37 @@ class TestReproducibleBuild(unittest.TestCase):
             b.write_bytes(a.read_bytes())
             self.assertTrue(repro.compare_zips(a, b))
 
+    def test_packaged_build_requires_same_toolchain_rebuilds(self):
+        script=(ROOT/'scripts/build.py').read_text()
+        verifier=(ROOT/'scripts/verify_reproducible.py').read_text()
+        self.assertIn("'--verify-current'",script)
+        self.assertIn("'--skip-repro-check'",verifier)
+        self.assertIn('generated_pe_sha256',verifier)
+        self.assertIn('three-way-bit-identical',verifier)
+        self.assertIn('cross-host identity NOT established',verifier)
+
+    def test_approval_report_rejects_stale_archive(self):
+        import json
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            (root/'dist').mkdir()
+            zip_file=root/'dist'/'test.zip'
+            with zipfile.ZipFile(zip_file, 'w') as z:
+                z.writestr('alpha',b'first')
+            report=root/'dist'/'approved.json'
+            report.write_text(json.dumps({
+                'version':'test', 'verification':'three-way-bit-identical',
+                'runtime_zip':'dist/test.zip','runtime_sha256':repro.file_hash(zip_file),
+                'generated_pe_sha256':{}
+            }))
+            with patch.object(repro,'ROOT',root),patch.object(repro,'VERSION','test'), \
+                 patch.object(repro,'OUTPUT','dist/test.zip'),patch.object(repro,'REPORT','dist/approved.json'):
+                self.assertTrue(repro.check_report())
+                with zipfile.ZipFile(zip_file, 'w') as z:
+                    z.writestr('alpha',b'changed')
+                self.assertFalse(repro.check_report())
+
     def test_copy_excludes_build_outputs(self):
         self.assertIn('dist', repro.IGNORED_DIRS)
         self.assertIn('build', repro.IGNORED_DIRS)

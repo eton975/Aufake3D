@@ -6,12 +6,15 @@ installation. This is a local same-toolchain guarantee, not proof that two
 arbitrarily different Clang/LLD versions produce identical machine code.
 
   python scripts/verify_reproducible.py --self-test
+  python scripts/verify_reproducible.py --verify-current
+  python scripts/verify_reproducible.py --check-report
   python scripts/verify_reproducible.py --compare first.zip second.zip
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import os
 from pathlib import Path
 import shutil
@@ -21,7 +24,9 @@ import tempfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = 'dist/Aufake3D_v0.9.0_Local_Runtime.zip'
+VERSION = json.loads((ROOT/'packaging/Game_Kits/INSTALL_MAP.json').read_text())['version']
+OUTPUT = f'dist/Aufake3D_v{VERSION}_Local_Runtime.zip'
+REPORT = 'dist/REPRODUCIBILITY_VERIFIED.json'
 IGNORED_DIRS = {'.git', 'build', 'dist', '__pycache__', '.pytest_cache', '.mypy_cache', '.venv', 'venv'}
 IGNORED_EXTENSIONS = {'.dll', '.exe', '.lib', '.obj', '.o', '.exp', '.pdb', '.pyc'}
 
@@ -71,7 +76,8 @@ def copy_clean_source(destination: Path) -> None:
 
 
 def build(source: Path) -> None:
-    cmd = [sys.executable, str(source/'scripts/build.py'), '--no-tests', '--no-acoustics']
+    cmd = [sys.executable, str(source/'scripts/build.py'), '--no-tests', '--no-acoustics',
+           '--skip-repro-check']
     print('BUILD:', source, flush=True)
     subprocess.run(cmd, cwd=source, check=True)
 
@@ -113,15 +119,90 @@ def self_test(work_dir: Path) -> bool:
     return not differences and compare_zips(alpha/OUTPUT, beta/OUTPUT)
 
 
+def verify_current(work_dir: Path) -> bool:
+    """Gate a local build against TWO independent fresh, same-toolchain builds.
+
+    If verification fails, there is no approval sidecar. The report is kept
+    outside the runtime ZIP so the act of certifying cannot change ZIP bytes.
+    """
+    report = ROOT/REPORT
+    report.unlink(missing_ok=True)
+    current_zip = ROOT/OUTPUT
+    if not current_zip.is_file():
+        raise FileNotFoundError('Build the current runtime first: '+str(current_zip))
+    alpha, beta = work_dir/'source-a', work_dir/'source-b'
+    for name in ('clang', 'lld-link'):
+        p = shutil.which(name)
+        if p:
+            version = subprocess.run([p, '--version'], capture_output=True, text=True, check=True)
+            print(name, version.stdout.splitlines()[0], flush=True)
+    copy_clean_source(alpha)
+    copy_clean_source(beta)
+    build(alpha)
+    build(beta)
+    hashes = [compiled_pe_hashes(tree) for tree in (ROOT, alpha, beta)]
+    names = set().union(*(h.keys() for h in hashes))
+    differences = [name for name in sorted(names)
+                   if not (hashes[0].get(name) == hashes[1].get(name) == hashes[2].get(name))]
+    if not names:
+        print('FAIL: no compiled PE binaries found')
+        return False
+    if differences:
+        print('FAIL: current, clean A and clean B generated different PE binaries:')
+        for name in differences[:30]:
+            print(' -', name, *(h.get(name, '(missing)') for h in hashes))
+        return False
+    if not (compare_zips(current_zip, alpha/OUTPUT) and
+            compare_zips(current_zip, beta/OUTPUT)):
+        return False
+    approved = {
+        'schema': 1,
+        'version': VERSION,
+        'verification': 'three-way-bit-identical',
+        'scope': 'same-host-and-toolchain; cross-host identity NOT established',
+        'runtime_zip': OUTPUT,
+        'runtime_sha256': file_hash(current_zip),
+        'generated_pe_sha256': dict(sorted(hashes[0].items())),
+    }
+    report.parent.mkdir(exist_ok=True)
+    report.write_text(json.dumps(approved, sort_keys=True, indent=2)+'\n', encoding='utf-8')
+    print('PASS: generated files and complete runtime ZIP match THREE independent builds')
+    print('VERIFIED REPORT:', report)
+    return True
+
+
+def check_report() -> bool:
+    report = ROOT/REPORT
+    if not report.exists():
+        print('FAIL: reproducibility verification report missing')
+        return False
+    content = json.loads(report.read_text(encoding='utf-8'))
+    if (content.get('version') != VERSION or
+            content.get('verification') != 'three-way-bit-identical' or
+            content.get('runtime_zip') != OUTPUT or
+            content.get('runtime_sha256') != file_hash(ROOT/OUTPUT) or
+            content.get('generated_pe_sha256') != dict(sorted(compiled_pe_hashes(ROOT).items()))):
+        print('FAIL: reproducibility report is stale or artifacts changed')
+        return False
+    print('PASS: all verified local artifacts still match the recorded SHA-256 manifest')
+    return True
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('--self-test', action='store_true', help='Rebuild twice in fresh, separate directories and compare')
+    group.add_argument('--verify-current', action='store_true',
+                       help='Release gate: compare current build with TWO clean rebuilds and write verified report')
+    group.add_argument('--check-report', action='store_true',
+                       help='Fail if verified manifest is missing or its artifact hashes changed')
     group.add_argument('--compare', nargs=2, type=Path, metavar=('FIRST.zip', 'SECOND.zip'),
                        help='Compare two previously built complete runtime ZIPs')
     parser.add_argument('--keep-dir', type=Path, help='Retain fresh self-test source copies/logs under this NEW directory')
     args = parser.parse_args()
     try:
+        if args.check_report:
+            return 0 if check_report() else 1
         if args.compare:
             if args.keep_dir:
                 parser.error('--keep-dir is only valid with --self-test')
@@ -129,9 +210,11 @@ def main() -> int:
         if args.keep_dir:
             directory = args.keep_dir.resolve()
             directory.mkdir(parents=True, exist_ok=False)
-            return 0 if self_test(directory) else 1
+            passed = verify_current(directory) if args.verify_current else self_test(directory)
+            return 0 if passed else 1
         with tempfile.TemporaryDirectory(prefix='aufake3d-repro-') as temp:
-            return 0 if self_test(Path(temp)) else 1
+            passed = verify_current(Path(temp)) if args.verify_current else self_test(Path(temp))
+            return 0 if passed else 1
     except (OSError, RuntimeError, subprocess.CalledProcessError, zipfile.BadZipFile) as exc:
         print('REPRODUCIBILITY CHECK FAILED:', exc, file=sys.stderr)
         return 1

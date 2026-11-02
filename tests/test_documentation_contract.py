@@ -29,7 +29,7 @@ class DocumentationContract(unittest.TestCase):
                 with self.subTest(path=rel,phrase=word):self.assertIn(word,text)
     def test_current_engine_source_not_legacy_readme(self):
         s=(ROOT/'Source/Engine/README.md').read_text()
-        self.assertIn('v0.9.0',s)
+        self.assertIn('v0.9.1',s)
         self.assertNotIn('v0.7.0-alpha',s)
         self.assertTrue((ROOT/'Docs/History/Engine_Notes/README_V070_ORIGINAL.md').exists())
     def test_new_guide_links(self):
@@ -45,5 +45,5 @@ class DocumentationContract(unittest.TestCase):
     def test_release_version(self):
         if (ROOT/'RELEASE_FREEZE.json').is_file():
             import json
-            self.assertEqual(json.loads((ROOT/'RELEASE_FREEZE.json').read_text())['version'],'0.9.0')
+            self.assertEqual(json.loads((ROOT/'RELEASE_FREEZE.json').read_text())['version'],'0.9.1')
 if __name__=='__main__': unittest.main()

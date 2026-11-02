@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"><assemblyIdentity type="win32" name="Unofficial.Aufake3D.Probe.gtavc" version="1.0.0.0"/><file name="a3dapi.dll"><comClass clsid="{92FA2C24-253C-11D2-90FB-006008A1F441}" threadingModel="Both"/></file></assembly>

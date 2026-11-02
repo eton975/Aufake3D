@@ -1,3 +1,12 @@
+## v0.9.1 reproducibility-gated development candidate
+
+Default one-click builds verify the complete compiled runtime and all generated
+PE files against **two independent clean rebuilds on the same toolchain**.
+A mismatch fails the build; an exact match creates
+`dist/REPRODUCIBILITY_VERIFIED.json`. This is **not** cross-OS equivalence or
+real-hardware/gameplay certification. See [v0.9.1 release notes](RELEASE_NOTES_V091.md)
+and [reproducible-build details](Docs/REPRODUCIBLE_BUILDS_V091.md).
+
 # Aufake3D v0.9.0 — AU8830 renderer development candidate
 
 **Source-first development candidate**, with no tracked precompiled PE32 EXEs or DLLs.

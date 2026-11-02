@@ -43,7 +43,7 @@ Extract the runtime ZIP fully. The extracted top-level folder contains `Game_Kit
 
    (There are **eight** supplied files; the original game `.exe` is not included.) If an existing `alice.exe.manifest` would be overwritten, back it up and investigate before proceeding.
 4. Double-click **`RUN_AUFAKE3D_WINDOWS.cmd`** in the game folder — not the original `.exe`.
-5. **On the first Windows launch, Aufake3D selects A3D2 as your initial default.** It makes a backup of the saved `base/config.cfg` before changing only `s_milesdriver`. Later launches do not change that setting; you can select Miles 2D or Dolby in-game and the selection will be respected. If A3D2 did not start, use the game's sound settings to select **Aureal A3D 2.0** once.
+5. **On the first Windows launch, Aufake3D selects A3D2 as your initial default.** It makes a backup of the saved `base/config.cfg` before changing only `s_milesdriver`. If the config is missing, it first lets Alice generate it and sets A3D2 after the first session. Later launches do not change that setting; you can select Miles 2D or Dolby in-game and the selection will be respected. If A3D2 did not start, use the game's sound settings to select **Aureal A3D 2.0** once.
 
 **Expected:** Sound starts normally, and selecting A3D2 opens its provider. If you change provider, allow the game to restart its sound system. Alice 2000's full round-trip provider switching still needs independent gameplay validation for this release candidate.
 
@@ -122,6 +122,20 @@ Extract the runtime ZIP fully. The extracted top-level folder contains `Game_Kit
    If `quake3.exe.manifest` already exists, back it up and check whether another modification depends on it.
 3. Double-click **`RUN_AUFAKE3D_WINDOWS.cmd`**.
 4. Open Quake III's console and enable A3D with **`s_enable_a3d 1`**. If prompted, restart the sound system or game. The launcher already supplies the recommended sound-mixing timing settings.
+
+## Alice (2000): preserving and recovering video settings
+
+Aufake3D should **never** reset `r_mode`, `r_customwidth`, `r_customheight`, `r_fullscreen` or other video/keybinding settings during ordinary launches. The one-time sound-preference helper does **not** restore its `.bak` file at launch. It now refuses to create a partial `base/config.cfg` when no game configuration exists. On a brand-new installation, the first launch lets Alice create a complete config; after the game exits, the launcher saves A3D2 **only if the game left its provider unset or `auto`**. An explicit Miles/Dolby choice made during that first session is respected. The first launch may therefore use Miles 2D.
+
+If an earlier installation has already reverted your resolution to 640×480, first close the game. In PowerShell inside the folder containing the original `alice.exe`, run:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\AUFAKE3D_RESTORE_DISPLAY_SETTINGS.ps1
+```
+
+This **optional, manual-only** recovery copies only `r_*`, `vid_*` and `gl_*` settings from `base/config.cfg.AUFAKE3D_before_A3D2_default.bak` into the active `base/config.cfg`. It preserves the current sound provider, binds and other choices, and saves a dated backup of the current file first. It never runs automatically. If the old backup does not contain your preferred resolution, set it inside Alice instead.
+
+If resolution still resets after this repair, do not repeatedly run the recovery utility: inspect what Alice actually saves in `base/config.cfg` before and after a launch. That would identify an independent game configuration-loading or graphics-mode issue.
 
 ## About the A3D2 default (Alice on Windows)
 

@@ -1,4 +1,4 @@
-# Engine source — current guide for v0.9.0
+# Engine source — current guide for v0.9.1
 
 The authoritative source map is [Docs/SOURCE_ARCHITECTURE.md](../../Docs/SOURCE_ARCHITECTURE.md).
 Build from the repository root with `python3 scripts/build_engine.py`; do not
