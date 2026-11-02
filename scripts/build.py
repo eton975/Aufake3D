@@ -108,6 +108,46 @@ def add_file(contents: dict[str, bytes], name: str, path: Path):
     contents[name] = path.read_bytes()
 
 
+def assert_unified_core(contents: dict[str, bytes], install_map: dict) -> dict:
+    """Build-time invariant: ALL kits use the same compiled A3D renderer.
+
+    In particular Alice 2011's extra Miles proxy, app-local COM activation
+    and provider-selection bridge MUST NOT acquire a separate a3dapi.dll or
+    a3d.dll build. The runner enforces this invariant on the actual ZIP bytes,
+    including its secondary SndDrivers copies, rather than merely trusting a
+    source-code comment or installer manifest.
+    """
+    cores = ('a3d.dll', 'a3dapi.dll')
+    canonical = {}
+    for name in cores:
+        key = 'Universal_Core/' + name
+        if key not in contents:
+            raise RuntimeError('Unified core missing from runtime: ' + key)
+        canonical[name] = hashlib.sha256(contents[key]).hexdigest()
+    installed = {}
+    for game, profile in install_map['profiles'].items():
+        prefix = 'Game_Kits/' + profile['folder'] + '/COPY_TO_GAME_FOLDER/'
+        paths = [name for name in profile['files'] if Path(name).name in cores]
+        for name in cores:
+            if name not in paths:
+                raise RuntimeError(f'{game}: missing shared core {name}')
+        installed[game] = {}
+        for relative in paths:
+            key = prefix + relative
+            if key not in contents:
+                raise RuntimeError(f'{game}: missing rendered core {key}')
+            name = Path(relative).name
+            actual = hashlib.sha256(contents[key]).hexdigest()
+            if actual != canonical[name]:
+                raise RuntimeError(f'{game}: renderer fork or stale component at {key}; '
+                                   f'expected {canonical[name]}, found {actual}')
+            installed[game][relative] = actual
+    return {'architecture':'single-shared-win32-engine',
+            'version':VERSION, 'core_sha256':canonical, 'game_kit_core_sha256':installed,
+            'note':'One audio renderer for all games. Compatibility bridges, Miles proxy and '
+                   'manifests are not alternate rendering engines. This does not verify gameplay.'}
+
+
 def stage_release(proxy: Path, bridge: Path) -> Path:
     """Assemble all four installer-kit layouts from *source-owned* templates.
 
@@ -167,7 +207,8 @@ def stage_release(proxy: Path, bridge: Path) -> Path:
                  'SECURITY_RELEASE_REVIEW.md','README.md'):
         add_file(contents, name, ROOT/name)
     for name in ('MANUAL_INSTALLATION.md','EASY_INSTALL_WINDOWS.md',
-                 'Aufake3D_v0.8.18_Quick_Start.pdf','SECURITY_REVIEW_V0814_RC1.md','AU8830_HRTF_PERFORMANCE_MODES.md','GAME_COMPATIBILITY_V090.md'):
+                 'Aufake3D_v0.8.18_Quick_Start.pdf','SECURITY_REVIEW_V0814_RC1.md','AU8830_HRTF_PERFORMANCE_MODES.md','GAME_COMPATIBILITY_V090.md',
+                 'UNIFIED_ENGINE_ALICE2011_MIGRATION.md'):
         p=ROOT/'Docs'/name
         if p.is_file():add_file(contents, 'Docs/'+name, p)
     add_file(contents, 'START_HERE.txt', ROOT/'START_HERE.txt')
@@ -180,6 +221,9 @@ without separate functionality tests. Process-memory-modifying helpers
 remain experimental and need independent antivirus/security review.
 Source repository: https://github.com/eton975/Aufake3D
 '''.lstrip()).encode('utf-8')
+    unified = assert_unified_core(contents, install_map)
+    contents['UNIFIED_ENGINE_SHA256.json'] = (json.dumps(unified, indent=2, sort_keys=True)+'\n').encode('utf-8')
+    print('Unified core verified across', len(unified['game_kit_core_sha256']), 'game kits, including Alice 2011')
     # Generate checksums for this exact local package, not frozen RC hashes.
     checksums = {path:hashlib.sha256(data).hexdigest() for path,data in sorted(contents.items())}
     contents['LOCAL_BUILD_SHA256.json'] = (json.dumps({'version': VERSION,

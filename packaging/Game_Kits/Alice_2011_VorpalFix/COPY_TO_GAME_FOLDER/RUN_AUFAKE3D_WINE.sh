@@ -7,7 +7,8 @@ export A3D_WAVEOUT_SCHEDULE_TEST='' A3D_SHORT_SFX_DECLICK=1
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 [[ -f alice.exe && -f 'SndDrivers/a3d_mss_real.dll' ]] || { echo 'Missing Alice or saved original Miles' >&2; exit 2; }
 export A3D_MASTER_GAIN="${A3D_MASTER_GAIN:-5.0}"
-export A3D_HRTF_MODE="${A3D_HRTF_MODE:-fast}"
+# Shared AU8830 renderer; only the executable activation/provider selector is game-specific.
+export A3D_HRTF_MODE="${A3D_HRTF_MODE:-reference}"
 export A3D_MILES_MODE=activate A3D_MILES_ALIAS_UNKNOWN=0 A3D_MILES_REQUIRE_CLI_A3D2=1
 export A3D_MILES_DISPLAY_CANONICAL=1 A3D_MILES_COM_PROBE=0
 export A3D_WAVEOUT_QUEUE_HEADERS=6 A3D_WAVEOUT_SUBBLOCKS=1 A3D_RENDER_SNAPSHOT=0

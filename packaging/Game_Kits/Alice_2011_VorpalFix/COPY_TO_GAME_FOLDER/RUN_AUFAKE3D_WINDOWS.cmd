@@ -10,7 +10,8 @@ set "A3D_WAVEOUT_SCHEDULE_TEST="
 set "A3D_SHORT_SFX_DECLICK=1"
 
 if not defined A3D_MASTER_GAIN set "A3D_MASTER_GAIN=5.0"
-if not defined A3D_HRTF_MODE set "A3D_HRTF_MODE=fast"
+rem Shared AU8830 56-tap engine: same reference/fast/legacy modes as other games.
+if not defined A3D_HRTF_MODE set "A3D_HRTF_MODE=reference"
 if not defined A3D_MILES_MODE set "A3D_MILES_MODE=activate"
 set "A3D_MILES_ALIAS_UNKNOWN=0"
 rem The RAM selector recognises a3d2 directly; never advertise the unsafe unknown alias.
@@ -34,7 +35,7 @@ if not exist "AUFAKE3D_A3D2_INITIAL_DEFAULT_DONE.txt" (
   powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0AUFAKE3D_SET_INITIAL_A3D2.ps1" -Game Alice2011 -GameDir "%CD%"
   if errorlevel 1 echo NOTE: Could not seed initial A3D2 setting. Select A3D2 once from the game menu.
 )
-echo Aufake3D v0.8.18: Alice 2011 VorpalFix A3D2 selector profile.
+echo Aufake3D v0.9.0 unified engine candidate: Alice 2011 VorpalFix selector profile.
 echo Warning: default audio gain 5.0. Lower device volume before running.
 rem Use the signature-checked, child-RAM-only selector bridge. Do not alter alice.exe on disk.
 rem The temporary manifest is required to activate the app-local A3D COM server.
