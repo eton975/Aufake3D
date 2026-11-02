@@ -264,7 +264,7 @@ def main():
         if args.doctor:return 0
         if args.require_native_mock and not native_mock_ready()[0]:
             raise RuntimeError(native_mock_ready()[1])
-        run([sys.executable,ROOT/'tools/generate_vortex2_hrtf.py','--check'])
+        run([sys.executable,ROOT/'Tools/generate_vortex2_hrtf.py','--check'])
         print('\n[1/5] Building core and experimental utilities')
         run([sys.executable, ROOT/'scripts/build_engine.py','--clang',clang,'--linker',ld])
         print('\n[2/5] Building original Alice 2000 bridge')

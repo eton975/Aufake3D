@@ -11,9 +11,16 @@ import unittest
 # on sys.path, particularly with Windows Python 3.13. Import the standalone
 # generator by its known on-disk location instead of assuming `tools` is a package.
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "tools"))
+sys.path.insert(0, str(ROOT / "Tools"))
 from generate_vortex2_hrtf import generate, CSV, OUT
 class Vortex2Reference(unittest.TestCase):
+    def test_case_sensitive_generator_path(self):
+        # Windows hides folder-name case errors that break Linux CI.
+        generator = ROOT / "Tools" / "generate_vortex2_hrtf.py"
+        self.assertTrue(generator.is_file(), f"Missing tracked generator: {generator}")
+        build_script = (ROOT / "scripts" / "build.py").read_text()
+        self.assertIn("ROOT/'Tools/generate_vortex2_hrtf.py'", build_script)
+
     @classmethod
     def setUpClass(cls):
         with CSV.open() as source:cls.rows=list(csv.DictReader(source))
