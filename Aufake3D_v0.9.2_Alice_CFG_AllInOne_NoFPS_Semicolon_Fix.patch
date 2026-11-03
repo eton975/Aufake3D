@@ -1,0 +1,36 @@
+diff --git a/Audio_Reference/ALICE_BASE_CFGS/a3d5_play_2011.cfg b/Audio_Reference/ALICE_BASE_CFGS/a3d5_play_2011.cfg
+index edec262..ed72f19 100644
+--- a/Audio_Reference/ALICE_BASE_CFGS/a3d5_play_2011.cfg
++++ b/Audio_Reference/ALICE_BASE_CFGS/a3d5_play_2011.cfg
+@@ -1,3 +1,4 @@
+-// Use the SAME 2011 demo on Win10 and Wine; 2011 record/replay needs confirmation.
+-// First run 'exec a3d5_stage.cfg' and wait for gvillage to load.
+-demo a3d5_2011
++// Alice 2011 demo playback on Windows 10 or Wine
++// First load gvillage with a3d5_stage.cfg
++// Verify that the same demo file is used for both recordings
++demo a3d5_2011
+diff --git a/Audio_Reference/ALICE_BASE_CFGS/a3d5_setup.cfg b/Audio_Reference/ALICE_BASE_CFGS/a3d5_setup.cfg
+index 750cdb6..cd19674 100644
+--- a/Audio_Reference/ALICE_BASE_CFGS/a3d5_setup.cfg
++++ b/Audio_Reference/ALICE_BASE_CFGS/a3d5_setup.cfg
+@@ -1,4 +1,5 @@
+-// Non-destructive common comparison setup: preserve your own audio-provider settings.
+-// Set the same frame cap in all modern configurations; native Win98 may not sustain it.
+-com_maxfps 60
+-echo A3D5: Load the map next with exec a3d5_load_hedge1.cfg
++// Five-way Alice audio comparison setup
++// Preserve the existing A3D provider and HRTF renderer
++// Preserve the current frame-rate settings
++// No gameplay configuration is modified here
++echo A3D5 setup ready. Load the map with exec a3d5_load_hedge1.cfg
+diff --git a/Audio_Reference/ALICE_BASE_CFGS/a3d5_stage.cfg b/Audio_Reference/ALICE_BASE_CFGS/a3d5_stage.cfg
+index c4dcd68..0f34b16 100644
+--- a/Audio_Reference/ALICE_BASE_CFGS/a3d5_stage.cfg
++++ b/Audio_Reference/ALICE_BASE_CFGS/a3d5_stage.cfg
+@@ -1,2 +1,3 @@
+-// Run this before demo playback; wait for level to load fully.
+-map gvillage
++// Load the staging level before demo playback
++// Wait until gvillage has finished loading
++map gvillage
