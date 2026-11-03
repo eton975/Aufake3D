@@ -1,0 +1,4 @@
+Aufake3D Alice Five-Way Audio Test Kit 1.0
+Generated 2026-11-03.
+Console compatibility must be confirmed in each game; real hardware not tested.
+Does not include game files, A3D DLLs, real audio or recordings.

@@ -1,0 +1,51 @@
+name: Aufake3D standalone Alice audio reference kit
+
+on:
+  push:
+    paths:
+      - 'Audio_Reference/**'
+      - 'scripts/build_audio_reference.py'
+      - 'BUILD_AUDIO_REFERENCE_WINDOWS.cmd'
+      - 'BUILD_AUDIO_REFERENCE_LINUX.sh'
+      - 'Docs/AUDIO_REFERENCE_5WAY.md'
+      - '.github/workflows/audio-reference-ci.yml'
+  pull_request:
+    paths:
+      - 'Audio_Reference/**'
+      - 'scripts/build_audio_reference.py'
+      - 'BUILD_AUDIO_REFERENCE_WINDOWS.cmd'
+      - 'BUILD_AUDIO_REFERENCE_LINUX.sh'
+      - 'Docs/AUDIO_REFERENCE_5WAY.md'
+      - '.github/workflows/audio-reference-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  five-way-reference:
+    name: Five-way reference kit (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2022]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install analyzer test dependencies
+        run: python -m pip install -r Audio_Reference/requirements.txt
+      - name: Run standalone analyzer regression tests
+        run: python scripts/build_audio_reference.py --test
+      - name: Build three-way reproducible standalone package
+        run: python scripts/build_audio_reference.py
+      - name: Verify standalone ZIP against sources and manifest
+        run: python scripts/build_audio_reference.py --verify
+      - name: Upload standalone audio reference kit
+        uses: actions/upload-artifact@v4
+        with:
+          name: Alice-Five-Way-Audio-Reference-${{ runner.os }}
+          path: dist/audio-reference/Aufake3D_Alice_Five_Way_Audio_Reference_Kit_v0.9.2.zip
+          if-no-files-found: error

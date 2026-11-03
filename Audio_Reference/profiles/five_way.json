@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "analysis": {
+    "max_lag_seconds": 12,
+    "duration_seconds": 45,
+    "window_seconds": 5
+  },
+  "captures": [
+    {
+      "id": "alice2000_windows",
+      "label": "Alice 2000 / Windows 10 / Aufake3D",
+      "file": "../recordings/alice2000_windows.wav",
+      "demo_sha256": "",
+      "start_seconds": null,
+      "notes": "Same 2000 .dm3 as Wine and hardware; A3D2 verified"
+    },
+    {
+      "id": "alice2000_wine",
+      "label": "Alice 2000 / Debian Wine / Aufake3D",
+      "file": "../recordings/alice2000_wine.wav",
+      "demo_sha256": "",
+      "start_seconds": null,
+      "notes": "Same 2000 .dm3 and Aufake3D settings as Windows"
+    },
+    {
+      "id": "alice2011_windows",
+      "label": "Alice 2011 / Windows 10 / Aufake3D",
+      "file": "../recordings/alice2011_windows.wav",
+      "demo_sha256": "",
+      "start_seconds": null,
+      "notes": "VorpalFix 4.2.1; A3D_MILES_MODE=activate"
+    },
+    {
+      "id": "alice2011_wine",
+      "label": "Alice 2011 / Debian Wine / Aufake3D",
+      "file": "../recordings/alice2011_wine.wav",
+      "demo_sha256": "",
+      "start_seconds": null,
+      "notes": "Same 2011 .dm3 as Windows; identical VorpalFix settings"
+    },
+    {
+      "id": "alice2000_vortex2_win98",
+      "label": "Alice 2000 / Win98SE / Real AU8830",
+      "file": "../recordings/alice2000_vortex2_win98.wav",
+      "demo_sha256": "",
+      "start_seconds": null,
+      "notes": "Pentium III physical Vortex 2 analog stereo line out to external recorder"
+    }
+  ]
+}

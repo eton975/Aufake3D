@@ -1,0 +1,8 @@
+# Audio reference lab: preserve locally captured audio and game demos without staging.
+recordings/*
+!recordings/PLACE_WAVS_HERE.txt
+results/
+*.dm3
+*.wav
+__pycache__/
+*.pyc

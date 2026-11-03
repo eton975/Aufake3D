@@ -1,0 +1,7 @@
+Provide these five actual recordings (not included in this ZIP):
+  alice2000_windows.wav
+  alice2000_wine.wav
+  alice2011_windows.wav
+  alice2011_wine.wav
+  alice2000_vortex2_win98.wav
+All stereo, ideally 48000 Hz, unprocessed PCM WAV.
