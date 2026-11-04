@@ -135,6 +135,7 @@ SUPPORTED_TARGETS = {
     'ubuntu-24.04': ('ubuntu', '24.04'),
     'ubuntu-26.04': ('ubuntu', '26.04'),
     'ubuntu-26.10': ('ubuntu', '26.10'),
+    'debian-13': ('debian', '13'),
 }
 
 
@@ -152,7 +153,8 @@ def verify_build_target(target: str) -> dict[str, str]:
     actual_id = os_release.get('ID', '').lower()
     actual_version = os_release.get('VERSION_ID', '')
     if (actual_id, actual_version) != (os_id, version):
-        raise ValueError(f'{target} requires Ubuntu {version}; found '
+        distribution = 'Ubuntu' if os_id == 'ubuntu' else 'Debian'
+        raise ValueError(f'{target} requires {distribution} {version}; found '
                          f'{actual_id} {actual_version}')
     return {'target': target, 'os_id': actual_id, 'os_version': actual_version}
 

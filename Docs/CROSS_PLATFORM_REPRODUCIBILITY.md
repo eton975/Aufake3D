@@ -5,23 +5,25 @@ The project has **two different verification scopes**. A local `BUILD_WINDOWS.cm
 verification, writes `dist/REPRODUCIBILITY_VERIFIED.json`, and **does not**
 claim that another operating system's binaries have the same hashes.
 
-The `.github/workflows/source-ci.yml` gate is mandatory for four targets:
-`windows-2022`, `ubuntu-24.04`, `ubuntu-26.04` (native hosted VM), and
-`ubuntu-26.10` (official Ubuntu Docker image on an `ubuntu-26.04` VM).
-Ubuntu 26.10 has no official GitHub-hosted x64 VM label. Its Docker image is
-pinned to the OCI digest in the workflow, not a floating tag; an emitter
-checks `/etc/os-release` before accepting any target name. Thus an accidentally
-misconfigured image cannot pass as Ubuntu 26.10.
+The `.github/workflows/source-ci.yml` gate is mandatory for five targets:
+`windows-2022`, `ubuntu-24.04`, `ubuntu-26.04` (native hosted VM),
+`ubuntu-26.10` (pinned Ubuntu container), and `debian-13` (pinned official
+Debian 13 container). Both containers run on hosted Ubuntu VMs, but the
+verifier authenticates their actual userspace via `/etc/os-release`; neither
+an Ubuntu host nor a mislabeled container may impersonate Debian 13. The
+container image OCI digests are fixed in the workflow.
 
 The independent release gate:
 
 1. Builds the **same checkout** on `windows-2022`, `ubuntu-24.04`,
-   `ubuntu-26.04`, and the pinned Ubuntu 26.10 container, running
-   the existing local verification and tests in every build environment.
-2. All four builds install **LLVM/Clang+LLD 19.1.7** through the same pinned
-   third-party installer action commit (`ebc0426251bc40c7cd31162802432c68818ab8f0`).
+   `ubuntu-26.04`, the pinned Ubuntu 26.10 container, and the pinned Debian 13
+   container, running the existing local verification and tests in every build environment.
+2. All five builds use byte-identical **LLVM/Clang+LLD 19.1.7** inputs.
+   Windows and Ubuntu use the pinned upstream installer action commit
+   (`ebc0426251bc40c7cd31162802432c68818ab8f0`). Debian 13 uses
+   the much smaller checksum-pinned compiler with identical CI bytes.
    The Python interpreter is pinned to **3.13.7**. On Windows, the workflow
-   uses `actions/setup-python`; on all three Ubuntu builds and the final
+   uses `actions/setup-python`; on all four Linux builds and the final
    comparison job it uses pinned `astral-sh/setup-uv` (v9.0.0 at a full commit
    SHA) installing pinned `uv` 0.10.0 and the exact managed CPython 3.13.7.
    This avoids `setup-python`'s missing Ubuntu 26.04/26.10 archive entries.
@@ -43,9 +45,9 @@ The independent release gate:
    and all members of the exact final runtime ZIP. It also records the exact
    raw ZIP SHA-256, full Python/LLVM versions, source Git commit, and the local
    verification result. It also stores a second deterministic ZIP of **every
-   compiled PE DLL/EXE**, including files not present in the runtime ZIP. Both
-   hosts upload the runtime ZIP, raw PE evidence and manifests separately.
-4. A final **cross-platform-byte-identity** job downloads all four artifacts,
+   compiled PE DLL/EXE**, including files not present in the runtime ZIP. All
+   target jobs upload the runtime ZIP, raw PE evidence and manifests separately.
+4. A final **cross-platform-byte-identity** job downloads all five artifacts,
    validates the manifests against the actual ZIPs, and **fails closed** if
    any tracked file, actual downloaded compiled PE, ZIP entry, archive byte,
    compiler version, Python version, or Git commit differs. The build evidence
@@ -55,7 +57,7 @@ The independent release gate:
    On success only, it writes
    `CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json` and publishes it as a
    separate artifact. The success certificate states an exact checked commit
-   and runtime SHA-256. Any missing, failed or mismatching Ubuntu job blocks the certificate.
+   and runtime SHA-256. Any missing, failed or mismatching Ubuntu or Debian job blocks the certificate.
 
 ## LLVM 19.1.7 on Ubuntu 26.04 and 26.10 (v6)
 
@@ -108,7 +110,7 @@ A local build whose SHA-256 matches the certified runtime ZIP hash can then
 be compared with that certified artifact. Merely running `BUILD_WINDOWS.cmd`
 on one computer can never prove another computer's output.
 
-For a diagnostic *pairwise* comparison (which cannot replace the mandatory four-target certificate):
+For a diagnostic *pairwise* comparison (which cannot replace the mandatory five-target certificate):
 
 ```sh
 python scripts/verify_cross_platform.py emit --llvm 19.1.7 --out dist/manifest.json
@@ -132,23 +134,27 @@ source revision **and pinned inputs**, not of arbitrary hosts/tools.
 A failed manifest-emission or certificate-comparison operation removes its
 previous success output, so stale files cannot masquerade as new proof.
 
-## Four-target certification (v3)
+## Five-target certification (v4)
 
-The final workflow now uses `scripts/verify_matrix_reproducibility.py`, which
-requires **all three** Ubuntu targets, validates the target label against the
+The final workflow uses `scripts/verify_matrix_reproducibility.py`, which
+requires **all three** Ubuntu targets **and Debian 13**, authenticates each
 recorded Linux OS release, reopens every downloaded PE evidence archive, checks
 every raw ZIP against the Windows reference, and emits **one consolidated**
-certificate only after all four independently built outputs match. A failed
+certificate only after all five independently built outputs match. A failed
 attempt deletes any stale certificate. The Windows job remains the byte identity
 reference, not a special renderer implementation.
 
-To reproduce the matrix check manually, download the four CI artifacts and run:
+The pinned local builder's existing v0.9.2 ZIP reference was originally
+certified by four CI environments; that historical reference hash is not
+silently rewritten. New CI certificates require five independent hosts.
+
+To reproduce the matrix check manually, download the five CI artifacts and run:
 
 ```sh
-python scripts/verify_matrix_reproducibility.py --windows verification/windows --linux-target ubuntu-24.04=verification/ubuntu-24.04 --linux-target ubuntu-26.04=verification/ubuntu-26.04 --linux-target ubuntu-26.10=verification/ubuntu-26.10 --expected-commit YOUR_GIT_COMMIT_SHA --out verification/CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json
+python scripts/verify_matrix_reproducibility.py --windows verification/windows --linux-target ubuntu-24.04=verification/ubuntu-24.04 --linux-target ubuntu-26.04=verification/ubuntu-26.04 --linux-target ubuntu-26.10=verification/ubuntu-26.10 --linux-target debian-13=verification/debian-13 --expected-commit YOUR_GIT_COMMIT_SHA --out verification/CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json
 ```
 
-**This configuration is not itself certification:** CI must pass on all four
+**This configuration is not itself certification:** CI must pass on all five
 real environments before an official checksum-identical release can be claimed.
 The digest-pinned 26.10 root filesystem and the pinned compiler/Python versions
 constrain the inputs, while the strict output comparison detects any remaining

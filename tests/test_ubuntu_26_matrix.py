@@ -1,4 +1,4 @@
-"""Four-runner byte-identity policy: the extra Ubuntu jobs may never be optional."""
+"""Five-runner byte-identity policy: Ubuntu and Debian are mandatory."""
 from __future__ import annotations
 
 import hashlib
@@ -22,7 +22,7 @@ class Ubuntu26MatrixTests(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
         root = Path(self.tmp.name)
         self.bundles = {}
-        for name in [matrix.WINDOWS, *matrix.UBUNTU_TARGETS]:
+        for name in [matrix.WINDOWS, *matrix.LINUX_TARGETS]:
             folder = root/name
             folder.mkdir()
             archive = folder/'runtime.zip'
@@ -33,8 +33,8 @@ class Ubuntu26MatrixTests(unittest.TestCase):
             self.bundles[name] = ({
                 'schema': core.SCHEMA,
                 'target': name, 'host': 'windows' if win else 'linux',
-                'os_id': 'windows' if win else 'ubuntu',
-                'os_version': '20348' if win else name.replace('ubuntu-', ''),
+                'os_id': 'windows' if win else core.SUPPORTED_TARGETS[name][0],
+                'os_version': '20348' if win else core.SUPPORTED_TARGETS[name][1],
                 'source_commit': COMMIT,
                 'python_version': matrix.PYTHON_VERSION,
                 'llvm_versions': {'clang': matrix.LLVM_VERSION,
@@ -58,25 +58,73 @@ class Ubuntu26MatrixTests(unittest.TestCase):
             z.writestr(info, data)
 
     def compare(self, target_names=None):
-        names = target_names if target_names is not None else matrix.UBUNTU_TARGETS
+        names = target_names if target_names is not None else matrix.LINUX_TARGETS
         return matrix.compare_matrix(self.bundles[matrix.WINDOWS],
                                      {name: self.bundles[name] for name in names}, COMMIT)
 
-    def test_all_four_identical_builds_certify(self):
+    def test_all_five_identical_builds_certify(self):
         certificate, errors = self.compare()
         self.assertEqual([], errors)
-        self.assertEqual(certificate['targets'], [matrix.WINDOWS, *matrix.UBUNTU_TARGETS])
+        self.assertEqual(certificate['targets'], [matrix.WINDOWS, *matrix.LINUX_TARGETS])
         self.assertEqual(certificate['runtime_zip_sha256'], self.bundles[matrix.WINDOWS][0]['runtime_zip_sha256'])
 
     def test_missing_ubuntu_2610_refuses_certificate(self):
-        certificate, errors = self.compare(('ubuntu-24.04', 'ubuntu-26.04'))
+        certificate, errors = self.compare(tuple(t for t in matrix.LINUX_TARGETS if t != 'ubuntu-26.10'))
         self.assertIsNone(certificate)
         self.assertIn('mandatory targets', ' '.join(errors))
 
     def test_missing_ubuntu_2604_refuses_certificate(self):
-        certificate, errors = self.compare(('ubuntu-24.04', 'ubuntu-26.10'))
+        certificate, errors = self.compare(tuple(t for t in matrix.LINUX_TARGETS if t != 'ubuntu-26.04'))
         self.assertIsNone(certificate)
         self.assertIn('mandatory targets', ' '.join(errors))
+
+    def test_missing_debian_13_refuses_certificate(self):
+        certificate, errors = self.compare(matrix.UBUNTU_TARGETS)
+        self.assertIsNone(certificate)
+        self.assertIn('mandatory targets', ' '.join(errors))
+
+    def test_spoofed_debian_13_os_identity_refuses_certificate(self):
+        self.bundles['debian-13'][0]['os_id'] = 'ubuntu'
+        certificate, errors = self.compare()
+        self.assertIsNone(certificate)
+        self.assertTrue(any('claimed target' in error for error in errors), errors)
+
+    def test_emitter_accepts_real_debian_13(self):
+        with patch.object(core.platform, 'system', return_value='Linux'), patch.object(
+                core.platform, 'freedesktop_os_release', return_value={'ID':'debian','VERSION_ID':'13'}):
+            self.assertEqual(core.verify_build_target('debian-13')['target'], 'debian-13')
+
+    def test_emitter_rejects_ubuntu_impostor_as_debian_13(self):
+        with patch.object(core.platform, 'system', return_value='Linux'), patch.object(
+                core.platform, 'freedesktop_os_release', return_value={'ID':'ubuntu','VERSION_ID':'24.04'}):
+            with self.assertRaisesRegex(ValueError, 'requires Debian 13'):
+                core.verify_build_target('debian-13')
+
+    def test_debian_13_modified_raw_pe_refuses_certificate(self):
+        _, runtime, pe = self.bundles['debian-13']
+        self.make_zip(pe, b'MZtampered-debian-binary')
+        certificate, errors = self.compare()
+        self.assertIsNone(certificate)
+        self.assertTrue(any('debian-13:' in e and 'PE evidence archive changed' in e
+                            for e in errors), errors)
+
+    def test_debian_13_modified_runtime_refuses_certificate(self):
+        manifest, runtime, pe = self.bundles['debian-13']
+        self.make_zip(runtime, b'changed Debian 13 runtime')
+        manifest['runtime_zip_sha256'] = core.digest(runtime)
+        manifest['runtime_entries_sha256'] = core.archive_entries(runtime)
+        certificate, errors = self.compare()
+        self.assertIsNone(certificate)
+        self.assertTrue(any('debian-13:' in e and 'runtime_zip_sha256' in e
+                            for e in errors), errors)
+
+    def test_debian_13_modified_source_refuses_certificate(self):
+        manifest, _, _ = self.bundles['debian-13']
+        manifest['tracked_source_sha256']['scripts/build.py'] = 'b'*64
+        certificate, errors = self.compare()
+        self.assertIsNone(certificate)
+        self.assertTrue(any('debian-13:' in e and 'tracked_source_sha256' in e
+                            for e in errors), errors)
 
     def test_fake_2610_os_identity_refuses_certificate(self):
         self.bundles['ubuntu-26.10'][0]['os_version'] = '26.04'
@@ -139,20 +187,34 @@ class Ubuntu26MatrixTests(unittest.TestCase):
             self.assertEqual(matrix.main(), 1)
         self.assertFalse(cert.exists())
 
-    def test_cli_success_writes_single_four_target_certificate(self):
+    def test_cli_missing_debian_13_refuses_certificate_and_deletes_stale_output(self):
+        for name, bundle in self.bundles.items():
+            (Path(self.tmp.name)/name/'manifest.json').write_text(json.dumps(bundle[0]))
+        cert = Path(self.tmp.name)/'old-certificate.json'
+        cert.write_text('old certificate must not survive')
+        args = ['verify_matrix_reproducibility.py', '--windows',
+                str(Path(self.tmp.name)/matrix.WINDOWS)]
+        for name in matrix.UBUNTU_TARGETS:
+            args.extend(['--linux-target', name+'='+str(Path(self.tmp.name)/name)])
+        args.extend(['--out', str(cert), '--expected-commit', COMMIT])
+        with patch.object(matrix.sys, 'argv', args):
+            self.assertEqual(matrix.main(), 1)
+        self.assertFalse(cert.exists())
+
+    def test_cli_success_writes_single_five_target_certificate(self):
         from unittest.mock import patch as mock_patch
         for name, bundle in self.bundles.items():
             (Path(self.tmp.name)/name/'manifest.json').write_text(json.dumps(bundle[0]))
         cert = Path(self.tmp.name)/'certificate.json'
         arguments = ['verify_matrix_reproducibility.py', '--windows',
                      str(Path(self.tmp.name)/matrix.WINDOWS)]
-        for target in matrix.UBUNTU_TARGETS:
+        for target in matrix.LINUX_TARGETS:
             arguments += ['--linux-target', target+'='+str(Path(self.tmp.name)/target)]
         arguments += ['--out', str(cert), '--expected-commit', COMMIT]
         with mock_patch.object(matrix.sys, 'argv', arguments):
             self.assertEqual(matrix.main(), 0)
         contents = json.loads(cert.read_text())
-        self.assertEqual(contents['targets'], [matrix.WINDOWS, *matrix.UBUNTU_TARGETS])
+        self.assertEqual(contents['targets'], [matrix.WINDOWS, *matrix.LINUX_TARGETS])
 
     def test_cli_tampered_2610_evidence_rejects_and_removes_stale_certificate(self):
         from unittest.mock import patch as mock_patch
@@ -164,23 +226,30 @@ class Ubuntu26MatrixTests(unittest.TestCase):
         self.make_zip(pe, b'MZmodified-real-binary')
         arguments = ['verify_matrix_reproducibility.py', '--windows',
                      str(Path(self.tmp.name)/matrix.WINDOWS)]
-        for target in matrix.UBUNTU_TARGETS:
+        for target in matrix.LINUX_TARGETS:
             arguments += ['--linux-target', target+'='+str(Path(self.tmp.name)/target)]
         arguments += ['--out', str(cert), '--expected-commit', COMMIT]
         with mock_patch.object(matrix.sys, 'argv', arguments):
             self.assertEqual(matrix.main(), 1)
         self.assertFalse(cert.exists())
 
-    def test_workflow_references_four_unique_required_target_artifacts(self):
+    def test_workflow_references_five_unique_required_target_artifacts(self):
         workflow = (ROOT/'.github/workflows/source-ci.yml').read_text()
         for target in [matrix.WINDOWS, *matrix.UBUNTU_TARGETS]:
             self.assertIn('Aufake3D-cross-'+target, workflow)
-            self.assertIn('verification/'+target if target.startswith('ubuntu') else 'verification/windows', workflow)
-        self.assertIn('needs: [windows-and-linux, ubuntu-2610-container]', workflow)
+            self.assertIn('verification/windows' if target == matrix.WINDOWS else 'verification/'+target, workflow)
+        self.assertIn('needs: [windows-and-linux, ubuntu-2610-container, debian-13-container]', workflow)
+        self.assertIn('debian:13@sha256:', workflow)
+        self.assertIn('--linux-target debian-13=verification/debian-13', workflow)
         self.assertIn('runs-on: ubuntu-26.04', workflow)
         self.assertIn('ubuntu:26.10@sha256:', workflow)
         self.assertIn('verify_matrix_reproducibility.py', workflow)
         self.assertIn('--expected-commit', workflow)
+        debian_job = workflow.split('  debian-13-container:', 1)[1].split('  cross-platform-byte-identity:', 1)[0]
+        self.assertIn('run: python scripts/build.py --require-native-mock --require-acoustics', debian_job)
+        self.assertIn('run: python scripts/verify_reproducible.py --check-report', debian_job)
+        self.assertIn('--target debian-13', debian_job)
+        self.assertIn("pinned_llvm(cache_root(), 'linux')", debian_job)
 
 
 if __name__ == '__main__':

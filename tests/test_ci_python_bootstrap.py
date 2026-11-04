@@ -22,16 +22,19 @@ class PinnedPythonBootstrap(unittest.TestCase):
         self.assertIn("- uses: actions/setup-python@v7\n        if: runner.os == 'Windows'", workflow)
         self.assertEqual(workflow.count("python-version: '3.13.7'"), 1)
 
-    def test_all_four_target_jobs_use_exact_managed_python(self):
+    def test_all_five_target_jobs_use_exact_managed_python(self):
         workflow = WORKFLOW.read_text()
-        self.assertEqual(workflow.count('uses: '+UV_ACTION), 3)
-        self.assertEqual(workflow.count("version: '0.10.0'"), 3)
-        self.assertEqual(workflow.count('run: bash scripts/ci_install_pinned_python.sh'), 3)
+        self.assertEqual(workflow.count('uses: '+UV_ACTION), 4)
+        self.assertEqual(workflow.count("version: '0.10.0'"), 4)
+        self.assertEqual(workflow.count('run: bash scripts/ci_install_pinned_python.sh'), 4)
         self.assertEqual(workflow.count('Verify the active Python is exactly 3.13.7'), 3)
+        self.assertEqual(workflow.count('Verify active Python 3.13.7'), 1)
+        self.assertIn('Install and activate exact managed Python 3.13.7 on Debian 13', workflow)
         self.assertIn('ubuntu-26.04', workflow)
         self.assertIn('ubuntu:26.10@sha256:', workflow)
-        self.assertIn('needs: [windows-and-linux, ubuntu-2610-container]', workflow)
+        self.assertIn('needs: [windows-and-linux, ubuntu-2610-container, debian-13-container]', workflow)
         self.assertIn('--linux-target ubuntu-26.10=verification/ubuntu-26.10', workflow)
+        self.assertIn('--linux-target debian-13=verification/debian-13', workflow)
 
     def test_bootstrap_fails_closed_without_pin(self):
         content = SCRIPT.read_text()

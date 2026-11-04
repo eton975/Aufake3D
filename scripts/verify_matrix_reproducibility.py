@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Fail-closed cross-OS certification for Windows plus ALL three Ubuntu targets.
+"""Fail-closed cross-OS certification for Windows, Ubuntu and Debian.
 
-All four CI artifacts must exist and match, including exact bytes of every
+All five CI artifacts must exist and match, including exact bytes of every
 compiled PE, the complete runtime ZIP and every tracked source file. Never
 issue a successful certificate for a partial matrix.
 """
@@ -21,6 +21,8 @@ from scripts import verify_cross_platform as v
 
 WINDOWS = 'windows-2022'
 UBUNTU_TARGETS = ('ubuntu-24.04', 'ubuntu-26.04', 'ubuntu-26.10')
+DEBIAN_TARGET = 'debian-13'
+LINUX_TARGETS = (*UBUNTU_TARGETS, DEBIAN_TARGET)
 LLVM_VERSION = '19.1.7'
 PYTHON_VERSION = '3.13.7'
 
@@ -42,9 +44,9 @@ def compare_matrix(windows: tuple[dict, Path, Path],
     errors: list[str] = []
     if not re.fullmatch(r'[0-9a-f]{40}', expected_commit):
         errors.append('Expected Git commit must be a full lowercase 40-character SHA')
-    if set(linux) != set(UBUNTU_TARGETS):
-        errors.append('Missing or unexpected Ubuntu targets; mandatory targets are '
-                      + ', '.join(UBUNTU_TARGETS))
+    if set(linux) != set(LINUX_TARGETS):
+        errors.append('Missing or unexpected Linux targets; mandatory targets are '
+                      + ', '.join(LINUX_TARGETS))
     w, wzip, wpe = windows
     if w.get('target') != WINDOWS or w.get('host') != 'windows' or w.get('os_id') != 'windows':
         errors.append('Windows reference has missing/incorrect Windows runner identity')
@@ -56,13 +58,13 @@ def compare_matrix(windows: tuple[dict, Path, Path],
             errors.append(f'{name}: Python must be pinned to {PYTHON_VERSION}')
         if manifest.get('llvm_versions') != {'clang': LLVM_VERSION, 'lld-link': LLVM_VERSION}:
             errors.append(f'{name}: LLVM must be pinned to {LLVM_VERSION}')
-        if name in UBUNTU_TARGETS:
-            version = name.removeprefix('ubuntu-')
+        if name in LINUX_TARGETS:
+            os_id, version = v.SUPPORTED_TARGETS[name]
             if (manifest.get('target'), manifest.get('host'),
                     manifest.get('os_id'), manifest.get('os_version')) != (
-                    name, 'linux', 'ubuntu', version):
+                    name, 'linux', os_id, version):
                 errors.append(f'{name}: claimed target does not match authenticated OS release')
-    for name in UBUNTU_TARGETS:
+    for name in LINUX_TARGETS:
         if name not in linux:
             continue
         m, z, pe = linux[name]
@@ -72,10 +74,10 @@ def compare_matrix(windows: tuple[dict, Path, Path],
     if errors:
         return None, errors
     return {
-        'schema': 3,
-        'verification': 'windows-ubuntu-24.04-26.04-26.10-byte-identical',
+        'schema': 4,
+        'verification': 'windows-ubuntu-24.04-26.04-26.10-debian-13-byte-identical',
         'source_commit': expected_commit,
-        'targets': [WINDOWS, *UBUNTU_TARGETS],
+        'targets': [WINDOWS, *LINUX_TARGETS],
         'runtime_zip_name': w['runtime_zip_name'],
         'runtime_zip_sha256': w['runtime_zip_sha256'],
         'generated_pe_bundle_sha256': w['generated_pe_bundle_sha256'],
@@ -84,7 +86,7 @@ def compare_matrix(windows: tuple[dict, Path, Path],
         'python_version': w['python_version'],
         'tracked_source_count': len(w['tracked_source_sha256']),
         'runtime_entry_count': len(w['runtime_entries_sha256']),
-        'scope': 'Four checked CI target environments; Win32 PE and full runtime ZIP only, not gameplay',
+        'scope': 'Five checked CI target environments; Win32 PE and full runtime ZIP only, not gameplay',
     }, []
 
 
@@ -92,8 +94,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--windows', type=Path, required=True)
     parser.add_argument('--linux-target', action='append', default=[],
-                        metavar='UBUNTU-VERSION=ARTIFACT-DIRECTORY',
-                        help='Required exactly once for each Ubuntu 24.04, 26.04 and 26.10')
+                        metavar='LINUX-TARGET=ARTIFACT-DIRECTORY',
+                        help='Required exactly once for Ubuntu 24.04, 26.04, 26.10 and Debian 13')
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--expected-commit', required=True)
     args = parser.parse_args()
@@ -102,22 +104,22 @@ def main() -> int:
         paths: dict[str, Path] = {}
         for item in args.linux_target:
             name, separator, path = item.partition('=')
-            if not separator or not path or name not in UBUNTU_TARGETS or name in paths:
-                raise ValueError(f'Invalid or duplicate mandatory Ubuntu target {item!r}')
+            if not separator or not path or name not in LINUX_TARGETS or name in paths:
+                raise ValueError(f'Invalid or duplicate mandatory Linux target {item!r}')
             paths[name] = Path(path)
-        if set(paths) != set(UBUNTU_TARGETS):
-            raise ValueError('All three Ubuntu target artifacts are mandatory')
+        if set(paths) != set(LINUX_TARGETS):
+            raise ValueError('All four Linux target artifacts are mandatory')
         windows = load_bundle(args.windows)
-        linux = {name: load_bundle(paths[name]) for name in UBUNTU_TARGETS}
+        linux = {name: load_bundle(paths[name]) for name in LINUX_TARGETS}
         certificate, errors = compare_matrix(windows, linux, args.expected_commit)
         if errors:
-            print('FAIL: four-target reproducibility is NOT certified:')
+            print('FAIL: five-target reproducibility is NOT certified:')
             for error in errors[:100]:
                 print(' -', error)
             return 1
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(certificate, indent=2, sort_keys=True)+'\n', encoding='utf-8')
-        print('PASS: Windows, Ubuntu 24.04, 26.04 and 26.10 are bit-identical: '
+        print('PASS: Windows, Ubuntu 24.04, 26.04, 26.10 and Debian 13 are bit-identical: '
               + certificate['runtime_zip_sha256'])
         return 0
     except (OSError, KeyError, ValueError, TypeError, subprocess.CalledProcessError,

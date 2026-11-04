@@ -101,6 +101,8 @@ class PinnedBuild(unittest.TestCase):
             self.assertEqual(env['PYTHONHASHSEED'], '0')
             self.assertEqual(env['SOURCE_DATE_EPOCH'], '1767225600')
             self.assertEqual(env['PATH'].split(os.pathsep)[0], str(cache / 'llvm' / 'bin'))
+            self.assertEqual(env['A3D_PINNED_CLANG'], str(cache / 'llvm' / 'bin' /
+                ('clang.exe' if os.name == 'nt' else 'clang')))
 
     def test_pinned_release_refuses_unverified_build_shortcuts(self):
         with tempfile.TemporaryDirectory() as tmp:

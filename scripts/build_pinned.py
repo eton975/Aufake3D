@@ -320,6 +320,9 @@ def build_env(cache: Path, python: Path, llvm_bin: Path) -> dict[str, str]:
     # Project build scripts and their two clean replicas inherit the same tools.
     path_parts = [str(llvm_bin), str(python.parent)]
     env['PATH'] = os.pathsep.join(path_parts + [env.get('PATH', '')])
+    # The compile-only Descent 3 regression must never fall through to
+    # Debian's /usr/bin/clang++ or a different host toolchain.
+    env['A3D_PINNED_CLANG'] = str(llvm_bin / ('clang.exe' if os.name == 'nt' else 'clang'))
     if os.name != 'nt':
         env['LD_LIBRARY_PATH'] = str(llvm_bin.parent / 'lib') + os.pathsep + env.get('LD_LIBRARY_PATH', '')
     return env

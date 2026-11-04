@@ -48,9 +48,11 @@ class LLVMCompatibilityTests(unittest.TestCase):
         self.assertLess(workflow.find('Prepare pinned legacy libxml2 for LLVM inside Ubuntu 26.10'),
                         workflow.find('Confirm real Ubuntu 26.10 environment'))
         self.assertIn('cross-platform-byte-identity:', workflow)
-        self.assertIn('needs: [windows-and-linux, ubuntu-2610-container]', workflow)
+        self.assertIn('needs: [windows-and-linux, ubuntu-2610-container, debian-13-container]', workflow)
         for target in ('ubuntu-24.04=', 'ubuntu-26.04=', 'ubuntu-26.10='):
             self.assertIn(target, workflow)
+        self.assertIn('debian:13@sha256:', workflow)
+        self.assertIn('--linux-target debian-13=verification/debian-13', workflow)
         self.assertIn('verify_matrix_reproducibility.py', workflow)
         self.assertIn('--expected-commit "${{ github.sha }}"', workflow)
 
