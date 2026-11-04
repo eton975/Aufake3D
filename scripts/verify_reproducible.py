@@ -100,6 +100,15 @@ def compiled_pe_hashes(source: Path) -> dict[str, str]:
     results = {}
     for base in roots:
         for p in base.rglob('*'):
+            # Descent 3's opt-in synthetic probe and its copied core DLLs
+            # are NOT part of the 20-PE certified game runtime. Exclude
+            # both the new persistent target and the historical probe tree.
+            # Only these explicitly named experimental paths are excluded;
+            # all normal generated PE outputs remain mandatory.
+            relative = p.relative_to(source).parts
+            if len(relative) > 2 and relative[:2] in (
+                    ('dist', 'descent3'), ('dist', 'experimental-descent3')):
+                continue
             if p.is_file() and p.suffix.lower() in ('.exe', '.dll'):
                 data = p.read_bytes()
                 if data[:2] == b'MZ':
