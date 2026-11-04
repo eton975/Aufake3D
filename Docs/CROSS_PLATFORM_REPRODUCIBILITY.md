@@ -57,6 +57,27 @@ The independent release gate:
    separate artifact. The success certificate states an exact checked commit
    and runtime SHA-256. Any missing, failed or mismatching Ubuntu job blocks the certificate.
 
+## LLVM 19.1.7 on Ubuntu 26.04 and 26.10 (v6)
+
+The pinned upstream Linux LLVM 19.1.7 release requires the pre-2.14
+`libxml2.so.2` ELF ABI. Ubuntu 26.04/26.10 instead use `libxml2.so.16` and
+cannot load `lld-link` directly. This is an **LLVM host dependency**, not a
+Windows DLL dependency. The CI jobs build the official GNOME libxml2 2.13.9
+source archive with its published SHA-256 pin, with ICU/zlib/lzma disabled,
+under the runner's temporary directory and place that private `.so.2` directory
+on the build process's `LD_LIBRARY_PATH`. No system library is replaced, no
+unverified `.so.16`-to-`.so.2` compatibility symlink is used, and no extra
+shared object is distributed in any Aufake3D game kit. The script fails
+immediately on a source checksum mismatch, unresolved ELF dependency, or if
+LLD does not load the checked private library. This workaround is intentionally
+not run on Ubuntu 24.04 or Windows.
+
+**Reproducibility stays fail-closed:** the library is a pinned build input,
+not a claimed cross-platform result. Every target still must produce the same
+compiled PE files and byte-for-byte identical runtime ZIP before the CI
+certificate can be issued. The library's locally built ELF bytes themselves
+are not an Aufake3D release artifact.
+
 ## Why the release ZIP packaging changed
 
 The runtime ZIP uses stored (`ZIP_STORED`) entries rather than zlib-compressed

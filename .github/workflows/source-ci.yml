@@ -48,7 +48,11 @@ jobs:
           directory: ${{ runner.temp }}/aufake3d-llvm
       - name: Install CMake/Ninja/C++ test dependencies (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build g++
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build g++ curl xz-utils
+      - name: Prepare pinned legacy libxml2 for LLVM on Ubuntu 26.04
+        if: matrix.os == 'ubuntu-26.04'
+        shell: bash
+        run: bash scripts/ci_prepare_llvm_compat.sh "${{ runner.temp }}/aufake3d-libxml2-legacy"
       - name: Verify LLVM and build prerequisites
         run: python scripts/build.py --doctor
       - name: Reject tracked prebuilt files
@@ -112,6 +116,9 @@ jobs:
           # Keep the 19.1.7 toolchain OUTSIDE the source checkout. The
           # three-build proof copies project source; LLVM is a build input.
           directory: ${{ runner.temp }}/aufake3d-llvm
+      - name: Prepare pinned legacy libxml2 for LLVM inside Ubuntu 26.10
+        shell: bash
+        run: bash scripts/ci_prepare_llvm_compat.sh "${{ runner.temp }}/aufake3d-libxml2-legacy"
       - name: Confirm real Ubuntu 26.10 environment and pinned LLVM
         run: python scripts/build.py --doctor
       - name: Reject tracked prebuilt files
