@@ -73,7 +73,12 @@ if [[ ! -f "$build_dir/libxml2.so.2" ]]; then
   echo 'FAIL: built libxml2 does not provide SONAME libxml2.so.2' >&2
   exit 1
 fi
-export LD_LIBRARY_PATH="$build_dir${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+# Install the *verified build output* into LLVM's already-mounted private lib
+# directory. In Ubuntu 26.10 containers runner.temp may be interpolated as a
+# HOST path, whereas LLVM_PATH is guaranteed to be the mounted container path.
+# A real .so.2 binary is copied, NOT a libxml2.so.16-to-.so.2 ABI symlink.
+install -m 0644 "$build_dir/libxml2.so.2" "$LLVM_PATH/lib/libxml2.so.2"
+export LD_LIBRARY_PATH="$LLVM_PATH/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
 # Check the *actual* LLVM binary and every transitive dependency. Do not
 # confuse a successful --version lookup with a successful dynamic-loader check.
@@ -83,7 +88,7 @@ if grep -q 'not found' <<< "$ldd_output"; then
   echo 'FAIL: LLVM still has unresolved ELF shared-library dependencies' >&2
   exit 1
 fi
-if ! grep -Fq "libxml2.so.2 => $build_dir/libxml2.so.2" <<< "$ldd_output"; then
+if ! grep -Fq "libxml2.so.2 => $LLVM_PATH/lib/libxml2.so.2" <<< "$ldd_output"; then
   echo 'FAIL: LLVM is not loading the expected private, checked libxml2.so.2' >&2
   exit 1
 fi

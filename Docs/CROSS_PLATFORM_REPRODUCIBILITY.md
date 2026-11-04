@@ -64,8 +64,11 @@ The pinned upstream Linux LLVM 19.1.7 release requires the pre-2.14
 cannot load `lld-link` directly. This is an **LLVM host dependency**, not a
 Windows DLL dependency. The CI jobs build the official GNOME libxml2 2.13.9
 source archive with its published SHA-256 pin, with ICU/zlib/lzma disabled,
-under the runner's temporary directory and place that private `.so.2` directory
-on the build process's `LD_LIBRARY_PATH`. No system library is replaced, no
+under the runner's temporary directory, then copy the real, verified `.so.2`
+shared object into the mounted LLVM installation's private `lib/` directory.
+This avoids the different host/container spellings of `runner.temp` across
+GitHub job steps. The build exports `LLVM_PATH/lib` on `LD_LIBRARY_PATH`.
+No system library is replaced, no
 unverified `.so.16`-to-`.so.2` compatibility symlink is used, and no extra
 shared object is distributed in any Aufake3D game kit. The script fails
 immediately on a source checksum mismatch, unresolved ELF dependency, or if

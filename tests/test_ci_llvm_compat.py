@@ -27,11 +27,12 @@ class LLVMCompatibilityTests(unittest.TestCase):
         source = SCRIPT.read_text(encoding='utf-8')
         self.assertIn('ldd "$LLVM_PATH/bin/lld-link"', source)
         self.assertIn("grep -q 'not found'", source)
-        self.assertIn('grep -Fq "libxml2.so.2 => $build_dir/libxml2.so.2"', source)
+        self.assertIn('grep -Fq "libxml2.so.2 => $LLVM_PATH/lib/libxml2.so.2"', source)
         self.assertIn('"$LLVM_PATH/bin/lld-link" --version', source)
         self.assertIn('"$LLVM_PATH/bin/clang" --version', source)
         self.assertIn("printf 'LD_LIBRARY_PATH=%s\\n'", source)
         self.assertIn('>> "$GITHUB_ENV"', source)
+        self.assertIn('install -m 0644 "$build_dir/libxml2.so.2" "$LLVM_PATH/lib/libxml2.so.2"', source)
         self.assertIn('must be built outside the source checkout', source)
 
     def test_linux_26_targets_both_have_preflight_and_matrix_gate_unchanged(self):
@@ -39,6 +40,7 @@ class LLVMCompatibilityTests(unittest.TestCase):
         self.assertIn('ubuntu-24.04, ubuntu-26.04, windows-2022', workflow)
         self.assertIn('ubuntu:26.10@sha256:', workflow)
         self.assertEqual(workflow.count('run: bash scripts/ci_prepare_llvm_compat.sh'), 2)
+        self.assertEqual(workflow.count('run: bash scripts/ci_prepare_llvm_compat.sh "$RUNNER_TEMP/aufake3d-libxml2-legacy"'), 2)
         self.assertIn("if: matrix.os == 'ubuntu-26.04'", workflow)
         self.assertIn('Prepare pinned legacy libxml2 for LLVM inside Ubuntu 26.10', workflow)
         self.assertLess(workflow.find('Prepare pinned legacy libxml2 for LLVM on Ubuntu 26.04'),
