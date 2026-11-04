@@ -20,7 +20,16 @@ The independent release gate:
    the existing local verification and tests in every build environment.
 2. All four builds install **LLVM/Clang+LLD 19.1.7** through the same pinned
    third-party installer action commit (`ebc0426251bc40c7cd31162802432c68818ab8f0`).
-   The Python interpreter is pinned to **3.13.7**. The emitter checks that
+   The Python interpreter is pinned to **3.13.7**. On Windows, the workflow
+   uses `actions/setup-python`; on all three Ubuntu builds and the final
+   comparison job it uses pinned `astral-sh/setup-uv` (v9.0.0 at a full commit
+   SHA) installing pinned `uv` 0.10.0 and the exact managed CPython 3.13.7.
+   This avoids `setup-python`'s missing Ubuntu 26.04/26.10 archive entries.
+   `scripts/ci_install_pinned_python.sh` verifies the interpreter's three-part
+   version, activates it in `GITHUB_PATH`, and installs it under `RUNNER_TEMP`,
+   outside the checkout. No system-Python or version-3.13 floating fallback is
+   permitted. `setup-python` is still used on Windows, where the exact archive
+   exists. The emitter checks that
    the `clang` and `lld-link` executables really identify as 19.1.7 before producing
    build evidence. CI has fixed `PYTHONHASHSEED` and `SOURCE_DATE_EPOCH`.
    The LLVM installer is explicitly directed to `${{ runner.temp }}/aufake3d-llvm`

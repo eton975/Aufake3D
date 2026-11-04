@@ -25,8 +25,20 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
+        if: runner.os == 'Windows'
         with:
           python-version: '3.13.7'
+      - name: Install pinned uv (Linux Python installer)
+        if: runner.os == 'Linux'
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: '0.10.0'
+      - name: Install and activate exact Python 3.13.7 on Linux
+        if: runner.os == 'Linux'
+        shell: bash
+        run: bash scripts/ci_install_pinned_python.sh
+      - name: Verify the active Python is exactly 3.13.7
+        run: python -c "import sys; assert sys.version_info[:3] == (3, 13, 7), sys.version; print(sys.version)"
       - name: Install pinned LLVM on both platforms
         uses: KyleMayes/install-llvm-action@ebc0426251bc40c7cd31162802432c68818ab8f0 # v2.0.9
         with:
@@ -84,9 +96,15 @@ jobs:
           apt-get update
           apt-get install -y --no-install-recommends ca-certificates curl git tar gzip xz-utils libstdc++6 libtinfo6 python3 cmake ninja-build g++
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - name: Install pinned uv (Ubuntu 26.10 Python installer)
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
-          python-version: '3.13.7'
+          version: '0.10.0'
+      - name: Install and activate exact Python 3.13.7 on Ubuntu 26.10
+        shell: bash
+        run: bash scripts/ci_install_pinned_python.sh
+      - name: Verify the active Python is exactly 3.13.7
+        run: python -c "import sys; assert sys.version_info[:3] == (3, 13, 7), sys.version; print(sys.version)"
       - name: Install pinned LLVM on Ubuntu 26.10
         uses: KyleMayes/install-llvm-action@ebc0426251bc40c7cd31162802432c68818ab8f0 # v2.0.9
         with:
@@ -121,9 +139,15 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - name: Install pinned uv for certification job
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
-          python-version: '3.13.7'
+          version: '0.10.0'
+      - name: Install and activate exact Python 3.13.7 for certification
+        shell: bash
+        run: bash scripts/ci_install_pinned_python.sh
+      - name: Verify the active Python is exactly 3.13.7
+        run: python -c "import sys; assert sys.version_info[:3] == (3, 13, 7), sys.version; print(sys.version)"
       - uses: actions/download-artifact@v7
         with:
           name: Aufake3D-cross-windows-2022
