@@ -7,7 +7,7 @@ export A3D_WAVEOUT_SCHEDULE_TEST='' A3D_SHORT_SFX_DECLICK=1
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 [[ -f hl.exe ]] || { echo 'Missing original hl.exe' >&2; exit 2; }
 export A3D_MASTER_GAIN="${A3D_MASTER_GAIN:-5.0}"
-export A3D_HRTF_MODE="${A3D_HRTF_MODE:-fast}"
+export A3D_HRTF_MODE="${A3D_HRTF_MODE:-reference}"
 export A3D_WAVEOUT_QUEUE_HEADERS="${A3D_WAVEOUT_QUEUE_HEADERS:-6}"
 export A3D_WAVEOUT_SUBBLOCKS="${A3D_WAVEOUT_SUBBLOCKS:-1}"
 export WINEDLLOVERRIDES="a3dapi=n,b;a3d=n,b${WINEDLLOVERRIDES:+;$WINEDLLOVERRIDES}"

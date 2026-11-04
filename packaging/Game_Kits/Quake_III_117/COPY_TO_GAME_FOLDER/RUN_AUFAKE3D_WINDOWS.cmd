@@ -10,7 +10,7 @@ set "A3D_WAVEOUT_SCHEDULE_TEST="
 set "A3D_SHORT_SFX_DECLICK=1"
 
 if not defined A3D_MASTER_GAIN set "A3D_MASTER_GAIN=5.0"
-if not defined A3D_HRTF_MODE set "A3D_HRTF_MODE=fast"
+if not defined A3D_HRTF_MODE set "A3D_HRTF_MODE=reference"
 if not exist "quake3.exe" (echo Missing original Quake III & exit /b 2)
 if not defined A3D_GEOMETRY_TRACE set "A3D_GEOMETRY_TRACE=1"
 if not defined A3D_GEOMETRY_RETRACE_BLOCKS set "A3D_GEOMETRY_RETRACE_BLOCKS=4"

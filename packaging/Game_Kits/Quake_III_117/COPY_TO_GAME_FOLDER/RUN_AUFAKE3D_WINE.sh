@@ -7,7 +7,7 @@ export A3D_WAVEOUT_SCHEDULE_TEST='' A3D_SHORT_SFX_DECLICK=1
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 [[ -f quake3.exe ]] || { echo 'Missing original quake3.exe' >&2; exit 2; }
 export A3D_MASTER_GAIN="${A3D_MASTER_GAIN:-5.0}"
-export A3D_HRTF_MODE="${A3D_HRTF_MODE:-fast}"
+export A3D_HRTF_MODE="${A3D_HRTF_MODE:-reference}"
 export A3D_GEOMETRY_TRACE="${A3D_GEOMETRY_TRACE:-1}"
 export A3D_GEOMETRY_RETRACE_BLOCKS="${A3D_GEOMETRY_RETRACE_BLOCKS:-4}"
 export A3D_REVERB_WET="${A3D_REVERB_WET:-0.14}"

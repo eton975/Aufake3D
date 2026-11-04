@@ -14,8 +14,8 @@ https://github.com/z2k-retro/aureal-vortex2-tools
 
 | `A3D_HRTF_MODE` | Implementation | Intended use |
 |---|---|---|
-| `fast` (default in game launchers) | Full 56 taps/ear; bilinear target update per block; 64-sample HRTF/ITD tracking; per-ear input ITD before FIR | Normal gameplay; currently matches reference acoustically while optimization is validated |
-| `reference` | Same 56 taps, ITD and 64-sample coefficient/ITD glides as `fast` | Reference for future *output-preserving* FAST optimizations |
+| `fast` (optional override) | Full 56 taps/ear; bilinear target update per block; 64-sample HRTF/ITD tracking; per-ear input ITD before FIR | Normal gameplay; currently matches reference acoustically while optimization is validated |
+| `reference` (default in game launchers) | Same 56 taps, ITD and 64-sample coefficient/ITD glides as `fast` | Reference for future *output-preserving* FAST optimizations |
 | `legacy` | Previous 24/48/96-tap KEMAR-based renderer (default 48 if selected); unchanged processing path | Rollback and regression testing |
 | `bitexact` | **Not implemented**; explicitly warns when logging enabled and uses `reference` | Never claim bit-exact output without digital hardware comparisons |
 
@@ -27,7 +27,7 @@ $env:A3D_HRTF_MODE = 'fast'
 .\RUN_AUFAKE3D_WINDOWS.cmd
 ```
 
-Or use `reference` or `legacy`. The launcher sets `fast` only if the caller has
+Or use `fast` or `legacy`. The launcher sets `reference` only if the caller has
 not defined a mode, so a user override is respected. The HRTF mode is unrelated
 to `s_milesdriver`; it must **never** force the game to select A3D2 or retain
 A3D2 when the player chooses Miles or Dolby. The original Alice selector bridges

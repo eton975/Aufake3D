@@ -2,7 +2,7 @@
 set -euo pipefail
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 [[ -f WolfSP.exe ]] || { echo 'Missing original game executable WolfSP.exe' >&2; exit 2; }
-export A3D_HRTF_MODE="${A3D_HRTF_MODE:-fast}"
+export A3D_HRTF_MODE="${A3D_HRTF_MODE:-reference}"
 export A3D_MASTER_GAIN="${A3D_MASTER_GAIN:-5.0}"
 export A3D_WAVEOUT_QUEUE_HEADERS="${A3D_WAVEOUT_QUEUE_HEADERS:-6}"
 export A3D_WAVEOUT_SUBBLOCKS="${A3D_WAVEOUT_SUBBLOCKS:-1}"
