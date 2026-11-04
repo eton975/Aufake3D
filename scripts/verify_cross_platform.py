@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from scripts import verify_reproducible as local_repro  # noqa: E402
 
-SCHEMA = 2
+SCHEMA = 3
 DEFAULT_ZIP = local_repro.OUTPUT
 # A separate, deterministic archive contains every generated PE found by the
 # existing local verifier, including PE files not included in the runtime ZIP.
@@ -118,7 +118,37 @@ def write_pe_evidence(root: Path, destination: Path, pe_hashes: dict[str, str]) 
         raise ValueError('PE evidence archive verification failed')
 
 
-def create_manifest(root: Path, archive: Path, expected_llvm: str) -> dict:
+# The Linux build image is part of the reproducibility contract. A label alone
+# is not proof of which OS produced the compiled binaries.
+SUPPORTED_TARGETS = {
+    'windows-2022': ('windows', None),
+    'ubuntu-24.04': ('ubuntu', '24.04'),
+    'ubuntu-26.04': ('ubuntu', '26.04'),
+    'ubuntu-26.10': ('ubuntu', '26.10'),
+}
+
+
+def verify_build_target(target: str) -> dict[str, str]:
+    if target not in SUPPORTED_TARGETS:
+        raise ValueError(f'Unsupported mandatory CI target: {target!r}')
+    os_id, version = SUPPORTED_TARGETS[target]
+    if os_id == 'windows':
+        if platform.system().lower() != 'windows':
+            raise ValueError(f'{target} must execute on native Windows')
+        return {'target': target, 'os_id': 'windows', 'os_version': platform.version()}
+    if platform.system().lower() != 'linux':
+        raise ValueError(f'{target} must execute on Linux')
+    os_release = platform.freedesktop_os_release()
+    actual_id = os_release.get('ID', '').lower()
+    actual_version = os_release.get('VERSION_ID', '')
+    if (actual_id, actual_version) != (os_id, version):
+        raise ValueError(f'{target} requires Ubuntu {version}; found '
+                         f'{actual_id} {actual_version}')
+    return {'target': target, 'os_id': actual_id, 'os_version': actual_version}
+
+
+def create_manifest(root: Path, archive: Path, expected_llvm: str,
+                    target: str | None = None) -> dict:
     versions = llvm_versions()
     if versions != {'clang': expected_llvm, 'lld-link': expected_llvm}:
         raise ValueError(f'Pinned LLVM {expected_llvm} required; found {versions}')
@@ -135,7 +165,9 @@ def create_manifest(root: Path, archive: Path, expected_llvm: str) -> dict:
         raise ValueError('No compiled Windows PE binaries found')
     evidence = root/'dist'/PE_EVIDENCE_NAME
     write_pe_evidence(root, evidence, pe_hashes)
+    identity = verify_build_target(target) if target is not None else {}
     return {
+        **identity,
         'schema': SCHEMA,
         'source_commit': clean_checkout_commit(root),
         'host': platform.system().lower(),
@@ -257,6 +289,8 @@ def main() -> int:
     sub = parser.add_subparsers(dest='action', required=True)
     p = sub.add_parser('emit', help='On a build runner, emit a validated build evidence manifest')
     p.add_argument('--llvm', required=True, help='Required full LLVM version, e.g. 19.1.7')
+    p.add_argument('--target', choices=sorted(SUPPORTED_TARGETS),
+                   help='CI-only: verify actual OS release and record build target')
     p.add_argument('--out', type=Path, required=True)
     p = sub.add_parser('compare', help='Compare downloaded Windows and Linux runtime bundles')
     p.add_argument('--windows', type=Path, required=True, help='Directory containing manifest.json and the runtime ZIP')
@@ -268,7 +302,7 @@ def main() -> int:
         if args.action == 'emit':
             args.out.unlink(missing_ok=True)  # a failed emission cannot retain an old report
             archive = ROOT / DEFAULT_ZIP
-            report = create_manifest(ROOT, archive, args.llvm)
+            report = create_manifest(ROOT, archive, args.llvm, target=args.target)
             args.out.parent.mkdir(parents=True, exist_ok=True)
             args.out.write_text(json.dumps(report, indent=2, sort_keys=True) + '\n', encoding='utf-8')
             print(f'BUILD EVIDENCE: {args.out} ({len(report["generated_pe_sha256"])} PE files)')

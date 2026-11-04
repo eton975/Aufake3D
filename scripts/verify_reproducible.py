@@ -69,9 +69,21 @@ def compare_zips(first: Path, second: Path) -> bool:
 
 def copy_clean_source(destination: Path) -> None:
     """Copy the same source inputs into a separate build directory."""
-    def ignore(_directory: str, names: list[str]) -> set[str]:
-        return {name for name in names if name in IGNORED_DIRS or
-                Path(name).suffix.lower() in IGNORED_EXTENSIONS or name.endswith('.log')}
+    def ignore(directory: str, names: list[str]) -> set[str]:
+        excluded = {name for name in names if name in IGNORED_DIRS or
+                    Path(name).suffix.lower() in IGNORED_EXTENSIONS or
+                    name.endswith('.log')}
+        # Regression guard for GitHub Actions installers that put their full
+        # LLVM toolchain in ./llvm. It is an EXTERNAL BUILD INPUT, not project
+        # source, and copying it twice can exhaust a hosted runner's disk.
+        # Only skip the root-level directory when it really contains LLVM;
+        # nested project source named "llvm" must still be copied.
+        if Path(directory).resolve() == ROOT.resolve() and 'llvm' in names:
+            bin_dir = ROOT / 'llvm' / 'bin'
+            if any((bin_dir / exe).is_file() for exe in
+                   ('clang', 'clang.exe', 'lld-link', 'lld-link.exe')):
+                excluded.add('llvm')
+        return excluded
     shutil.copytree(ROOT, destination, ignore=ignore)
 
 

@@ -1,0 +1,673 @@
+diff --git a/.github/workflows/source-ci.yml b/.github/workflows/source-ci.yml
+index 76ef911..da8cd4d 100644
+--- a/.github/workflows/source-ci.yml
++++ b/.github/workflows/source-ci.yml
+@@ -1,4 +1,4 @@
+-name: Aufake3D Win32 source builds and cross-OS reproducibility
++name: Aufake3D four-target Win32 byte-identical builds
+ 
+ on:
+   push:
+@@ -21,7 +21,7 @@ jobs:
+     strategy:
+       fail-fast: false
+       matrix:
+-        os: [ubuntu-24.04, windows-2022]
++        os: [ubuntu-24.04, ubuntu-26.04, windows-2022]
+     steps:
+       - uses: actions/checkout@v7
+       - uses: actions/setup-python@v7
+@@ -43,11 +43,11 @@ jobs:
+       - name: Assert local three-build verification
+         run: python scripts/verify_reproducible.py --check-report
+       - name: Record build evidence and exact source/PE/runtime hashes
+-        run: python scripts/verify_cross_platform.py emit --llvm 19.1.7 --out dist/manifest.json
++        run: python scripts/verify_cross_platform.py emit --llvm 19.1.7 --target ${{ matrix.os }} --out dist/manifest.json
+       - name: Upload runtime and build evidence for the cross-OS release gate
+         uses: actions/upload-artifact@v7
+         with:
+-          name: Aufake3D-cross-${{ runner.os }}
++          name: Aufake3D-cross-${{ matrix.os }}
+           path: |
+             dist/Aufake3D_v0.9.2_Local_Runtime.zip
+             dist/Aufake3D_Generated_PE_Evidence.zip
+@@ -57,7 +57,7 @@ jobs:
+       - name: Upload individual binaries and local verification for diagnostics
+         uses: actions/upload-artifact@v7
+         with:
+-          name: Aufake3D-debug-${{ runner.os }}
++          name: Aufake3D-debug-${{ matrix.os }}
+           path: |
+             dist/core/a3d.dll
+             dist/core/a3dapi.dll
+@@ -66,10 +66,53 @@ jobs:
+             dist/REPRODUCIBILITY_VERIFIED.json
+           if-no-files-found: error
+ 
++  ubuntu-2610-container:
++    name: Build Win32 PE inside pinned Ubuntu 26.10 container
++    # GitHub provides ubuntu-26.04, not ubuntu-26.10, as a hosted VM label.
++    # Explicit image digest prevents the 26.10 rootfs changing under this job.
++    runs-on: ubuntu-26.04
++    container:
++      image: ubuntu:26.10@sha256:262df65c0ec6bf8d9dcc87454f4330a05fae4b97825f45854af3b136666584c2
++      options: --platform linux/amd64
++    steps:
++      - name: Bootstrap native Ubuntu 26.10 build dependencies
++        run: |
++          export DEBIAN_FRONTEND=noninteractive
++          apt-get update
++          apt-get install -y --no-install-recommends ca-certificates curl git tar gzip xz-utils libstdc++6 libtinfo6 python3 cmake ninja-build g++
++      - uses: actions/checkout@v7
++      - uses: actions/setup-python@v7
++        with:
++          python-version: '3.13.7'
++      - name: Install pinned LLVM on Ubuntu 26.10
++        uses: KyleMayes/install-llvm-action@ebc0426251bc40c7cd31162802432c68818ab8f0 # v2.0.9
++        with:
++          version: '19.1.7'
++      - name: Confirm real Ubuntu 26.10 environment and pinned LLVM
++        run: python scripts/build.py --doctor
++      - name: Reject tracked prebuilt files
++        run: python Tools/verify_source_only.py
++      - name: Build Win32 components and verify three independent builds
++        run: python scripts/build.py --require-native-mock --require-acoustics
++      - name: Assert local three-build verification
++        run: python scripts/verify_reproducible.py --check-report
++      - name: Record Ubuntu 26.10 evidence and verify OS identity
++        run: python scripts/verify_cross_platform.py emit --llvm 19.1.7 --target ubuntu-26.10 --out dist/manifest.json
++      - name: Upload Ubuntu 26.10 binary evidence
++        uses: actions/upload-artifact@v7
++        with:
++          name: Aufake3D-cross-ubuntu-26.10
++          path: |
++            dist/Aufake3D_v0.9.2_Local_Runtime.zip
++            dist/Aufake3D_Generated_PE_Evidence.zip
++            dist/manifest.json
++          if-no-files-found: error
++          retention-days: 30
++
+   cross-platform-byte-identity:
+-    name: Certify Windows/Linux PE and complete ZIP byte identity
+-    needs: windows-and-linux
+-    runs-on: ubuntu-24.04
++    name: Certify identical Win32 outputs on Windows and all Ubuntu targets
++    needs: [windows-and-linux, ubuntu-2610-container]
++    runs-on: ubuntu-26.04
+     steps:
+       - uses: actions/checkout@v7
+       - uses: actions/setup-python@v7
+@@ -77,14 +120,29 @@ jobs:
+           python-version: '3.13.7'
+       - uses: actions/download-artifact@v7
+         with:
+-          name: Aufake3D-cross-Windows
++          name: Aufake3D-cross-windows-2022
+           path: verification/windows
+       - uses: actions/download-artifact@v7
+         with:
+-          name: Aufake3D-cross-Linux
+-          path: verification/linux
+-      - name: Fail unless both OS artifacts are exactly identical
+-        run: python scripts/verify_cross_platform.py compare --windows verification/windows --linux verification/linux --out verification/CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json --expected-commit "${{ github.sha }}"
++          name: Aufake3D-cross-ubuntu-24.04
++          path: verification/ubuntu-24.04
++      - uses: actions/download-artifact@v7
++        with:
++          name: Aufake3D-cross-ubuntu-26.04
++          path: verification/ubuntu-26.04
++      - uses: actions/download-artifact@v7
++        with:
++          name: Aufake3D-cross-ubuntu-26.10
++          path: verification/ubuntu-26.10
++      - name: Fail unless Windows and ALL Ubuntu artifacts are byte-identical
++        run: >-
++          python scripts/verify_matrix_reproducibility.py
++          --windows verification/windows
++          --linux-target ubuntu-24.04=verification/ubuntu-24.04
++          --linux-target ubuntu-26.04=verification/ubuntu-26.04
++          --linux-target ubuntu-26.10=verification/ubuntu-26.10
++          --out verification/CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json
++          --expected-commit "${{ github.sha }}"
+       - name: Upload cross-platform verification certificate
+         uses: actions/upload-artifact@v7
+         with:
+diff --git a/Docs/CROSS_PLATFORM_REPRODUCIBILITY.md b/Docs/CROSS_PLATFORM_REPRODUCIBILITY.md
+index bb933d2..18f69f0 100644
+--- a/Docs/CROSS_PLATFORM_REPRODUCIBILITY.md
++++ b/Docs/CROSS_PLATFORM_REPRODUCIBILITY.md
+@@ -5,14 +5,23 @@ The project has **two different verification scopes**. A local `BUILD_WINDOWS.cm
+ verification, writes `dist/REPRODUCIBILITY_VERIFIED.json`, and **does not**
+ claim that another operating system's binaries have the same hashes.
+ 
+-The new `.github/workflows/source-ci.yml` has an independent release gate:
++The `.github/workflows/source-ci.yml` gate is mandatory for four targets:
++`windows-2022`, `ubuntu-24.04`, `ubuntu-26.04` (native hosted VM), and
++`ubuntu-26.10` (official Ubuntu Docker image on an `ubuntu-26.04` VM).
++Ubuntu 26.10 has no official GitHub-hosted x64 VM label. Its Docker image is
++pinned to the OCI digest in the workflow, not a floating tag; an emitter
++checks `/etc/os-release` before accepting any target name. Thus an accidentally
++misconfigured image cannot pass as Ubuntu 26.10.
+ 
+-1. Builds the **same checkout** on `windows-2022` and `ubuntu-24.04`, running
+-   the existing local verification and tests on both platforms.
+-2. Both runners install **LLVM/Clang+LLD 19.1.7** through the same pinned
++The independent release gate:
++
++1. Builds the **same checkout** on `windows-2022`, `ubuntu-24.04`,
++   `ubuntu-26.04`, and the pinned Ubuntu 26.10 container, running
++   the existing local verification and tests in every build environment.
++2. All four builds install **LLVM/Clang+LLD 19.1.7** through the same pinned
+    third-party installer action commit (`ebc0426251bc40c7cd31162802432c68818ab8f0`).
+    The Python interpreter is pinned to **3.13.7**. The emitter checks that
+-   both `clang` and `lld-link` really identify as 19.1.7 before producing
++   the `clang` and `lld-link` executables really identify as 19.1.7 before producing
+    build evidence. CI has fixed `PYTHONHASHSEED` and `SOURCE_DATE_EPOCH`.
+ 3. Each runner writes `dist/manifest.json` containing SHA-256 hashes of **all
+    git-tracked files as checked out**, all generated PE `.dll` and `.exe` files,
+@@ -21,17 +30,17 @@ The new `.github/workflows/source-ci.yml` has an independent release gate:
+    verification result. It also stores a second deterministic ZIP of **every
+    compiled PE DLL/EXE**, including files not present in the runtime ZIP. Both
+    hosts upload the runtime ZIP, raw PE evidence and manifests separately.
+-4. A third **cross-platform-byte-identity** job downloads both artifacts,
++4. A final **cross-platform-byte-identity** job downloads all four artifacts,
+    validates the manifests against the actual ZIPs, and **fails closed** if
+    any tracked file, actual downloaded compiled PE, ZIP entry, archive byte,
+    compiler version, Python version, or Git commit differs. The build evidence
+    emitter refuses a dirty checkout, preventing an uncommitted source change
+    from being mislabeled with a clean Git commit. The CI job also
+-   checks that both manifests identify **the exact Actions checkout commit**.
++   checks that all manifests identify **the exact Actions checkout commit**.
+    On success only, it writes
+    `CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json` and publishes it as a
+    separate artifact. The success certificate states an exact checked commit
+-   and runtime SHA-256. Any failed matrix job blocks the certificate.
++   and runtime SHA-256. Any missing, failed or mismatching Ubuntu job blocks the certificate.
+ 
+ ## Why the release ZIP packaging changed
+ 
+@@ -60,13 +69,13 @@ A local build whose SHA-256 matches the certified runtime ZIP hash can then
+ be compared with that certified artifact. Merely running `BUILD_WINDOWS.cmd`
+ on one computer can never prove another computer's output.
+ 
+-To manually compare artifacts from both hosts after their local gates pass:
++For a diagnostic *pairwise* comparison (which cannot replace the mandatory four-target certificate):
+ 
+ ```sh
+ python scripts/verify_cross_platform.py emit --llvm 19.1.7 --out dist/manifest.json
+ ```
+ 
+-Place each host's `manifest.json`, `Aufake3D_v0.9.2_Local_Runtime.zip`, and
++Place the two hosts' `manifest.json`, `Aufake3D_v0.9.2_Local_Runtime.zip`, and
+ `Aufake3D_Generated_PE_Evidence.zip` in separate directories,
+ `verification/windows` and `verification/linux`, then:
+ 
+@@ -83,3 +92,26 @@ source revision **and pinned inputs**, not of arbitrary hosts/tools.
+ 
+ A failed manifest-emission or certificate-comparison operation removes its
+ previous success output, so stale files cannot masquerade as new proof.
++
++## Four-target certification (v3)
++
++The final workflow now uses `scripts/verify_matrix_reproducibility.py`, which
++requires **all three** Ubuntu targets, validates the target label against the
++recorded Linux OS release, reopens every downloaded PE evidence archive, checks
++every raw ZIP against the Windows reference, and emits **one consolidated**
++certificate only after all four independently built outputs match. A failed
++attempt deletes any stale certificate. The Windows job remains the byte identity
++reference, not a special renderer implementation.
++
++To reproduce the matrix check manually, download the four CI artifacts and run:
++
++```sh
++python scripts/verify_matrix_reproducibility.py --windows verification/windows --linux-target ubuntu-24.04=verification/ubuntu-24.04 --linux-target ubuntu-26.04=verification/ubuntu-26.04 --linux-target ubuntu-26.10=verification/ubuntu-26.10 --expected-commit YOUR_GIT_COMMIT_SHA --out verification/CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json
++```
++
++**This configuration is not itself certification:** CI must pass on all four
++real environments before an official checksum-identical release can be claimed.
++The digest-pinned 26.10 root filesystem and the pinned compiler/Python versions
++constrain the inputs, while the strict output comparison detects any remaining
++differences. The runner kernel, build packages and SDK/tool archives are not yet
++fully content-addressed; all generated release bytes remain release-blocking.
+diff --git a/Docs/ONE_CLICK_BUILD.md b/Docs/ONE_CLICK_BUILD.md
+index 7548318..03941f2 100644
+--- a/Docs/ONE_CLICK_BUILD.md
++++ b/Docs/ONE_CLICK_BUILD.md
+@@ -192,3 +192,12 @@ issues `CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json` on a passing run.
+ Local `BUILD_WINDOWS.cmd` deliberately cannot claim cross-host identity by
+ itself. The deterministic runtime ZIP is now stored without DEFLATE compression
+ and may be larger. See `Docs/CROSS_PLATFORM_REPRODUCIBILITY.md`.
++
++### Ubuntu 26.04 / 26.10 CI build targets
++
++The GitHub Actions reproducibility matrix now also tests Ubuntu 26.04 (native
++hosted runner) and Ubuntu 26.10 (digest-pinned official container on a 26.04
++runner). Both use LLVM 19.1.7 and Python 3.13.7 and must match the Windows
++reference and Ubuntu 24.04 byte-for-byte. A successful local
++`BUILD_WINDOWS.cmd` still proves **local** reproducibility only. See
++`Docs/CROSS_PLATFORM_REPRODUCIBILITY.md` for the four-target release gate.
+diff --git a/scripts/verify_cross_platform.py b/scripts/verify_cross_platform.py
+index a496d91..7ad8305 100644
+--- a/scripts/verify_cross_platform.py
++++ b/scripts/verify_cross_platform.py
+@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
+ sys.path.insert(0, str(ROOT))
+ from scripts import verify_reproducible as local_repro  # noqa: E402
+ 
+-SCHEMA = 2
++SCHEMA = 3
+ DEFAULT_ZIP = local_repro.OUTPUT
+ # A separate, deterministic archive contains every generated PE found by the
+ # existing local verifier, including PE files not included in the runtime ZIP.
+@@ -118,7 +118,37 @@ def write_pe_evidence(root: Path, destination: Path, pe_hashes: dict[str, str])
+         raise ValueError('PE evidence archive verification failed')
+ 
+ 
+-def create_manifest(root: Path, archive: Path, expected_llvm: str) -> dict:
++# The Linux build image is part of the reproducibility contract. A label alone
++# is not proof of which OS produced the compiled binaries.
++SUPPORTED_TARGETS = {
++    'windows-2022': ('windows', None),
++    'ubuntu-24.04': ('ubuntu', '24.04'),
++    'ubuntu-26.04': ('ubuntu', '26.04'),
++    'ubuntu-26.10': ('ubuntu', '26.10'),
++}
++
++
++def verify_build_target(target: str) -> dict[str, str]:
++    if target not in SUPPORTED_TARGETS:
++        raise ValueError(f'Unsupported mandatory CI target: {target!r}')
++    os_id, version = SUPPORTED_TARGETS[target]
++    if os_id == 'windows':
++        if platform.system().lower() != 'windows':
++            raise ValueError(f'{target} must execute on native Windows')
++        return {'target': target, 'os_id': 'windows', 'os_version': platform.version()}
++    if platform.system().lower() != 'linux':
++        raise ValueError(f'{target} must execute on Linux')
++    os_release = platform.freedesktop_os_release()
++    actual_id = os_release.get('ID', '').lower()
++    actual_version = os_release.get('VERSION_ID', '')
++    if (actual_id, actual_version) != (os_id, version):
++        raise ValueError(f'{target} requires Ubuntu {version}; found '
++                         f'{actual_id} {actual_version}')
++    return {'target': target, 'os_id': actual_id, 'os_version': actual_version}
++
++
++def create_manifest(root: Path, archive: Path, expected_llvm: str,
++                    target: str | None = None) -> dict:
+     versions = llvm_versions()
+     if versions != {'clang': expected_llvm, 'lld-link': expected_llvm}:
+         raise ValueError(f'Pinned LLVM {expected_llvm} required; found {versions}')
+@@ -135,7 +165,9 @@ def create_manifest(root: Path, archive: Path, expected_llvm: str) -> dict:
+         raise ValueError('No compiled Windows PE binaries found')
+     evidence = root/'dist'/PE_EVIDENCE_NAME
+     write_pe_evidence(root, evidence, pe_hashes)
++    identity = verify_build_target(target) if target is not None else {}
+     return {
++        **identity,
+         'schema': SCHEMA,
+         'source_commit': clean_checkout_commit(root),
+         'host': platform.system().lower(),
+@@ -257,6 +289,8 @@ def main() -> int:
+     sub = parser.add_subparsers(dest='action', required=True)
+     p = sub.add_parser('emit', help='On a build runner, emit a validated build evidence manifest')
+     p.add_argument('--llvm', required=True, help='Required full LLVM version, e.g. 19.1.7')
++    p.add_argument('--target', choices=sorted(SUPPORTED_TARGETS),
++                   help='CI-only: verify actual OS release and record build target')
+     p.add_argument('--out', type=Path, required=True)
+     p = sub.add_parser('compare', help='Compare downloaded Windows and Linux runtime bundles')
+     p.add_argument('--windows', type=Path, required=True, help='Directory containing manifest.json and the runtime ZIP')
+@@ -268,7 +302,7 @@ def main() -> int:
+         if args.action == 'emit':
+             args.out.unlink(missing_ok=True)  # a failed emission cannot retain an old report
+             archive = ROOT / DEFAULT_ZIP
+-            report = create_manifest(ROOT, archive, args.llvm)
++            report = create_manifest(ROOT, archive, args.llvm, target=args.target)
+             args.out.parent.mkdir(parents=True, exist_ok=True)
+             args.out.write_text(json.dumps(report, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+             print(f'BUILD EVIDENCE: {args.out} ({len(report["generated_pe_sha256"])} PE files)')
+diff --git a/scripts/verify_matrix_reproducibility.py b/scripts/verify_matrix_reproducibility.py
+new file mode 100644
+index 0000000..f3a8e2c
+--- /dev/null
++++ b/scripts/verify_matrix_reproducibility.py
+@@ -0,0 +1,130 @@
++#!/usr/bin/env python3
++"""Fail-closed cross-OS certification for Windows plus ALL three Ubuntu targets.
++
++All four CI artifacts must exist and match, including exact bytes of every
++compiled PE, the complete runtime ZIP and every tracked source file. Never
++issue a successful certificate for a partial matrix.
++"""
++from __future__ import annotations
++
++import argparse
++import json
++from pathlib import Path
++import re
++import subprocess
++import sys
++import zipfile
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT))
++from scripts import verify_cross_platform as v
++
++WINDOWS = 'windows-2022'
++UBUNTU_TARGETS = ('ubuntu-24.04', 'ubuntu-26.04', 'ubuntu-26.10')
++LLVM_VERSION = '19.1.7'
++PYTHON_VERSION = '3.13.7'
++
++
++def load_bundle(folder: Path) -> tuple[dict, Path, Path]:
++    manifest = json.loads((folder / 'manifest.json').read_text(encoding='utf-8'))
++    # Malformed/malicious manifest names must not escape their artifact directory.
++    for field in ('runtime_zip_name', 'generated_pe_bundle_name'):
++        name = manifest.get(field)
++        if not isinstance(name, str) or Path(name).name != name or name in ('', '.', '..'):
++            raise ValueError(f'Invalid {field} in {folder}: {name!r}')
++    return (manifest, folder / manifest['runtime_zip_name'],
++            folder / manifest['generated_pe_bundle_name'])
++
++
++def compare_matrix(windows: tuple[dict, Path, Path],
++                   linux: dict[str, tuple[dict, Path, Path]],
++                   expected_commit: str) -> tuple[dict | None, list[str]]:
++    errors: list[str] = []
++    if not re.fullmatch(r'[0-9a-f]{40}', expected_commit):
++        errors.append('Expected Git commit must be a full lowercase 40-character SHA')
++    if set(linux) != set(UBUNTU_TARGETS):
++        errors.append('Missing or unexpected Ubuntu targets; mandatory targets are '
++                      + ', '.join(UBUNTU_TARGETS))
++    w, wzip, wpe = windows
++    if w.get('target') != WINDOWS or w.get('host') != 'windows' or w.get('os_id') != 'windows':
++        errors.append('Windows reference has missing/incorrect Windows runner identity')
++    all_bundles = {WINDOWS: windows, **linux}
++    for name, (manifest, _, _) in all_bundles.items():
++        if manifest.get('source_commit') != expected_commit:
++            errors.append(f'{name}: source commit does not match CI checkout')
++        if manifest.get('python_version') != PYTHON_VERSION:
++            errors.append(f'{name}: Python must be pinned to {PYTHON_VERSION}')
++        if manifest.get('llvm_versions') != {'clang': LLVM_VERSION, 'lld-link': LLVM_VERSION}:
++            errors.append(f'{name}: LLVM must be pinned to {LLVM_VERSION}')
++        if name in UBUNTU_TARGETS:
++            version = name.removeprefix('ubuntu-')
++            if (manifest.get('target'), manifest.get('host'),
++                    manifest.get('os_id'), manifest.get('os_version')) != (
++                    name, 'linux', 'ubuntu', version):
++                errors.append(f'{name}: claimed target does not match authenticated OS release')
++    for name in UBUNTU_TARGETS:
++        if name not in linux:
++            continue
++        m, z, pe = linux[name]
++        _, failures = v.compare_builds(w, m, wzip, z, wpe, pe,
++                                       expected_commit=expected_commit)
++        errors.extend(f'{name}: {error}' for error in failures)
++    if errors:
++        return None, errors
++    return {
++        'schema': 3,
++        'verification': 'windows-ubuntu-24.04-26.04-26.10-byte-identical',
++        'source_commit': expected_commit,
++        'targets': [WINDOWS, *UBUNTU_TARGETS],
++        'runtime_zip_name': w['runtime_zip_name'],
++        'runtime_zip_sha256': w['runtime_zip_sha256'],
++        'generated_pe_bundle_sha256': w['generated_pe_bundle_sha256'],
++        'generated_pe_sha256': w['generated_pe_sha256'],
++        'llvm_versions': w['llvm_versions'],
++        'python_version': w['python_version'],
++        'tracked_source_count': len(w['tracked_source_sha256']),
++        'runtime_entry_count': len(w['runtime_entries_sha256']),
++        'scope': 'Four checked CI target environments; Win32 PE and full runtime ZIP only, not gameplay',
++    }, []
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('--windows', type=Path, required=True)
++    parser.add_argument('--linux-target', action='append', default=[],
++                        metavar='UBUNTU-VERSION=ARTIFACT-DIRECTORY',
++                        help='Required exactly once for each Ubuntu 24.04, 26.04 and 26.10')
++    parser.add_argument('--out', type=Path, required=True)
++    parser.add_argument('--expected-commit', required=True)
++    args = parser.parse_args()
++    args.out.unlink(missing_ok=True)  # a failed rerun must NEVER retain previous proof
++    try:
++        paths: dict[str, Path] = {}
++        for item in args.linux_target:
++            name, separator, path = item.partition('=')
++            if not separator or not path or name not in UBUNTU_TARGETS or name in paths:
++                raise ValueError(f'Invalid or duplicate mandatory Ubuntu target {item!r}')
++            paths[name] = Path(path)
++        if set(paths) != set(UBUNTU_TARGETS):
++            raise ValueError('All three Ubuntu target artifacts are mandatory')
++        windows = load_bundle(args.windows)
++        linux = {name: load_bundle(paths[name]) for name in UBUNTU_TARGETS}
++        certificate, errors = compare_matrix(windows, linux, args.expected_commit)
++        if errors:
++            print('FAIL: four-target reproducibility is NOT certified:')
++            for error in errors[:100]:
++                print(' -', error)
++            return 1
++        args.out.parent.mkdir(parents=True, exist_ok=True)
++        args.out.write_text(json.dumps(certificate, indent=2, sort_keys=True)+'\n', encoding='utf-8')
++        print('PASS: Windows, Ubuntu 24.04, 26.04 and 26.10 are bit-identical: '
++              + certificate['runtime_zip_sha256'])
++        return 0
++    except (OSError, KeyError, ValueError, TypeError, subprocess.CalledProcessError,
++            zipfile.BadZipFile) as exc:
++        print('FAIL: cross-platform reproducibility NOT certified:', exc, file=sys.stderr)
++        return 1
++
++
++if __name__ == '__main__':
++    raise SystemExit(main())
+diff --git a/tests/test_cross_platform_reproducibility.py b/tests/test_cross_platform_reproducibility.py
+index af8f6e9..d39da4d 100644
+--- a/tests/test_cross_platform_reproducibility.py
++++ b/tests/test_cross_platform_reproducibility.py
+@@ -195,9 +195,9 @@ class CrossPlatformReproducibilityTests(unittest.TestCase):
+     def test_ci_build_and_compare_both_os(self):
+         workflow = (ROOT/'.github/workflows/source-ci.yml').read_text()
+         self.assertIn('matrix:', workflow)
+-        self.assertIn('ubuntu-24.04, windows-2022', workflow)
++        self.assertIn('ubuntu-24.04, ubuntu-26.04, windows-2022', workflow)
+         self.assertIn('cross-platform-byte-identity:', workflow)
+-        self.assertIn('verify_cross_platform.py compare', workflow)
++        self.assertIn('verify_matrix_reproducibility.py', workflow)
+         self.assertIn('Aufake3D_Generated_PE_Evidence.zip', workflow)
+         self.assertIn('--expected-commit', workflow)
+         self.assertIn('19.1.7', workflow)
+diff --git a/tests/test_ubuntu_26_matrix.py b/tests/test_ubuntu_26_matrix.py
+new file mode 100644
+index 0000000..dd94949
+--- /dev/null
++++ b/tests/test_ubuntu_26_matrix.py
+@@ -0,0 +1,187 @@
++"""Four-runner byte-identity policy: the extra Ubuntu jobs may never be optional."""
++from __future__ import annotations
++
++import hashlib
++import json
++from pathlib import Path
++import tempfile
++import unittest
++from unittest.mock import patch
++import zipfile
++
++from scripts import verify_cross_platform as core
++from scripts import verify_matrix_reproducibility as matrix
++
++ROOT = Path(__file__).resolve().parents[1]
++COMMIT = 'a' * 40
++
++
++class Ubuntu26MatrixTests(unittest.TestCase):
++    def setUp(self):
++        self.tmp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.tmp.cleanup)
++        root = Path(self.tmp.name)
++        self.bundles = {}
++        for name in [matrix.WINDOWS, *matrix.UBUNTU_TARGETS]:
++            folder = root/name
++            folder.mkdir()
++            archive = folder/'runtime.zip'
++            pe = folder/'pe-evidence.zip'
++            self.make_zip(archive, b'fixed-runtime')
++            self.make_zip(pe, b'MZfixed-binary')
++            win = name == matrix.WINDOWS
++            self.bundles[name] = ({
++                'schema': core.SCHEMA,
++                'target': name, 'host': 'windows' if win else 'linux',
++                'os_id': 'windows' if win else 'ubuntu',
++                'os_version': '20348' if win else name.replace('ubuntu-', ''),
++                'source_commit': COMMIT,
++                'python_version': matrix.PYTHON_VERSION,
++                'llvm_versions': {'clang': matrix.LLVM_VERSION,
++                                  'lld-link': matrix.LLVM_VERSION},
++                'local_verification': 'three-way-bit-identical',
++                'runtime_zip_name': archive.name,
++                'runtime_zip_sha256': core.digest(archive),
++                'runtime_entries_sha256': core.archive_entries(archive),
++                'generated_pe_bundle_name': pe.name,
++                'generated_pe_bundle_sha256': core.digest(pe),
++                'generated_pe_sha256': core.archive_entries(pe),
++                'tracked_source_sha256': {'scripts/build.py': 'a' * 64},
++            }, archive, pe)
++
++    @staticmethod
++    def make_zip(path: Path, data: bytes):
++        with zipfile.ZipFile(path, 'w', compression=zipfile.ZIP_STORED) as z:
++            info = zipfile.ZipInfo('test/a3d.dll', (2026, 1, 1, 0, 0, 0))
++            info.create_system = 3
++            info.compress_type = zipfile.ZIP_STORED
++            z.writestr(info, data)
++
++    def compare(self, target_names=None):
++        names = target_names if target_names is not None else matrix.UBUNTU_TARGETS
++        return matrix.compare_matrix(self.bundles[matrix.WINDOWS],
++                                     {name: self.bundles[name] for name in names}, COMMIT)
++
++    def test_all_four_identical_builds_certify(self):
++        certificate, errors = self.compare()
++        self.assertEqual([], errors)
++        self.assertEqual(certificate['targets'], [matrix.WINDOWS, *matrix.UBUNTU_TARGETS])
++        self.assertEqual(certificate['runtime_zip_sha256'], self.bundles[matrix.WINDOWS][0]['runtime_zip_sha256'])
++
++    def test_missing_ubuntu_2610_refuses_certificate(self):
++        certificate, errors = self.compare(('ubuntu-24.04', 'ubuntu-26.04'))
++        self.assertIsNone(certificate)
++        self.assertIn('mandatory targets', ' '.join(errors))
++
++    def test_missing_ubuntu_2604_refuses_certificate(self):
++        certificate, errors = self.compare(('ubuntu-24.04', 'ubuntu-26.10'))
++        self.assertIsNone(certificate)
++        self.assertIn('mandatory targets', ' '.join(errors))
++
++    def test_fake_2610_os_identity_refuses_certificate(self):
++        self.bundles['ubuntu-26.10'][0]['os_version'] = '26.04'
++        certificate, errors = self.compare()
++        self.assertIsNone(certificate)
++        self.assertTrue(any('claimed target' in x for x in errors), errors)
++
++    def test_changed_2610_pe_refuses_certificate(self):
++        self.bundles['ubuntu-26.10'][0]['generated_pe_sha256']['test/a3d.dll'] = '0'*64
++        certificate, errors = self.compare()
++        self.assertIsNone(certificate)
++        self.assertTrue(any('generated_pe_sha256' in x for x in errors), errors)
++
++    def test_changed_2604_zip_refuses_certificate(self):
++        m, runtime, pe = self.bundles['ubuntu-26.04']
++        self.make_zip(runtime, b'changed but same filename')
++        m['runtime_zip_sha256'] = core.digest(runtime)
++        m['runtime_entries_sha256'] = core.archive_entries(runtime)
++        certificate, errors = self.compare()
++        self.assertIsNone(certificate)
++        self.assertTrue(any('raw runtime ZIP' in x or 'runtime_zip_sha256' in x for x in errors), errors)
++
++    def test_different_commit_refuses_certificate(self):
++        self.bundles['ubuntu-26.10'][0]['source_commit'] = 'b'*40
++        _, errors = self.compare()
++        self.assertTrue(any('source commit' in x for x in errors), errors)
++
++    def test_unpinned_llvm_refuses_certificate(self):
++        self.bundles['ubuntu-26.10'][0]['llvm_versions']['clang'] = '22.1.8'
++        _, errors = self.compare()
++        self.assertTrue(any('LLVM must be pinned' in x for x in errors), errors)
++
++    def test_emitter_rejects_false_2610_claim(self):
++        with patch.object(core.platform, 'system', return_value='Linux'), patch.object(
++                core.platform, 'freedesktop_os_release', return_value={'ID': 'ubuntu', 'VERSION_ID': '26.04'}):
++            with self.assertRaisesRegex(ValueError, 'requires Ubuntu 26.10'):
++                core.verify_build_target('ubuntu-26.10')
++
++    def test_emitter_accepts_real_2610(self):
++        with patch.object(core.platform, 'system', return_value='Linux'), patch.object(
++                core.platform, 'freedesktop_os_release', return_value={'ID': 'ubuntu', 'VERSION_ID': '26.10'}):
++            self.assertEqual(core.verify_build_target('ubuntu-26.10')['target'], 'ubuntu-26.10')
++
++    def test_manifest_cannot_escape_artifact_directory(self):
++        folder = Path(self.tmp.name)/'malicious'
++        folder.mkdir()
++        (folder/'manifest.json').write_text(json.dumps({
++            'runtime_zip_name': '../runtime.zip', 'generated_pe_bundle_name': 'pe.zip'}))
++        with self.assertRaisesRegex(ValueError, 'Invalid runtime_zip_name'):
++            matrix.load_bundle(folder)
++
++    def test_cli_failure_deletes_old_certificate(self):
++        cert = Path(self.tmp.name)/'stale-certificate.json'
++        cert.write_text('{"not_really": "certified"}')
++        from unittest.mock import patch as mock_patch
++        with mock_patch.object(matrix.sys, 'argv', [
++                'verify_matrix_reproducibility.py', '--windows', str(Path(self.tmp.name)/'windows'),
++                '--linux-target', 'ubuntu-24.04='+str(Path(self.tmp.name)/'ubuntu-24.04'),
++                '--out', str(cert), '--expected-commit', COMMIT]):
++            self.assertEqual(matrix.main(), 1)
++        self.assertFalse(cert.exists())
++
++    def test_cli_success_writes_single_four_target_certificate(self):
++        from unittest.mock import patch as mock_patch
++        for name, bundle in self.bundles.items():
++            (Path(self.tmp.name)/name/'manifest.json').write_text(json.dumps(bundle[0]))
++        cert = Path(self.tmp.name)/'certificate.json'
++        arguments = ['verify_matrix_reproducibility.py', '--windows',
++                     str(Path(self.tmp.name)/matrix.WINDOWS)]
++        for target in matrix.UBUNTU_TARGETS:
++            arguments += ['--linux-target', target+'='+str(Path(self.tmp.name)/target)]
++        arguments += ['--out', str(cert), '--expected-commit', COMMIT]
++        with mock_patch.object(matrix.sys, 'argv', arguments):
++            self.assertEqual(matrix.main(), 0)
++        contents = json.loads(cert.read_text())
++        self.assertEqual(contents['targets'], [matrix.WINDOWS, *matrix.UBUNTU_TARGETS])
++
++    def test_cli_tampered_2610_evidence_rejects_and_removes_stale_certificate(self):
++        from unittest.mock import patch as mock_patch
++        for name, bundle in self.bundles.items():
++            (Path(self.tmp.name)/name/'manifest.json').write_text(json.dumps(bundle[0]))
++        cert = Path(self.tmp.name)/'certificate.json'
++        cert.write_text('old proof')
++        pe = self.bundles['ubuntu-26.10'][2]
++        self.make_zip(pe, b'MZmodified-real-binary')
++        arguments = ['verify_matrix_reproducibility.py', '--windows',
++                     str(Path(self.tmp.name)/matrix.WINDOWS)]
++        for target in matrix.UBUNTU_TARGETS:
++            arguments += ['--linux-target', target+'='+str(Path(self.tmp.name)/target)]
++        arguments += ['--out', str(cert), '--expected-commit', COMMIT]
++        with mock_patch.object(matrix.sys, 'argv', arguments):
++            self.assertEqual(matrix.main(), 1)
++        self.assertFalse(cert.exists())
++
++    def test_workflow_references_four_unique_required_target_artifacts(self):
++        workflow = (ROOT/'.github/workflows/source-ci.yml').read_text()
++        for target in [matrix.WINDOWS, *matrix.UBUNTU_TARGETS]:
++            self.assertIn('Aufake3D-cross-'+target, workflow)
++            self.assertIn('verification/'+target if target.startswith('ubuntu') else 'verification/windows', workflow)
++        self.assertIn('needs: [windows-and-linux, ubuntu-2610-container]', workflow)
++        self.assertIn('runs-on: ubuntu-26.04', workflow)
++        self.assertIn('ubuntu:26.10@sha256:', workflow)
++        self.assertIn('verify_matrix_reproducibility.py', workflow)
++        self.assertIn('--expected-commit', workflow)
++
++
++if __name__ == '__main__':
++    unittest.main()

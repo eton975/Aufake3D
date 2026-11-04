@@ -1,4 +1,4 @@
-name: Aufake3D Win32 source builds and cross-OS reproducibility
+name: Aufake3D four-target Win32 byte-identical builds
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, windows-2022]
+        os: [ubuntu-24.04, ubuntu-26.04, windows-2022]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -31,6 +31,9 @@ jobs:
         uses: KyleMayes/install-llvm-action@ebc0426251bc40c7cd31162802432c68818ab8f0 # v2.0.9
         with:
           version: '19.1.7'
+          # Keep the 19.1.7 toolchain OUTSIDE the source checkout. The
+          # three-build proof copies project source; LLVM is a build input.
+          directory: ${{ runner.temp }}/aufake3d-llvm
       - name: Install CMake/Ninja/C++ test dependencies (Linux)
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y cmake ninja-build g++
@@ -43,11 +46,11 @@ jobs:
       - name: Assert local three-build verification
         run: python scripts/verify_reproducible.py --check-report
       - name: Record build evidence and exact source/PE/runtime hashes
-        run: python scripts/verify_cross_platform.py emit --llvm 19.1.7 --out dist/manifest.json
+        run: python scripts/verify_cross_platform.py emit --llvm 19.1.7 --target ${{ matrix.os }} --out dist/manifest.json
       - name: Upload runtime and build evidence for the cross-OS release gate
         uses: actions/upload-artifact@v7
         with:
-          name: Aufake3D-cross-${{ runner.os }}
+          name: Aufake3D-cross-${{ matrix.os }}
           path: |
             dist/Aufake3D_v0.9.2_Local_Runtime.zip
             dist/Aufake3D_Generated_PE_Evidence.zip
@@ -57,7 +60,7 @@ jobs:
       - name: Upload individual binaries and local verification for diagnostics
         uses: actions/upload-artifact@v7
         with:
-          name: Aufake3D-debug-${{ runner.os }}
+          name: Aufake3D-debug-${{ matrix.os }}
           path: |
             dist/core/a3d.dll
             dist/core/a3dapi.dll
@@ -66,10 +69,56 @@ jobs:
             dist/REPRODUCIBILITY_VERIFIED.json
           if-no-files-found: error
 
+  ubuntu-2610-container:
+    name: Build Win32 PE inside pinned Ubuntu 26.10 container
+    # GitHub provides ubuntu-26.04, not ubuntu-26.10, as a hosted VM label.
+    # Explicit image digest prevents the 26.10 rootfs changing under this job.
+    runs-on: ubuntu-26.04
+    container:
+      image: ubuntu:26.10@sha256:262df65c0ec6bf8d9dcc87454f4330a05fae4b97825f45854af3b136666584c2
+      options: --platform linux/amd64
+    steps:
+      - name: Bootstrap native Ubuntu 26.10 build dependencies
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update
+          apt-get install -y --no-install-recommends ca-certificates curl git tar gzip xz-utils libstdc++6 libtinfo6 python3 cmake ninja-build g++
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13.7'
+      - name: Install pinned LLVM on Ubuntu 26.10
+        uses: KyleMayes/install-llvm-action@ebc0426251bc40c7cd31162802432c68818ab8f0 # v2.0.9
+        with:
+          version: '19.1.7'
+          # Keep the 19.1.7 toolchain OUTSIDE the source checkout. The
+          # three-build proof copies project source; LLVM is a build input.
+          directory: ${{ runner.temp }}/aufake3d-llvm
+      - name: Confirm real Ubuntu 26.10 environment and pinned LLVM
+        run: python scripts/build.py --doctor
+      - name: Reject tracked prebuilt files
+        run: python Tools/verify_source_only.py
+      - name: Build Win32 components and verify three independent builds
+        run: python scripts/build.py --require-native-mock --require-acoustics
+      - name: Assert local three-build verification
+        run: python scripts/verify_reproducible.py --check-report
+      - name: Record Ubuntu 26.10 evidence and verify OS identity
+        run: python scripts/verify_cross_platform.py emit --llvm 19.1.7 --target ubuntu-26.10 --out dist/manifest.json
+      - name: Upload Ubuntu 26.10 binary evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: Aufake3D-cross-ubuntu-26.10
+          path: |
+            dist/Aufake3D_v0.9.2_Local_Runtime.zip
+            dist/Aufake3D_Generated_PE_Evidence.zip
+            dist/manifest.json
+          if-no-files-found: error
+          retention-days: 30
+
   cross-platform-byte-identity:
-    name: Certify Windows/Linux PE and complete ZIP byte identity
-    needs: windows-and-linux
-    runs-on: ubuntu-24.04
+    name: Certify identical Win32 outputs on Windows and all Ubuntu targets
+    needs: [windows-and-linux, ubuntu-2610-container]
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -77,14 +126,29 @@ jobs:
           python-version: '3.13.7'
       - uses: actions/download-artifact@v7
         with:
-          name: Aufake3D-cross-Windows
+          name: Aufake3D-cross-windows-2022
           path: verification/windows
       - uses: actions/download-artifact@v7
         with:
-          name: Aufake3D-cross-Linux
-          path: verification/linux
-      - name: Fail unless both OS artifacts are exactly identical
-        run: python scripts/verify_cross_platform.py compare --windows verification/windows --linux verification/linux --out verification/CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json --expected-commit "${{ github.sha }}"
+          name: Aufake3D-cross-ubuntu-24.04
+          path: verification/ubuntu-24.04
+      - uses: actions/download-artifact@v7
+        with:
+          name: Aufake3D-cross-ubuntu-26.04
+          path: verification/ubuntu-26.04
+      - uses: actions/download-artifact@v7
+        with:
+          name: Aufake3D-cross-ubuntu-26.10
+          path: verification/ubuntu-26.10
+      - name: Fail unless Windows and ALL Ubuntu artifacts are byte-identical
+        run: >-
+          python scripts/verify_matrix_reproducibility.py
+          --windows verification/windows
+          --linux-target ubuntu-24.04=verification/ubuntu-24.04
+          --linux-target ubuntu-26.04=verification/ubuntu-26.04
+          --linux-target ubuntu-26.10=verification/ubuntu-26.10
+          --out verification/CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json
+          --expected-commit "${{ github.sha }}"
       - name: Upload cross-platform verification certificate
         uses: actions/upload-artifact@v7
         with:

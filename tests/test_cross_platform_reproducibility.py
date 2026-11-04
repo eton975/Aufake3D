@@ -195,9 +195,9 @@ class CrossPlatformReproducibilityTests(unittest.TestCase):
     def test_ci_build_and_compare_both_os(self):
         workflow = (ROOT/'.github/workflows/source-ci.yml').read_text()
         self.assertIn('matrix:', workflow)
-        self.assertIn('ubuntu-24.04, windows-2022', workflow)
+        self.assertIn('ubuntu-24.04, ubuntu-26.04, windows-2022', workflow)
         self.assertIn('cross-platform-byte-identity:', workflow)
-        self.assertIn('verify_cross_platform.py compare', workflow)
+        self.assertIn('verify_matrix_reproducibility.py', workflow)
         self.assertIn('Aufake3D_Generated_PE_Evidence.zip', workflow)
         self.assertIn('--expected-commit', workflow)
         self.assertIn('19.1.7', workflow)

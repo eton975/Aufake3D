@@ -5,15 +5,30 @@ The project has **two different verification scopes**. A local `BUILD_WINDOWS.cm
 verification, writes `dist/REPRODUCIBILITY_VERIFIED.json`, and **does not**
 claim that another operating system's binaries have the same hashes.
 
-The new `.github/workflows/source-ci.yml` has an independent release gate:
+The `.github/workflows/source-ci.yml` gate is mandatory for four targets:
+`windows-2022`, `ubuntu-24.04`, `ubuntu-26.04` (native hosted VM), and
+`ubuntu-26.10` (official Ubuntu Docker image on an `ubuntu-26.04` VM).
+Ubuntu 26.10 has no official GitHub-hosted x64 VM label. Its Docker image is
+pinned to the OCI digest in the workflow, not a floating tag; an emitter
+checks `/etc/os-release` before accepting any target name. Thus an accidentally
+misconfigured image cannot pass as Ubuntu 26.10.
 
-1. Builds the **same checkout** on `windows-2022` and `ubuntu-24.04`, running
-   the existing local verification and tests on both platforms.
-2. Both runners install **LLVM/Clang+LLD 19.1.7** through the same pinned
+The independent release gate:
+
+1. Builds the **same checkout** on `windows-2022`, `ubuntu-24.04`,
+   `ubuntu-26.04`, and the pinned Ubuntu 26.10 container, running
+   the existing local verification and tests in every build environment.
+2. All four builds install **LLVM/Clang+LLD 19.1.7** through the same pinned
    third-party installer action commit (`ebc0426251bc40c7cd31162802432c68818ab8f0`).
    The Python interpreter is pinned to **3.13.7**. The emitter checks that
-   both `clang` and `lld-link` really identify as 19.1.7 before producing
+   the `clang` and `lld-link` executables really identify as 19.1.7 before producing
    build evidence. CI has fixed `PYTHONHASHSEED` and `SOURCE_DATE_EPOCH`.
+   The LLVM installer is explicitly directed to `${{ runner.temp }}/aufake3d-llvm`
+   on every CI target, **outside the Git checkout**; this avoids copying a
+   several-gigabyte toolchain into the two clean rebuild directories. The
+   reproducibility verifier additionally excludes a root-level `llvm/` folder
+   when it contains the actual LLVM binaries. The CI environment still uses
+   the pinned compiler executable for every build and checks its version.
 3. Each runner writes `dist/manifest.json` containing SHA-256 hashes of **all
    git-tracked files as checked out**, all generated PE `.dll` and `.exe` files,
    and all members of the exact final runtime ZIP. It also records the exact
@@ -21,17 +36,17 @@ The new `.github/workflows/source-ci.yml` has an independent release gate:
    verification result. It also stores a second deterministic ZIP of **every
    compiled PE DLL/EXE**, including files not present in the runtime ZIP. Both
    hosts upload the runtime ZIP, raw PE evidence and manifests separately.
-4. A third **cross-platform-byte-identity** job downloads both artifacts,
+4. A final **cross-platform-byte-identity** job downloads all four artifacts,
    validates the manifests against the actual ZIPs, and **fails closed** if
    any tracked file, actual downloaded compiled PE, ZIP entry, archive byte,
    compiler version, Python version, or Git commit differs. The build evidence
    emitter refuses a dirty checkout, preventing an uncommitted source change
    from being mislabeled with a clean Git commit. The CI job also
-   checks that both manifests identify **the exact Actions checkout commit**.
+   checks that all manifests identify **the exact Actions checkout commit**.
    On success only, it writes
    `CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json` and publishes it as a
    separate artifact. The success certificate states an exact checked commit
-   and runtime SHA-256. Any failed matrix job blocks the certificate.
+   and runtime SHA-256. Any missing, failed or mismatching Ubuntu job blocks the certificate.
 
 ## Why the release ZIP packaging changed
 
@@ -60,13 +75,13 @@ A local build whose SHA-256 matches the certified runtime ZIP hash can then
 be compared with that certified artifact. Merely running `BUILD_WINDOWS.cmd`
 on one computer can never prove another computer's output.
 
-To manually compare artifacts from both hosts after their local gates pass:
+For a diagnostic *pairwise* comparison (which cannot replace the mandatory four-target certificate):
 
 ```sh
 python scripts/verify_cross_platform.py emit --llvm 19.1.7 --out dist/manifest.json
 ```
 
-Place each host's `manifest.json`, `Aufake3D_v0.9.2_Local_Runtime.zip`, and
+Place the two hosts' `manifest.json`, `Aufake3D_v0.9.2_Local_Runtime.zip`, and
 `Aufake3D_Generated_PE_Evidence.zip` in separate directories,
 `verification/windows` and `verification/linux`, then:
 
@@ -83,3 +98,26 @@ source revision **and pinned inputs**, not of arbitrary hosts/tools.
 
 A failed manifest-emission or certificate-comparison operation removes its
 previous success output, so stale files cannot masquerade as new proof.
+
+## Four-target certification (v3)
+
+The final workflow now uses `scripts/verify_matrix_reproducibility.py`, which
+requires **all three** Ubuntu targets, validates the target label against the
+recorded Linux OS release, reopens every downloaded PE evidence archive, checks
+every raw ZIP against the Windows reference, and emits **one consolidated**
+certificate only after all four independently built outputs match. A failed
+attempt deletes any stale certificate. The Windows job remains the byte identity
+reference, not a special renderer implementation.
+
+To reproduce the matrix check manually, download the four CI artifacts and run:
+
+```sh
+python scripts/verify_matrix_reproducibility.py --windows verification/windows --linux-target ubuntu-24.04=verification/ubuntu-24.04 --linux-target ubuntu-26.04=verification/ubuntu-26.04 --linux-target ubuntu-26.10=verification/ubuntu-26.10 --expected-commit YOUR_GIT_COMMIT_SHA --out verification/CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json
+```
+
+**This configuration is not itself certification:** CI must pass on all four
+real environments before an official checksum-identical release can be claimed.
+The digest-pinned 26.10 root filesystem and the pinned compiler/Python versions
+constrain the inputs, while the strict output comparison detects any remaining
+differences. The runner kernel, build packages and SDK/tool archives are not yet
+fully content-addressed; all generated release bytes remain release-blocking.

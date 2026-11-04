@@ -163,6 +163,15 @@ an unexpected file change.
 
 ### Troubleshooting
 
+- **`No space left on device` during `verify_reproducible.py` in GitHub Actions:**
+  This is **runner disk space**, not GitHub repository or Git history quota.
+  An older pinned LLVM installation used `./llvm` inside the checkout, and
+  `copy_clean_source()` accidentally duplicated the large toolchain into
+  both verification trees. The CI workflow now installs LLVM under
+  `${{ runner.temp }}/aufake3d-llvm`, outside the checkout, and the local
+  copier also refuses to duplicate a recognizable root-level LLVM install.
+  Do **not** disable `--verify-current` or skip either clean rebuild to fix
+  this; rerun the complete four-target CI gate using the amended workflow.
 - **Clang/LLD not found:** Run `python scripts/build.py --doctor` and add LLVM's
   `bin` folder to `PATH`; start a new terminal.
 - **`stdio.h`, `msvcrt.lib`, `oldnames.lib` missing:** Install Visual Studio
@@ -192,3 +201,12 @@ issues `CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json` on a passing run.
 Local `BUILD_WINDOWS.cmd` deliberately cannot claim cross-host identity by
 itself. The deterministic runtime ZIP is now stored without DEFLATE compression
 and may be larger. See `Docs/CROSS_PLATFORM_REPRODUCIBILITY.md`.
+
+### Ubuntu 26.04 / 26.10 CI build targets
+
+The GitHub Actions reproducibility matrix now also tests Ubuntu 26.04 (native
+hosted runner) and Ubuntu 26.10 (digest-pinned official container on a 26.04
+runner). Both use LLVM 19.1.7 and Python 3.13.7 and must match the Windows
+reference and Ubuntu 24.04 byte-for-byte. A successful local
+`BUILD_WINDOWS.cmd` still proves **local** reproducibility only. See
+`Docs/CROSS_PLATFORM_REPRODUCIBILITY.md` for the four-target release gate.
