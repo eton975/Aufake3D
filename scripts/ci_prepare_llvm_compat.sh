@@ -56,7 +56,7 @@ build_dir="$workdir/build"
 # The library is a private BUILD-TIME dependency of LLVM, not an Aufake3D
 # runtime artifact. Disable ICU and compression dependencies to avoid importing
 # a second, unpinned old-library dependency tree from Ubuntu 24.04.
-cmake -S "$source_dir" -B "$build_dir" \
+cmake -S "$source_dir" -B "$build_dir" -G Ninja \
   -DCMAKE_BUILD_TYPE=Release \
   -DBUILD_SHARED_LIBS=ON \
   -DLIBXML2_WITH_PYTHON=OFF \

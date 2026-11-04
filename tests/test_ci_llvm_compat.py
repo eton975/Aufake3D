@@ -52,6 +52,7 @@ class LLVMCompatibilityTests(unittest.TestCase):
         self.assertIn('verify_matrix_reproducibility.py', workflow)
         self.assertIn('--expected-commit "${{ github.sha }}"', workflow)
 
+    @unittest.skipIf(os.name == "nt", "Linux CI runs the Bash-only toolchain smoke test")
     def test_shell_syntax_and_fail_closed_when_toolchain_missing(self):
         subprocess.run(['bash', '-n', str(SCRIPT)], check=True, capture_output=True)
         env = dict(os.environ)
@@ -61,7 +62,8 @@ class LLVMCompatibilityTests(unittest.TestCase):
         run = subprocess.run(['bash', str(SCRIPT), '/tmp/unneeded-libxml-compat'],
                              env=env, capture_output=True, text=True)
         self.assertNotEqual(run.returncode, 0)
-        self.assertIn('FAIL:', run.stderr)
+        self.assertTrue('LLVM installer must set LLVM_PATH' in run.stderr
+                        or 'only for Ubuntu 26.04/26.10' in run.stderr)
 
 
 if __name__ == '__main__':
