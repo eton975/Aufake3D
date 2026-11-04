@@ -51,6 +51,21 @@ class PinnedBuild(unittest.TestCase):
         self.assertEqual(len(ref['generated_pe_sha256']),20)
         self.assertIn('dist/miles-local/mss32.dll',ref['generated_pe_sha256'])
 
+    def test_upstream_uv_version_metadata_is_accepted_but_not_a_different_release(self):
+        self.assertTrue(pin.uv_version_matches('uv 0.10.0 (0ba432459 2026-02-05)\\n'))
+        self.assertTrue(pin.uv_version_matches('uv 0.10.0'))
+        for output in ('uv 0.10.1', 'uv 0.10.0.1', 'uv 0.10.0-malicious',
+                       'uv 0.10.0\\nuv 0.10.1', 'uv 0.9.99'):
+            with self.subTest(output=output):
+                self.assertFalse(pin.uv_version_matches(output))
+
+    def test_direct_pinned_script_can_import_project_verifier(self):
+        # Running a file under scripts/ instead of -m may hide ROOT on sys.path.
+        command = [sys.executable, str(pin.ROOT/'scripts/build_pinned.py'), '--doctor']
+        result = subprocess.run(command, cwd=pin.ROOT.parent,
+                                capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_cached_tool_directory_must_be_outside_repo(self):
         with self.assertRaisesRegex(RuntimeError, 'outside'):
             pin.cache_root({'A3D_PINNED_CACHE': str(pin.ROOT / 'llvm')})
