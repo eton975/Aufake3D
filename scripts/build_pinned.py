@@ -44,16 +44,16 @@ RUNTIME_ZIP = ROOT / 'dist/Aufake3D_v0.9.2_Local_Runtime.zip'
 # outside the source tree and are never copied into the clean-build replicas.
 ASSETS = {
     'linux': {
-        'llvm': ('https://github.com/llvm/llvm-project/releases/download/llvmorg-19.1.7/LLVM-19.1.7-Linux-X64.tar.xz',
-                 '4a5ec53951a584ed36f80240f6fbf8fdd46b4cf6c7ee87cc2d5018dc37caf679'),
+        'llvm': ('https://github.com/eton975/Aufake3D/releases/download/llvm19.1.7-a3d-slim-v1/aufake3d-llvm-19.1.7-linux-slim.tar.xz',
+                 '9802ae0682f1e61f67b34a8d573148953d20691f6b2519a9defc4155cb3452e7'),
         'uv': ('https://github.com/astral-sh/uv/releases/download/0.10.0/uv-x86_64-unknown-linux-gnu.tar.gz',
                '230e328948c92dd1ebad83949c4d56e83813dfe9c6362a4c519e6a227973f1ae'),
     },
     'windows': {
-        # The LLVM 19.1.7 Windows archive comes from the same upstream build
-        # family as the CI-installed win64.exe. The SHA gate tests output identity.
-        'llvm': ('https://github.com/llvm/llvm-project/releases/download/llvmorg-19.1.7/clang+llvm-19.1.7-x86_64-pc-windows-msvc.tar.xz',
-                 'b4557b4f012161f56a2f5d9e877ab9635cafd7a08f7affe14829bd60c9d357f0'),
+        # Byte-identical CI binaries repacked into the public, verified slim
+        # toolchain release; never substitute a different Clang or LLD build.
+        'llvm': ('https://github.com/eton975/Aufake3D/releases/download/llvm19.1.7-a3d-slim-v1/aufake3d-llvm-19.1.7-windows-slim.tar.xz',
+                 'f36d3a21833120367778b519d2c9aac2918a2ce327f3672531bb82fd691d36c9'),
         'uv': ('https://github.com/astral-sh/uv/releases/download/0.10.0/uv-x86_64-pc-windows-msvc.zip',
                '4037b444541f695cd2eb93188a9346de3e334af562381411deade0a31c7bf898'),
     },
@@ -110,11 +110,11 @@ def download_verified(url: str, expected_sha256: str, target: Path) -> Path:
 
 
 def extract_llvm(archive: Path, dest: Path) -> None:
-    """Use system tar only for extracting a hash-verified upstream LLVM archive."""
+    """Extract flat-layout, SHA-256-pinned slim LLVM without privilege changes."""
     if shutil.which('tar') is None:
         raise RuntimeError('tar is required to unpack upstream LLVM (Windows 10 includes tar.exe)')
     dest.mkdir(parents=True, exist_ok=True)
-    subprocess.run(['tar', '-xJf', str(archive), '-C', str(dest), '--strip-components=1'], check=True)
+    subprocess.run(['tar', '-xJf', str(archive), '-C', str(dest)], check=True)
 
 
 def pinned_llvm(cache: Path, host: str) -> Path:
@@ -144,6 +144,23 @@ def pinned_llvm(cache: Path, host: str) -> Path:
         shutil.rmtree(staging)
     try:
         extract_llvm(archive, staging)
+        # The public slim release records hashes of the exact CI-installed
+        # compiler and every packaged dependency. Verify that unpacking did
+        # not omit, rename or change any of those bytes.
+        manifest_file = staging / 'AUFAKE3D_LLVM_PROVENANCE.json'
+        manifest = json.loads(manifest_file.read_text(encoding='utf-8'))
+        files = manifest.get('files_sha256')
+        if (manifest.get('llvm_version') != LLVM_VERSION or
+                manifest.get('host') != host or
+                not isinstance(files, dict) or not files):
+            raise RuntimeError('Invalid LLVM 19.1.7 slim provenance')
+        for name, expected in files.items():
+            relative = Path(name)
+            if (relative.is_absolute() or '..' in relative.parts or
+                    not (staging / relative).is_file() or
+                    not re.fullmatch(r'[0-9a-f]{64}', str(expected)) or
+                    sha_file(staging / relative) != expected):
+                raise RuntimeError('Pinned LLVM extraction differs from provenance: ' + name)
         bins = [staging / 'bin' / p.name for p in executables]
         if not all(p.is_file() for p in bins):
             raise RuntimeError('Verified LLVM archive did not contain clang and lld-link')
@@ -157,7 +174,7 @@ def pinned_llvm(cache: Path, host: str) -> Path:
     finally:
         if staging.exists():
             shutil.rmtree(staging)
-        # Avoid retaining a ~1.65 GB archive in addition to the LLVM tree.
+        # Avoid retaining the downloaded archive as well as the extracted tools.
         archive.unlink(missing_ok=True)
     return bin_dir
 

@@ -261,3 +261,34 @@ runner). Both use LLVM 19.1.7 and Python 3.13.7 and must match the Windows
 reference and Ubuntu 24.04 byte-for-byte. A successful local
 `BUILD_WINDOWS.cmd` still proves **local** reproducibility only. See
 `Docs/CROSS_PLATFORM_REPRODUCIBILITY.md` for the four-target release gate.
+
+## Smaller, checksum-pinned local LLVM 19.1.7 (November 2026)
+
+The default Windows and Debian one-click entrypoints use the exact **upstream
+LLVM 19.1.7** executables already used by the successful four-platform
+GitHub Actions certificate. To avoid huge downloads, their original bytes and
+required runtime DLLs/shared libraries plus Clang resource headers have been
+repacked into SHA-256-pinned, licensed **build-only archives**:
+
+| Build host | Full upstream LLVM download | Slim CI-provenance archive |
+|---|---:|---:|
+| Windows x64 | 845,236,708 bytes | **114,095,304 bytes** |
+| Debian 13/Linux x64 | 1,653,440,720 bytes | **163,329,824 bytes** |
+
+Public provenance and license: https://github.com/eton975/Aufake3D/releases/tag/llvm19.1.7-a3d-slim-v1
+
+The two archives are pinned in `scripts/build_pinned.py` to the **actual
+SHA-256 of the published asset**, then their included compiler/dependency
+bytes are checked against their internal per-file SHA-256 manifest after
+extraction. A wrong hash fails; no fallback to the Debian-packaged compiler
+or whichever LLVM happens to be installed on Windows is permitted. They are
+cached outside the checkout and do not modify system PATH or registry.
+
+Neither a matching version string nor a successful compiler smoke test is
+sufficient to certify a build: both normal three-build verification and
+comparison of all **20 generated PE files** and the complete runtime ZIP
+against the CI reference still must succeed. The slim archives do not
+contain Aufake3D game DLLs or proprietary game data. The original unmodified
+LLVM compiler/linker bytes come from the exact SHA-pinned LLVM installer
+action used by the release CI; the release is a compiler input, not an
+Aufake3D game binary release.
