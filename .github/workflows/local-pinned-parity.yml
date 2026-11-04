@@ -1,0 +1,60 @@
+name: Aufake3D pinned local Windows and Debian byte-identity check
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pinned-native-windows:
+    name: One-click pinned Windows build must match certified CI bytes
+    runs-on: windows-2022
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13.7'
+      - name: Download pinned toolchain, build three times, compare all 20 PE files and runtime ZIP
+        run: python scripts/build_pinned.py --no-acoustics
+      - name: Publish validated Windows runtime for inspection
+        uses: actions/upload-artifact@v7
+        with:
+          name: Aufake3D-pinned-native-windows
+          path: |
+            dist/Aufake3D_v0.9.2_Local_Runtime.zip
+            dist/REPRODUCIBILITY_VERIFIED.json
+          if-no-files-found: error
+          retention-days: 14
+
+  pinned-debian-13:
+    name: One-click pinned Debian 13 build must match certified CI bytes
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    container:
+      # Exact amd64 OCI manifest from Debian's official 2026-10-27 image.
+      # Do not substitute a floating Debian tag or an Ubuntu userspace.
+      image: debian:13@sha256:e2914ec98e08b24b4cee3cefcb9f90dfb5519f8d215a2ccf0c9a49b10b6e43de
+      options: --platform linux/amd64
+    steps:
+      - name: Bootstrap Debian 13 host tools (not the Windows PE compiler)
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update
+          apt-get install -y --no-install-recommends python3 ca-certificates curl git tar xz-utils cmake ninja-build g++ libstdc++6
+      - uses: actions/checkout@v7
+      - name: Verify container really is Debian 13
+        run: python3 -c "import platform; d=platform.freedesktop_os_release(); assert (d.get('ID'),d.get('VERSION_ID')) == ('debian','13'), d"
+      - name: Download pinned toolchain, build three times, compare all 20 PE files and runtime ZIP
+        run: python3 scripts/build_pinned.py --no-acoustics
+      - name: Publish validated Debian 13 runtime for inspection
+        uses: actions/upload-artifact@v7
+        with:
+          name: Aufake3D-pinned-debian-13
+          path: |
+            dist/Aufake3D_v0.9.2_Local_Runtime.zip
+            dist/REPRODUCIBILITY_VERIFIED.json
+          if-no-files-found: error
+          retention-days: 14

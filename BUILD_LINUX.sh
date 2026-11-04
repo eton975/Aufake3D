@@ -6,4 +6,4 @@ if ! command -v python3 >/dev/null 2>&1; then
   printf 'ERROR: Python 3.10+ missing. Debian/Ubuntu: sudo apt install python3\n' >&2
   exit 1
 fi
-exec python3 scripts/build.py "$@"
+exec python3 scripts/build_pinned.py "$@"

@@ -1,0 +1,73 @@
+name: Prepare minimal LLVM 19.1.7 build-only toolchains
+
+on:
+  push:
+    branches:
+      - fix/local-win-debian-ci-reference-build-20261104
+    paths:
+      - scripts/ci_make_slim_llvm.py
+      - .github/workflows/publish-slim-llvm.yml
+
+permissions:
+  contents: read
+
+jobs:
+  pack:
+    if: github.repository == 'eton975/Aufake3D' && github.ref == 'refs/heads/fix/local-win-debian-ci-reference-build-20261104'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-2022
+            host: windows
+          - os: ubuntu-24.04
+            host: linux
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13.7'
+      - name: Install exact LLVM 19.1.7 used by certified CI
+        uses: KyleMayes/install-llvm-action@ebc0426251bc40c7cd31162802432c68818ab8f0 # v2.0.9
+        with:
+          version: '19.1.7'
+          directory: ${{ runner.temp }}/aufake3d-llvm
+      - name: Repack only required files and execute isolated PE smoke test
+        shell: bash
+        run: python scripts/ci_make_slim_llvm.py --llvm-root "$LLVM_PATH" --host "${{ matrix.host }}" --out "dist/aufake3d-llvm-19.1.7-${{ matrix.host }}-slim.tar.xz"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: LLVM-19.1.7-slim-${{ matrix.host }}
+          path: dist/aufake3d-llvm-19.1.7-${{ matrix.host }}-slim.tar.xz
+          if-no-files-found: error
+
+  release:
+    needs: pack
+    if: github.repository == 'eton975/Aufake3D' && github.ref == 'refs/heads/fix/local-win-debian-ci-reference-build-20261104'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          pattern: LLVM-19.1.7-slim-*
+          path: packages
+          merge-multiple: true
+      - name: Publish immutable third-party compiler input assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag=llvm19.1.7-a3d-slim-v1
+          test -s packages/aufake3d-llvm-19.1.7-linux-slim.tar.xz
+          test -s packages/aufake3d-llvm-19.1.7-windows-slim.tar.xz
+          sha256sum packages/*
+          if gh release view "$tag" --repo "$GH_REPO" >/dev/null 2>&1; then
+            echo 'Refusing to overwrite a published toolchain release; choose a new tag instead.' >&2
+            exit 1
+          fi
+          gh release create "$tag" packages/aufake3d-llvm-19.1.7-linux-slim.tar.xz packages/aufake3d-llvm-19.1.7-windows-slim.tar.xz --repo "$GH_REPO" --target "${{ github.sha }}" --title 'Small LLVM 19.1.7 compiler inputs for Aufake3D' --notes 'Third-party LLVM (Apache-2.0 WITH LLVM-exception), repacked from the CI reference installation without changing compiler bytes; file hashes and licence included in each archive. Build-only; not a game release.' --prerelease

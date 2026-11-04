@@ -1,0 +1,34 @@
+{
+  "generated_pe_sha256": {
+    "Source/Engine/classic2000/alice-a3d-bridge.exe": "89c2dff585c4af4d607148dc2b4b0a33cfab7c4d9277939eedcc4556eef9be9a",
+    "Source/Engine/classic2000/alice-a3d2000-native.exe": "89c2dff585c4af4d607148dc2b4b0a33cfab7c4d9277939eedcc4556eef9be9a",
+    "Source/Engine/experimental/build/a3d-launch.exe": "7e2d46788d839095852403fa05de079cd979c0642fc6ca5088269ba3d14620ce",
+    "Source/Engine/experimental/build/halflife-a3d-alpha.exe": "235e4c5cce97574871dc4d1185eec84cf9751cb6340b42365d81a2fa78daa659",
+    "Source/Engine/experimental/build/unreal-a3d-alpha.exe": "9d4b15ab6fa0dc08341eb05e57fc68d5a313ed6bf098f36e699588425ea0a5e9",
+    "Source/Engine/native/quake3-a3d-native.exe": "51d5fee6b77d1a05982708f479bc0a69a5c6e70780d723cce41052b4689d582f",
+    "Source/Engine/remaster2011/alice-a3d2011-native.exe": "03a1ffec10aec782a9b9af560367257e1d730b46ba961f6072a0e788c628fb7b",
+    "Source/Engine/win32/build/a3d-comtest.exe": "b51ce3eadf9e98bb62406ac606b8966c07d2aad504fb829eb3511ac45a2c3973",
+    "Source/Engine/win32/build/a3d-miles-enum.exe": "284f10276b0bfaf5beebdaa4b0f4de536a0969e433f4b82041bb2ab1576628a9",
+    "Source/Engine/win32/build/a3d-miles-open.exe": "e8acba8cb56886afd4b110267ca390d6459d1d128ae644eb8865d416e396e5de",
+    "Source/Engine/win32/build/a3d-miles-wave.exe": "2b060d92d9004d3a547e47134d15860d23014ce4ec84bbd2af3a479af123296e",
+    "Source/Engine/win32/build/a3d-playback-demo.exe": "612bc02717745119b4ee8230388c9ae97fc384ec1e1a8d611b298a6f486502f1",
+    "Source/Engine/win32/build/a3d-quake3-lock-test.exe": "9cb68abb27e0cf884d64e3a09321ff5b3c87e90c1bb3df4f39cd5ee3b6053a18",
+    "Source/Engine/win32/build/a3d-register32.exe": "ca3b1b392daa8218afd075c6268d0de398497ac3761ea86e6535d7e4ec89fdb4",
+    "Source/Engine/win32/build/a3d-selftest.exe": "ffa19e714ca84c663aae93b0955633949b3d2e6482acbc59b2a4df6775a356d3",
+    "Source/Engine/win32/build/a3d.dll": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0",
+    "Source/Engine/win32/build/a3dapi.dll": "213c8f292e1352f3b87b7f1c2433673698d6d0bb05790c0b117dccf2aec82d2e",
+    "dist/core/a3d.dll": "9291fd3e74eb43b129d1ff9713f979b6f9f25723f78300c8f4b2ed8e5bbeccd0",
+    "dist/core/a3dapi.dll": "213c8f292e1352f3b87b7f1c2433673698d6d0bb05790c0b117dccf2aec82d2e",
+    "dist/miles-local/mss32.dll": "603d627ef1305f92896e0cafcfda5c0327e2de30e38049916890a14f662555f0"
+  },
+  "llvm_versions": {
+    "clang": "19.1.7",
+    "lld-link": "19.1.7"
+  },
+  "origin": "GitHub Actions run 41767660727, Windows artifact 13293008650 (four-target certificate passed)",
+  "python_version": "3.13.7",
+  "runtime_zip_sha256": "a64f99e63e235e310c4d8dd45dff05f7b77271d744c9d060a9ca84a9b28f3848",
+  "schema": 1,
+  "source_commit": "e390fdb3063d01ae56e09d84c5930124c324e4af",
+  "source_manifest_sha256": "14ddde413256cbcb7d11f9648b6050867208214aba0979d566020af294736d51"
+}
