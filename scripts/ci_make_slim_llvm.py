@@ -62,7 +62,12 @@ def source_files(root, host):
     license_path=next((root/n for n in ('LICENSE.TXT','LICENSE.txt','LICENSE')
                        if (root/n).is_file()),None)
     if license_path is None:
-        raise RuntimeError('LLVM redistribution licence is missing')
+        # Official LLVM win64 NSIS installer drops its top-level licence when
+        # unpacked by install-llvm-action. Use the exact upstream 19.1.7
+        # tagged-source licence vendored alongside this source-only project.
+        license_path = Path(__file__).resolve().parents[1] / 'ThirdParty' / 'LLVM-19.1.7-LICENSE.TXT'
+        if not license_path.is_file() or 'Apache License' not in license_path.read_text(encoding='utf-8'):
+            raise RuntimeError('LLVM redistribution licence is missing')
     selected['LLVM_LICENSE.TXT']=license_path
     return dict(sorted(selected.items()))
 
