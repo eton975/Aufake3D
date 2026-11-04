@@ -41,6 +41,26 @@ Intermediate object files may be elsewhere, but **distributable build artifacts 
 
 For **Descent 3 retail**, extract its separate ZIP and place the included `a3d.dll` and `a3dapi.dll` beside the original `main.exe`; select **Aureal 3D** in the game's setup. See the [Descent 3 guide](Docs/DESCENT3_PUBLIC_RELEASE.md). This is a retail drop-in experiment, **not** the separate Descent 3 source-engine integration.
 
+### Alice (2011): FPS limit resets to 85 (VorpalFix)
+
+If Alice (2011) with **VorpalFix 4.2.1** resets a user-selected FPS limit
+(such as `com_maxfps 144`) to **85 FPS** on relaunch, inspect the
+**third-party** `VorpalFix.ini` file. Its `OverrideFPSLimit = 1` option
+explicitly selects an 85-FPS override, even when the game's `config.cfg`
+contains a different limit.
+
+**Confirmed workaround:** close the game, back up `VorpalFix.ini`, change
+`OverrideFPSLimit = 1` to `OverrideFPSLimit = 0`, then launch Alice, choose
+your preferred FPS limit in the game, exit normally and launch it again.
+One additional restart after selecting the limit was necessary in the
+reported Wine test. Be aware that `0` is documented by VorpalFix as its
+60-FPS mode; it is **not** a general "unlimited FPS" option. Verify the
+effective frame rate after restarting. No `autoexec.cfg` is required.
+
+**Disposition: Won't Fix (external configuration).** Aufake3D does not
+ship, manage or modify VorpalFix, `VorpalFix.ini` or the game's FPS settings.
+No changes to Aufake3D audio DLLs or launchers are required for this issue.
+
 ## What's new in v0.9.2?
 
 - **Descent 3 retail experiment.** The unmodified game has been observed loading Aufake3D's local `a3dapi.dll` (ProcMon), and an A/B/A test found that sound disappeared when the DLLs were removed and returned when restored. Stereo recordings and listening impressions are promising for spatial audio, **but correct HRTF, occlusion, reflections and general gameplay remain unconfirmed**. Its public, deterministic game-folder ZIP is generated automatically during the normal build.

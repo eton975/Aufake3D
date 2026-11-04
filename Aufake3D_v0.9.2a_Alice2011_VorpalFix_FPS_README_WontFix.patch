@@ -1,0 +1,31 @@
+diff --git a/README.md b/README.md
+index 12c5b7fabc1a..a191e976589e 100644
+--- a/README.md
++++ b/README.md
+@@ -40,6 +40,26 @@
+ 4. **Alice (2011) is special:** before copying its proxy, preserve **two copies of the genuine original Miles `mss32.dll`** and verify the expected game/DLL hashes. **Do not install its proxy blindly.** Read the [full installation guide](Docs/INSTALLATION.md).
+ 
+ For **Descent 3 retail**, extract its separate ZIP and place the included `a3d.dll` and `a3dapi.dll` beside the original `main.exe`; select **Aureal 3D** in the game's setup. See the [Descent 3 guide](Docs/DESCENT3_PUBLIC_RELEASE.md). This is a retail drop-in experiment, **not** the separate Descent 3 source-engine integration.
++
++### Alice (2011): FPS limit resets to 85 (VorpalFix)
++
++If Alice (2011) with **VorpalFix 4.2.1** resets a user-selected FPS limit
++(such as `com_maxfps 144`) to **85 FPS** on relaunch, inspect the
++**third-party** `VorpalFix.ini` file. Its `OverrideFPSLimit = 1` option
++explicitly selects an 85-FPS override, even when the game's `config.cfg`
++contains a different limit.
++
++**Confirmed workaround:** close the game, back up `VorpalFix.ini`, change
++`OverrideFPSLimit = 1` to `OverrideFPSLimit = 0`, then launch Alice, choose
++your preferred FPS limit in the game, exit normally and launch it again.
++One additional restart after selecting the limit was necessary in the
++reported Wine test. Be aware that `0` is documented by VorpalFix as its
++60-FPS mode; it is **not** a general "unlimited FPS" option. Verify the
++effective frame rate after restarting. No `autoexec.cfg` is required.
++
++**Disposition: Won't Fix (external configuration).** Aufake3D does not
++ship, manage or modify VorpalFix, `VorpalFix.ini` or the game's FPS settings.
++No changes to Aufake3D audio DLLs or launchers are required for this issue.
+ 
+ ## What's new in v0.9.2?
+ 
