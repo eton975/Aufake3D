@@ -99,7 +99,7 @@ class PinnedBuild(unittest.TestCase):
                 self.assertEqual(run.call_count, 3 if os.name != 'nt' else 2)
                 build_args = run.call_args_list[-2].args[0]
                 proof_args = run.call_args_list[-1].args[0]
-                self.assertIn('scripts/build.py', ' '.join(build_args).replace('\\\\', '/'))
+                self.assertIn('scripts/build.py', Path(build_args[1]).as_posix())
                 self.assertIn('--check-report', proof_args)
                 self.assertEqual(run.call_args_list[-2].kwargs['env']['PYTHONHASHSEED'], '0')
 
