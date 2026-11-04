@@ -6,7 +6,7 @@ echo Aufake3D -- Windows 10/11 local x86 build
  echo ==============================================
 where py >nul 2>&1
 if not errorlevel 1 (
-    py -3 scripts\build.py %*
+    py -3 scripts\build_pinned.py %*
 ) else (
     where python >nul 2>&1
     if errorlevel 1 (
@@ -15,7 +15,7 @@ if not errorlevel 1 (
         pause
         exit /b 1
     )
-    python scripts\build.py %*
+    python scripts\build_pinned.py %*
 )
 set "RESULT=%ERRORLEVEL%"
 if not "%RESULT%"=="0" (

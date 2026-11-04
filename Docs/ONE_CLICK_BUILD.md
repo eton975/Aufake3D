@@ -2,10 +2,61 @@
 
 **Windows 10/11:** double-click **`BUILD_WINDOWS.cmd`** in the repository root.
 **Linux:** run **`./BUILD_LINUX.sh`** in the repository root.
-These launch the same cross-platform Python orchestrator (`scripts/build.py`) and
+Both now launch `scripts/build_pinned.py`, which provisions an isolated,
+**SHA-256-verified upstream LLVM 19.1.7** toolchain and **uv 0.10.0** from
+locked release archive bytes, plus managed **Python 3.13.7**. The toolchain
+lives under the current user's cache, *outside* the checkout. It leaves
+system Clang, system Python, PATH and the registry unchanged. The first build
+needs internet access and potentially multiple gigabytes of free disk space
+(the upstream Linux LLVM archive alone is about 1.65 GB). Subsequent builds
+reuse the checked toolchain. Nothing is installed with administrator access.
+
+The pinned wrapper runs the same cross-platform Python orchestrator
+(`scripts/build.py`) and
 produce 32-bit **Windows PE** game DLLs and EXEs on both operating systems.
 The project does **not** currently build native ELF `.so` libraries for Linux;
 Wine loads the Windows binaries. Build scripts never modify original games.
+
+## CI-reference-locked build (default, Windows and Debian 13)
+
+The one-click entrypoints **refuse to call an unpinned system compiler** and
+retain the mandatory three-independent-build verification. They additionally
+compare every compiled PE binary **and** the full v0.9.2 runtime ZIP byte-for-byte against the successful
+four-environment GitHub `main` certification of 2026-11-04:
+
+- Reference commit: `e390fdb3063d01ae56e09d84c5930124c324e4af`
+- Runtime ZIP SHA-256: `a64f99e63e235e310c4d8dd45dff05f7b77271d744c9d060a9ca84a9b28f3848`
+- [Original Actions run](https://github.com/eton975/Aufake3D/actions/runs/41767660727)
+
+The fixed reference applies to these **v0.9.2 source/build inputs**, not arbitrary
+future code revisions. If an intentional source change alters packaged bytes,
+CI must certify the updated outputs before a new expected SHA-256 is used.
+For a newly certified source revision, pass `--reference-file PATH_TO_CERTIFIED_REFERENCE.json`
+to the pinned wrapper, containing the independently verified CI runtime ZIP
+SHA-256 **and every generated PE file SHA-256**. Merely passing a claimed ZIP
+hash is not enough; all executables and DLLs must match the CI evidence.
+
+The **Python/LLVM archives are verified by SHA-256** before installing. The
+managed CPython interpreter is verified as exactly 3.13.7, and the pinned `uv`
+interpreter manager fixes the installation logic. There is no unverified
+system-compiler fallback. On Linux, if the original LLVM binary requires
+`libxml2.so.2` and the host lacks it, the script builds a checksum-pinned real
+libxml2 2.13.9 in its private cache (requires CMake/Ninja/curl/C++); it does not
+fake a SONAME symlink or alter system libraries.
+
+**Local byte identity is not a newly issued four-host CI certificate.** The
+reference comparison proves the built release ZIP matches an independently
+certified artifact. The cross-platform Actions certificate itself still
+requires actual Windows plus all three Ubuntu builds and their PE evidence.
+
+For troubleshooting or explicit *unlocked* development builds, use
+`python3 scripts/build.py` directly on Linux, or `py -3 scripts\build.py` on
+Windows. Those commands remain available but do **not** check the CI reference
+and may produce host-specific hashes. `--skip-repro-check`, `--no-tests` and
+`--no-package` are deliberately prohibited through the pinned entrypoints.
+`--doctor` on the pinned wrappers displays the selected locked inputs without
+downloading anything. The `A3D_PINNED_CACHE` environment variable can move the
+private toolchain to another location **outside** the source checkout.
 
 ## First-time prerequisite installation
 
