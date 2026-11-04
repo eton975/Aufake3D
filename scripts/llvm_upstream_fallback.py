@@ -103,6 +103,11 @@ def extract_upstream_llvm(archive: Path, destination: Path, host: str) -> dict:
             relative = PurePosixPath(*parts[1:])
             if not selected_input(relative, host):
                 continue
+            # Upstream tarballs contain normal resource-directory entries
+            # (e.g. lib/clang/19/include/cuda_wrappers). The slim packager
+            # selects only actual files under those directories.
+            if member.isdir():
+                continue
             name = relative.as_posix()
             if name in selected:
                 raise RuntimeError('Duplicate upstream LLVM selected file: ' + name)

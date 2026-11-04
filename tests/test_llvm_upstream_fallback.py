@@ -36,6 +36,9 @@ def fixture_archive(folder: Path, host: str, malicious: bool = False) -> tuple[P
         files['../../escape.txt'] = b'escape'
     archive = folder / 'official-upstream-fixture.tar.xz'
     with tarfile.open(archive, 'w:xz') as output:
+        directory = tarfile.TarInfo('LLVM-19.1.7/lib/clang/19/include/cuda_wrappers')
+        directory.type = tarfile.DIRTYPE
+        output.addfile(directory)
         for name, body in files.items():
             member = tarfile.TarInfo('LLVM-19.1.7/' + name)
             member.size = len(body)
