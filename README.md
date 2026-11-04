@@ -1,81 +1,86 @@
-## v0.9.1 reproducibility-gated development candidate
+# Aufake3D
 
-Default one-click builds verify the complete compiled runtime and all generated
-PE files against **two independent clean rebuilds on the same toolchain**.
-A mismatch fails the build; an exact match creates
-`dist/REPRODUCIBILITY_VERIFIED.json`. This is **not** cross-OS equivalence or
-real-hardware/gameplay certification. See [v0.9.1 release notes](RELEASE_NOTES_V091.md)
-and [reproducible-build details](Docs/REPRODUCIBLE_BUILDS_V091.md).
+**An independent, experimental software implementation of Aureal A3D for classic Windows games.**
 
-# Aufake3D v0.9.0 — AU8830 renderer development candidate
+Aufake3D aims to let games use their **real Aureal A3D audio paths** on modern Windows and Linux/Wine, without installing obsolete Vortex drivers or patching the original game executable. Its shared Win32 x86 audio engine implements A3D interfaces, positional sound, HRTF rendering and developing geometry-related behaviour. Compatibility and fidelity vary by game and are not guaranteed.
 
-**Source-first development candidate**, with no tracked precompiled PE32 EXEs or DLLs.
-The local build generates a separate **experimental** Windows runtime ZIP. The
-v0.9.0 engine adds a contributor-derived 56-tap AU8830 HRTF path and is **not**
-yet certified by in-game testing or hardware sample comparisons. Original Miles
-DLLs, game executables and assets are not distributed.
+> **v0.9.2 — development/experimental release.** The existence of a download or game kit does not certify gameplay, authentic AU8830 fidelity, security or compatibility with every game edition. Back up your games before installing.
 
-## New to Aufake3D? Install without compiling
+## Get the software
 
-Start with [START_HERE.txt](START_HERE.txt) and the
-[beginner-friendly Windows guide](Docs/EASY_INSTALL_WINDOWS.md), also available as
-[a printable four-page PDF](Docs/Aufake3D_v0.8.18_Quick_Start.pdf).
-Use the **compiled runtime ZIP** and copy the contents of the matching
-`Game_Kits/<game>/COPY_TO_GAME_FOLDER/` into the game's existing directory.
-Alice 2011 requires preservation of the genuine Miles DLL first.
+For ordinary use, download a **compiled release asset** from [GitHub Releases](https://github.com/eton975/Aufake3D/releases), not GitHub's automatic *Source code (zip)* file. A source checkout does not contain the built DLLs until you compile it.
 
-The Windows Alice launchers seed A3D2 **once in the saved configuration**
-and then respect in-game provider changes. They do not force A3D2 on the command
-line. This initial-default seeder is pending real-game verification.
+| Want to… | Use this release file |
+|---|---|
+| Try a standard game kit | `Aufake3D_v0.9.2_Local_Runtime.zip` |
+| Try original retail **Descent 3** | `Aufake3D_v0.9.2_Descent3_Experimental_Win32.zip` (**experimental**) |
+| Build or contribute | Clone the source, then follow [Build and release](Docs/BUILD_AND_RELEASE.md) |
 
-## Build locally — Windows 10/11 or Linux
+**Where are the binaries?** After a successful build, look in **`dist/` at the repository root**:
 
-Run **`BUILD_WINDOWS.cmd`** (double-click) or **`./BUILD_LINUX.sh`**.
-The scripts compile the PE32 core, game bridges, Miles proxy and helpers,
-run applicable tests, and assemble a local ZIP with six game kits. Unreal and Half-Life integrations are
-experimental, and the Return to Castle Wolfenstein kit is **probe-only**; game
-compatibility is not established by the presence of DLLs.
-See [the one-click build guide](Docs/ONE_CLICK_BUILD.md). No old binary ZIP is needed.
-
-See [v0.9.0 development notes](RELEASE_NOTES_V090.md), [v0.8.16 build fixes](RELEASE_NOTES_V0816.md), and
-[GitHub merge provenance](Docs/GITHUB_SOURCE_INTEGRATION_V0816.md).
-
-## Entry points
-
-- [Developer documentation](Docs/DEVELOPER_INDEX.md) and
-  [architecture map](Docs/SOURCE_ARCHITECTURE.md).
-- [How to compile](BUILDING.md) the PE32 A3D core and the separate vendor-free
-  331-export Miles proxy.
-- [COM ABI](Docs/COM_ABI_AND_LIFETIMES.md),
-  [WaveOut worker](Docs/WAVEOUT_WORKER_CONTRACT.md),
-  [PCM/spatial processing](Docs/PCM_AND_SPATIAL_PIPELINE.md),
-  [geometry/HRTF](Docs/GEOMETRY_AND_HRTF.md).
-- [Contributor guidelines](CONTRIBUTING.md), [licensing scope](LICENSE_SCOPE.md),
-  and [security notes](SECURITY_RELEASE_REVIEW.md).
-
-```bash
-python3 -m unittest discover -s tests -v
-python3 scripts/build_engine.py
-python3 Source/Alice2011_NameFix_v089/build_proxy_from_export_map.py --output ./dist/miles-repro
+```text
+dist/
+├── core/
+│   ├── a3d.dll             universal Win32 x86 bridge
+│   └── a3dapi.dll          universal A3D COM implementation
+├── Aufake3D_v0.9.2_Local_Runtime.zip
+├── Aufake3D_v0.9.2_Descent3_Experimental_Win32.zip
+├── REPRODUCIBILITY_VERIFIED.json         local three-build evidence, if passed
+├── DESCENT3_PUBLIC_RELEASE_SHA256.json   Descent 3 ZIP checksum sidecar
+└── descent3/                           optional developer-only probe and object
 ```
 
-The compiler outputs Windows x86 binaries, not native Linux `.so` files. Do
-not publish compiled legacy process-modifying launcher executables as
-malware-cleared: independent review is still outstanding. The existing MIT
-licence requires confirmation of the relevant rights holders and preservation
-of KEMAR dataset attribution. A3D 3.0 is not fully implemented.
+Intermediate object files may be elsewhere, but **distributable build artifacts are in `dist/`**. Build artifacts from GitHub Actions are not automatically published as GitHub Release downloads; maintainers must publish verified assets separately.
 
-## Component-level security findings (documentation update)
+## Install in brief
 
-VirusTotal reported individual detections on several components of the earlier full RC. The optional prebuilt `a3d-selftest.exe` has been removed from the full package; no working game DLLs or bridges were altered. **Neither package is antivirus-cleared.** Read [Docs/SECURITY_REVIEW_V0814_RC1.md](Docs/SECURITY_REVIEW_V0814_RC1.md) for exact hashes, limitations and further review.
+1. **Back up the entire game installation.** Lower speaker/headphone volume before testing; the current default master gain is 5.0 with a limiter.
+2. Extract the compiled ZIP. For a standard game, choose its `Game_Kits/<game>/COPY_TO_GAME_FOLDER/` directory and copy **the contents** beside the original game executable. Do not overwrite a game's original executable or delete existing `SndDrivers` folders.
+3. Run the supplied `RUN_AUFAKE3D_WINDOWS.cmd` where provided; Wine users can use the appropriate included launcher. Select the game's genuine Aureal A3D option where available.
+4. **Alice (2011) is special:** before copying its proxy, preserve **two copies of the genuine original Miles `mss32.dll`** and verify the expected game/DLL hashes. **Do not install its proxy blindly.** Read the [full installation guide](Docs/INSTALLATION.md).
 
-## AU8830 hardware-derived HRTF / CPU performance
+For **Descent 3 retail**, extract its separate ZIP and place the included `a3d.dll` and `a3dapi.dll` beside the original `main.exe`; select **Aureal 3D** in the game's setup. See the [Descent 3 guide](Docs/DESCENT3_PUBLIC_RELEASE.md). This is a retail drop-in experiment, **not** the separate Descent 3 source-engine integration.
 
-The 56-tap Vortex 2 filter table is included for local evaluation. See
-[AU8830 HRTF modes](Docs/AU8830_HRTF_PERFORMANCE_MODES.md) and
-[game compatibility status](Docs/GAME_COMPATIBILITY_V090.md).
-`A3D_HRTF_MODE=fast` is the normal default; both `fast` and `reference`
-now use measured 64-sample HRTF/ITD smoothing and per-ear input delay
-before the 56-tap FIR. `legacy` restores the original renderer.
-**No bit-exact claim or new game gameplay pass is made.**
+## What's new in v0.9.2?
 
+- **Descent 3 retail experiment.** The unmodified game has been observed loading Aufake3D's local `a3dapi.dll` (ProcMon), and an A/B/A test found that sound disappeared when the DLLs were removed and returned when restored. Stereo recordings and listening impressions are promising for spatial audio, **but correct HRTF, occlusion, reflections and general gameplay remain unconfirmed**. Its public, deterministic game-folder ZIP is generated automatically during the normal build.
+- **Reproducible release engineering.** The core runtime and Descent 3 ZIP are required to match independent local rebuilds byte-for-byte. The release workflow also requires matching outputs from **Windows Server 2022, Ubuntu 24.04, Ubuntu 26.04, Ubuntu 26.10 and Debian 13**, using pinned toolchains. A passing build or a design requirement alone is **not** proof a specific GitHub release has passed all gates.
+- **Return to Castle Wolfenstein research.** A deterministic BSP v47 acoustics/surface exporter records source provenance and candidate geometry. **This does not enable A3D in unmodified RtCW.**
+- **Existing engine retained.** The single shared renderer continues the 56-tap AU8830 Reference/Fast and 48-tap Legacy modes, fixed 6 × 256 WaveOut buffering at 48 kHz (~32 ms), and master gain 5.0 default. The original A3D game/provider options are not relabelled to fake compatibility.
+- **Clearer documentation.** Current setup, support status, reproducibility and release instructions have dedicated guides; older release notes are archived.
+
+See the [complete change history](CHANGELOG.md).
+
+## Game status: tested paths versus research
+
+| Game | Current scope |
+|---|---|
+| American McGee's Alice (2000) | Earlier Windows/Wine A3D2 gameplay testing; revalidate with v0.9.2 |
+| Alice (2011), VorpalFix 4.2.1 | Version-specific Miles bridge, earlier gameplay/provider tests; retain original Miles DLL |
+| Quake III Arena 1.17 | Earlier A3D2/Wine testing with matching 1.17 game data |
+| **Descent 3 (retail)** | **Experimental:** DLL load and audio dependence confirmed on one setup; 3D fidelity under investigation |
+| Half-Life, Unreal, RtCW, GTA III/Vice City | Experimental/research paths; not broad gameplay-certified support |
+| Descent 3 open-source engine | Separate source adapter research; not required for retail drop-in test |
+
+A game kit may be present even where actual Aureal activation is unproven. See [game compatibility](Docs/COMPATIBILITY.md) for details and a test procedure.
+
+## Build from source
+
+On **Debian/Ubuntu**, from a checkout:
+
+```bash
+./BUILD_LINUX.sh
+```
+
+On **Windows 10/11**, double-click `BUILD_WINDOWS.cmd`. Both build **32-bit Windows PE** DLLs/EXEs; Linux builds are intended for use through Wine, **not native `.so` libraries**. The pinned build scripts handle their toolchain requirements; do not silently substitute a system compiler when validating reproducibility.
+
+**After the build, open `dist/`.** For complete instructions, testing, SHA-256 checks and the five-platform certificate, read [Build and release](Docs/BUILD_AND_RELEASE.md).
+
+## Documentation, safety and licensing
+
+- **Start here:** [Documentation index](Docs/README.md) · [Installation](Docs/INSTALLATION.md) · [Build/release](Docs/BUILD_AND_RELEASE.md) · [Troubleshooting](Docs/TROUBLESHOOTING.md).
+- **Engineering:** [Developer guide](Docs/DEVELOPER_INDEX.md) · [Descent 3 research](Docs/DESCENT3_PUBLIC_RELEASE.md).
+- **Safety and provenance:** [Security](SECURITY.md) · [Licensing scope](LICENSE_SCOPE.md) · [Third-party notices](THIRD_PARTY_NOTICES.md).
+- **Previous releases:** [Changelog](CHANGELOG.md) · [Historical documents](Docs/HISTORY_INDEX.md).
+
+Aufake3D is independent of Aureal and the game publishers. No proprietary game executable, Miles runtime or Aureal driver binaries are supplied. Follow the source-specific licence and redistribution notices; source and binary provenance must be reviewed before publication.

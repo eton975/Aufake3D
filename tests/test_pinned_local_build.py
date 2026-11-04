@@ -113,7 +113,10 @@ class PinnedBuild(unittest.TestCase):
     def test_reference_hash_mismatch_is_a_hard_error(self):
         with tempfile.TemporaryDirectory() as tmp:
             cache = Path(tmp)
-            with patch.object(pin, 'pinned_uv', return_value=cache/'uv'), \
+            # Git/commit provenance is covered by test_pinned_reference_revision.
+            # Force the exact-reference branch to exercise the legacy ZIP gate.
+            with patch.object(pin, 'reference_checkout_is_exact', return_value=True), \
+                 patch.object(pin, 'pinned_uv', return_value=cache/'uv'), \
                  patch.object(pin, 'pinned_python', return_value=Path(sys.executable)), \
                  patch.object(pin, 'pinned_llvm', return_value=cache/'llvm'), \
                  patch.object(pin, 'assert_versions'), \
@@ -127,7 +130,10 @@ class PinnedBuild(unittest.TestCase):
     def test_reference_hash_match_requires_mandatory_check_report(self):
         with tempfile.TemporaryDirectory() as tmp:
             cache = Path(tmp)
-            with patch.object(pin, 'pinned_uv', return_value=cache/'uv'), \
+            # Git/commit provenance is covered by test_pinned_reference_revision.
+            # Force the exact-reference branch to exercise the legacy ZIP gate.
+            with patch.object(pin, 'reference_checkout_is_exact', return_value=True), \
+                 patch.object(pin, 'pinned_uv', return_value=cache/'uv'), \
                  patch.object(pin, 'pinned_python', return_value=Path(sys.executable)), \
                  patch.object(pin, 'pinned_llvm', return_value=cache/'llvm'), \
                  patch.object(pin, 'assert_versions'), \

@@ -27,6 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 VERSION = json.loads((ROOT/'packaging/Game_Kits/INSTALL_MAP.json').read_text())['version']
 OUTPUT = f'dist/Aufake3D_v{VERSION}_Local_Runtime.zip'
 REPORT = 'dist/REPRODUCIBILITY_VERIFIED.json'
+DESCENT3_OUTPUT = 'dist/Aufake3D_v0.9.2_Descent3_Experimental_Win32.zip'
 IGNORED_DIRS = {'.git', 'build', 'dist', '__pycache__', '.pytest_cache', '.mypy_cache', '.venv', 'venv'}
 IGNORED_EXTENSIONS = {'.dll', '.exe', '.lib', '.obj', '.o', '.exp', '.pdb', '.pyc'}
 
@@ -137,7 +138,8 @@ def self_test(work_dir: Path) -> bool:
             print(' -', name, a.get(name, '(missing)'), b.get(name, '(missing)'))
     else:
         print(f'PASS: {len(a)} generated PE executables and DLLs SHA-256 identical')
-    return not differences and compare_zips(alpha/OUTPUT, beta/OUTPUT)
+    return (not differences and compare_zips(alpha/OUTPUT, beta/OUTPUT) and
+            compare_zips(alpha/DESCENT3_OUTPUT, beta/DESCENT3_OUTPUT))
 
 
 def verify_current(work_dir: Path) -> bool:
@@ -176,6 +178,12 @@ def verify_current(work_dir: Path) -> bool:
     if not (compare_zips(current_zip, alpha/OUTPUT) and
             compare_zips(current_zip, beta/OUTPUT)):
         return False
+    # The public Descent 3 ZIP must have identical raw bytes across all
+    # three same-host builds, not merely identical decompressed DLLs.
+    descent3_zip = ROOT/DESCENT3_OUTPUT
+    if not (compare_zips(descent3_zip, alpha/DESCENT3_OUTPUT) and
+            compare_zips(descent3_zip, beta/DESCENT3_OUTPUT)):
+        return False
     approved = {
         'schema': 1,
         'version': VERSION,
@@ -183,6 +191,8 @@ def verify_current(work_dir: Path) -> bool:
         'scope': 'same-host-and-toolchain; cross-host identity NOT established',
         'runtime_zip': OUTPUT,
         'runtime_sha256': file_hash(current_zip),
+        'descent3_zip': DESCENT3_OUTPUT,
+        'descent3_zip_sha256': file_hash(descent3_zip),
         'generated_pe_sha256': dict(sorted(hashes[0].items())),
     }
     report.parent.mkdir(exist_ok=True)
@@ -205,6 +215,20 @@ def check_report() -> bool:
             content.get('generated_pe_sha256') != dict(sorted(compiled_pe_hashes(ROOT).items()))):
         print('FAIL: reproducibility report is stale or artifacts changed')
         return False
+    # Preserve compatibility with historical report fixtures, but a new
+    # v0.9.2 report that names the public kit may never pass if it was removed
+    # or repacked after certification.
+    public_archive = content.get('descent3_zip')
+    public_digest = content.get('descent3_zip_sha256')
+    if (public_archive is None) != (public_digest is None):
+        print('FAIL: incomplete Descent 3 release ZIP evidence')
+        return False
+    if public_archive is not None:
+        path = ROOT/DESCENT3_OUTPUT
+        if (public_archive != DESCENT3_OUTPUT or not path.is_file() or
+                file_hash(path) != public_digest):
+            print('FAIL: Descent 3 public release ZIP is missing or changed')
+            return False
     print('PASS: all verified local artifacts still match the recorded SHA-256 manifest')
     return True
 

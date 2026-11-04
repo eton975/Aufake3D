@@ -209,7 +209,9 @@ def stage_release(proxy: Path, bridge: Path) -> Path:
     for name in ('LICENSE','LICENSE_SCOPE.md','LICENSE_STATUS.md','THIRD_PARTY_NOTICES.md',
                  'SECURITY_RELEASE_REVIEW.md','README.md'):
         add_file(contents, name, ROOT/name)
-    for name in ('MANUAL_INSTALLATION.md','EASY_INSTALL_WINDOWS.md',
+    for name in ('INSTALLATION.md','COMPATIBILITY.md','TROUBLESHOOTING.md',
+                 'DESCENT3_PUBLIC_RELEASE.md',
+                 'MANUAL_INSTALLATION.md','EASY_INSTALL_WINDOWS.md',
                  'Aufake3D_v0.8.18_Quick_Start.pdf','SECURITY_REVIEW_V0814_RC1.md','AU8830_HRTF_PERFORMANCE_MODES.md','GAME_COMPATIBILITY_V090.md',
                  'UNIFIED_ENGINE_ALICE2011_MIGRATION.md', 'REPRODUCIBLE_BUILDS_V091.md', 'RTCW_BSP_EXPORT_V092.md'):
         p=ROOT/'Docs'/name
@@ -316,6 +318,10 @@ def main():
         # A previous verification must never survive a new or failed build.
         report=DIST/'REPRODUCIBILITY_VERIFIED.json'
         if report.exists():report.unlink()
+        # Never leave stale public Descent 3 ZIP/sidecar after a failed build.
+        for stale in (DIST/'Aufake3D_v0.9.2_Descent3_Experimental_Win32.zip',
+                      DIST/'DESCENT3_PUBLIC_RELEASE_SHA256.json'):
+            stale.unlink(missing_ok=True)
         if args.require_native_mock and not native_mock_ready()[0]:
             raise RuntimeError(native_mock_ready()[1])
         run([sys.executable,ROOT/'Tools/generate_vortex2_hrtf.py','--check'])
@@ -343,6 +349,9 @@ def main():
         print('\n[5/5] Assembling complete game kits')
         if not args.no_package:
             stage_release(proxy,bridge)
+            # Public retail Descent 3 ZIP: same freshly built universal core.
+            # Keep independent of developer-only probe/adapter output.
+            run([sys.executable, ROOT/'scripts/package_descent3_release.py'])
             if not args.skip_repro_check:
                 print('\n[6/6] MANDATORY: two clean rebuilds plus exact local comparison')
                 run([sys.executable, ROOT/'scripts/verify_reproducible.py', '--verify-current'])

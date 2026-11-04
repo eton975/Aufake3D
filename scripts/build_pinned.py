@@ -355,6 +355,29 @@ def check_compiled_pe_bytes(reference: dict) -> None:
     print(f'PASS: ALL {len(expected)} COMPILED WIN32 PE EXEs/DLLs match certified CI SHA-256 bytes.')
 
 
+def reference_checkout_is_exact(reference: dict) -> bool:
+    """True only for a clean Git checkout of the reference's exact commit.
+
+    The frozen CI runtime SHA-256 is valid for that revision alone. A later
+    revision (or uncommitted changes) must pass the existing independent local
+    reproducibility gate and obtain fresh CI evidence, not be judged against
+    an unrelated historical package hash.
+    """
+    commit = reference.get('source_commit')
+    if not isinstance(commit, str) or not re.fullmatch(r'[0-9a-f]{40}', commit):
+        raise RuntimeError('Invalid historical CI reference commit ID')
+    try:
+        head = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=ROOT,
+                              capture_output=True, text=True, check=True).stdout.strip()
+        dirty = subprocess.run(['git', 'status', '--porcelain', '--untracked-files=all'],
+                               cwd=ROOT, capture_output=True, text=True, check=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        # A source archive without verified Git provenance is never the exact
+        # certified checkout. It may still be built and locally verified.
+        return False
+    return head == commit and not dirty.strip()
+
+
 def run_build(cache: Path, extra: list[str], reference: dict) -> int:
     host = 'windows' if os.name == 'nt' else 'linux'
     if platform.machine().lower() not in ('x86_64', 'amd64'):
@@ -380,6 +403,14 @@ def run_build(cache: Path, extra: list[str], reference: dict) -> int:
     # The main builder must have generated the independent three-build report.
     subprocess.run([str(python), str(ROOT / 'scripts/verify_reproducible.py'), '--check-report'],
                    cwd=ROOT, env=env, check=True)
+    # The three-build verification and --check-report have already completed.
+    # Historical CI SHA-256 applies ONLY to the exact clean reference tree.
+    if not reference_checkout_is_exact(reference):
+        print('PASS: pinned build and independent three-build local reproducibility checks.')
+        print('Historical CI reference is NOT APPLICABLE to this changed source tree:',
+              reference['source_commit'])
+        print('CROSS-PLATFORM CERTIFICATION: PENDING a fresh five-target CI matrix.')
+        return 0
     actual = sha_file(RUNTIME_ZIP)
     expected_sha256 = reference['runtime_zip_sha256']
     if actual != expected_sha256:

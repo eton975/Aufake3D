@@ -69,6 +69,7 @@ jobs:
           name: Aufake3D-cross-${{ matrix.os }}
           path: |
             dist/Aufake3D_v0.9.2_Local_Runtime.zip
+            dist/Aufake3D_v0.9.2_Descent3_Experimental_Win32.zip
             dist/Aufake3D_Generated_PE_Evidence.zip
             dist/manifest.json
           if-no-files-found: error
@@ -135,6 +136,7 @@ jobs:
           name: Aufake3D-cross-ubuntu-26.10
           path: |
             dist/Aufake3D_v0.9.2_Local_Runtime.zip
+            dist/Aufake3D_v0.9.2_Descent3_Experimental_Win32.zip
             dist/Aufake3D_Generated_PE_Evidence.zip
             dist/manifest.json
           if-no-files-found: error
@@ -196,6 +198,7 @@ jobs:
           name: Aufake3D-cross-debian-13
           path: |
             dist/Aufake3D_v0.9.2_Local_Runtime.zip
+            dist/Aufake3D_v0.9.2_Descent3_Experimental_Win32.zip
             dist/Aufake3D_Generated_PE_Evidence.zip
             dist/manifest.json
           if-no-files-found: error
@@ -246,9 +249,22 @@ jobs:
           --linux-target debian-13=verification/debian-13
           --out verification/CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json
           --expected-commit "${{ github.sha }}"
+      - name: Verify public Descent 3 ZIP identity across all five certified targets
+        run: >-
+          python scripts/verify_descent3_release.py
+          --windows verification/windows
+          --linux-target ubuntu-24.04=verification/ubuntu-24.04
+          --linux-target ubuntu-26.04=verification/ubuntu-26.04
+          --linux-target ubuntu-26.10=verification/ubuntu-26.10
+          --linux-target debian-13=verification/debian-13
+          --base-certificate verification/CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json
+          --out verification/DESCENT3_PUBLIC_RELEASE_VERIFIED.json
+          --expected-commit "${{ github.sha }}"
       - name: Upload cross-platform verification certificate
         uses: actions/upload-artifact@v7
         with:
           name: Aufake3D-cross-platform-verified
-          path: verification/CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json
+          path: |
+            verification/CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json
+            verification/DESCENT3_PUBLIC_RELEASE_VERIFIED.json
           if-no-files-found: error

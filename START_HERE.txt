@@ -1,64 +1,27 @@
 AUFAKE3D v0.9.2 - START HERE
-=============================
-Simple Windows 10/11 installation instructions
+============================
 
-New research-only tool: Tools\export_rtcw_bsp_acoustics.py
-This does NOT add A3D audio to unmodified Return to Castle Wolfenstein.
-See Docs\RTCW_BSP_EXPORT_V092.md.
+COMPLETE INSTRUCTIONS: README.md and Docs/README.md
+INSTALL: Docs/INSTALLATION.md
+BUILD: Docs/BUILD_AND_RELEASE.md
+WHAT'S NEW: CHANGELOG.md
+DESCENT 3 RETAIL (EXPERIMENTAL): Docs/DESCENT3_PUBLIC_RELEASE.md
 
+WHERE ARE THE DLLS AND RELEASE ZIP FILES?
+  AFTER a successful build, go to the repository's dist/ folder:
+    dist/core/a3d.dll
+    dist/core/a3dapi.dll
+    dist/Aufake3D_v0.9.2_Local_Runtime.zip
+    dist/Aufake3D_v0.9.2_Descent3_Experimental_Win32.zip
 
-1. You need the BUILT RUNTIME ZIP, not the source-code ZIP.
-   Extract the entire runtime ZIP before installing anything.
-2. Back up your complete, working game folder. If Aufake3D was
-   already installed, restore the original game files first.
-3. Inside the extracted runtime, open Game_Kits, then your game:
+GitHub's default SOURCE-CODE ZIP is NOT a compiled binary release. Download
+verified release assets instead, or build the project with BUILD_WINDOWS.cmd
+(Windows) / ./BUILD_LINUX.sh (Debian/Ubuntu).
 
-   Alice (2000)       -> Alice_2000\COPY_TO_GAME_FOLDER
-   Alice (2011)       -> Alice_2011_VorpalFix\COPY_TO_GAME_FOLDER
-   Quake III (1.17)   -> Quake_III_117\COPY_TO_GAME_FOLDER
+Back up your games; start with low speaker volume. IMPORTANT: Alice (2011)
+requires preservation of TWO genuine Miles DLL copies BEFORE installing its
+proxy. Read Docs/INSTALLATION.md. Do not replace a whole SndDrivers folder.
 
-4. IMPORTANT FOR ALICE 2011: follow the pre-installation steps in
-   Docs\EASY_INSTALL_WINDOWS.md FIRST. You must preserve the ORIGINAL
-   Miles sound DLL in two places before copying the new files.
-5. Copy EVERYTHING INSIDE COPY_TO_GAME_FOLDER into the folder holding
-   your game's real executable (alice.exe or quake3.exe). Do not copy
-   the COPY_TO_GAME_FOLDER folder itself. Keep any SndDrivers folders.
-6. Double-click RUN_AUFAKE3D_WINDOWS.cmd IN THE GAME FOLDER.
-   On Windows, both Alice kits select A3D2 on their FIRST launch by
-   updating the saved game setting ONCE (with a backup). From then on,
-   the menu controls the provider normally: Miles and Dolby remain
-   selectable and their settings are not overwritten on later launches.
-   For Quake III, enable A3D using the console command s_enable_a3d 1.
-
-NEVER overwrite or rename the original game executable.
-Keep your original game data and the original Miles DLL.
-The Alice kits include AUFAKE3D_SET_INITIAL_A3D2.ps1; keep it beside
-RUN_AUFAKE3D_WINDOWS.cmd. The helper requires Windows PowerShell.
-Do not use a forced +set s_milesdriver a3d2 launcher argument.
-The initial-default feature is a new release-candidate integration
-and still requires a real-game provider round-trip test.
-
-The default audio gain is high (5.0); lower your speaker/headphone
-volume before first launch.
-
-READ THE COMPLETE EASY GUIDE:
-Docs\EASY_INSTALL_WINDOWS.md
-
-OPTIONAL PRINTABLE VERSION:
-Docs\Aufake3D_v0.8.18_Quick_Start.pdf
-
-Linux/Wine: the same game-kit files may be used; run
-  bash ./RUN_AUFAKE3D_WINE.sh
-from the actual game folder. Wine support differs by game and is
-still experimental for Alice 2011. See Docs/MANUAL_INSTALLATION.md
-in the original runtime package for more information.
-
-This v0.9.2 package is a development candidate, not a fully tested
-universal compatibility release. Half-Life 1.0.1.1 has an
-experimental kit; it is not covered by the main quick start.
-
-NEW v0.9.0 RENDERING MODES:
- A3D_HRTF_MODE=fast (default), reference, or legacy.
- See Docs\AU8830_HRTF_PERFORMANCE_MODES.md and Docs\GAME_COMPATIBILITY_V090.md
- New Unreal and RtCW kits are EXPERIMENTAL/PROBE-ONLY, not tested A3D support.
- Do not publish the HRTF data without permission from its contributor.
+Experimental Descent 3: use the separate public ZIP's COPY_TO_DESCENT3_GAME_FOLDER,
+placing the two DLLs beside original main.exe and selecting Aureal 3D in
+Descent 3 setup. Developer-only dist/descent3/ is NOT the public game patch.
