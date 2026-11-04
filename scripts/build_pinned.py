@@ -40,7 +40,7 @@ DEFAULT_REFERENCE = ROOT / 'scripts/ci_reference_v092.json'
 RUNTIME_ZIP = ROOT / 'dist/Aufake3D_v0.9.2_Local_Runtime.zip'
 
 # Hashes of official *archive bytes*, not of version strings. The Linux LLVM
-# archive is large (~1.65 GB); downloaded bytes and extracted toolchain live
+# archives are small and SHA-pinned; extracted compiler inputs live
 # outside the source tree and are never copied into the clean-build replicas.
 ASSETS = {
     'linux': {
@@ -110,11 +110,28 @@ def download_verified(url: str, expected_sha256: str, target: Path) -> Path:
 
 
 def extract_llvm(archive: Path, dest: Path) -> None:
-    """Extract flat-layout, SHA-256-pinned slim LLVM without privilege changes."""
-    if shutil.which('tar') is None:
-        raise RuntimeError('tar is required to unpack upstream LLVM (Windows 10 includes tar.exe)')
+    """Extract only regular files from a hash-pinned, flat-layout LLVM archive.
+
+    Python's built-in LZMA decoder avoids the very slow Windows tar.exe path.
+    All extracted file hashes are checked against the signed-off provenance
+    manifest by pinned_llvm() before compilation; no installer or elevation.
+    """
+    import tarfile
+    print('Extracting slim LLVM using built-in Python LZMA:', archive.name, flush=True)
     dest.mkdir(parents=True, exist_ok=True)
-    subprocess.run(['tar', '-xJf', str(archive), '-C', str(dest)], check=True)
+    with tarfile.open(archive, 'r:xz') as source:
+        for member in source:
+            relative = Path(member.name)
+            if (not member.isfile() or relative.is_absolute() or
+                    '..' in relative.parts or not member.name):
+                raise RuntimeError('Unsafe LLVM archive entry: ' + member.name)
+            target = dest / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            with source.extractfile(member) as inp, target.open('wb') as out:
+                shutil.copyfileobj(inp, out, length=1024 * 1024)
+            if os.name != 'nt':
+                target.chmod(member.mode & 0o777)
+    print('Slim LLVM extraction complete; validating all file SHA-256 values.', flush=True)
 
 
 def pinned_llvm(cache: Path, host: str) -> Path:
