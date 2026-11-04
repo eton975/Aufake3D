@@ -40,6 +40,7 @@ typedef struct {
  const unsigned char *pcm;
  unsigned bytes,rate,channels,bits;
  float pos[3],vel[3],gain,pitch;
+ float pan_values[2]; unsigned pan_set;
  float min_dist,max_dist,distance_scale,doppler_scale,doppler_factor;
  unsigned max_distance_behavior,head_relative;
  double cursor;
@@ -447,6 +448,8 @@ static void a3dmix_render(A3DMix*m,unsigned char*out,unsigned frames){
     float q=v->early[idx];l+=q*rg[k][0];r+=q*rg[k][1];
    }
    v->early_cursor=(v->early_cursor+1)&(A3DMIX_EARLY_RING-1u);
+   /* Only explicit opt-in per-source pan changes the ear gains. */
+   if(v->pan_set){l*=v->pan_values[0];r*=v->pan_values[1];}
    if(m->weapon_clarity && v->weapon_protected){weapon_l[n]+=l;weapon_r[n]+=r;}
    else {left[n]+=l;right[n]+=r;}
   }

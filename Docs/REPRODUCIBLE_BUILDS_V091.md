@@ -26,3 +26,11 @@ published as reproducible. `--no-package` also means no verified release.
 This is a source and packaging milestone, **not** proof of A3D 2.0/3.0
 acoustic completeness, real Vortex 2 driver compatibility, or gameplay support.
 Original retail game files and proprietary SDK DLLs are not included.
+
+## v0.9.2 Windows/Linux CI certification (separate gate)
+
+The build now has a mandatory GitHub Actions cross-platform comparison job
+using exact LLVM/Python versions and deterministic uncompressed ZIP entries.
+It compares actual runtime ZIP bytes and per-PE hashes before issuing a
+separate cross-OS certificate. A local three-build report is **not** a
+cross-platform certificate. Full details: `Docs/CROSS_PLATFORM_REPRODUCIBILITY.md`.

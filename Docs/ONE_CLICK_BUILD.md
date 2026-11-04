@@ -182,3 +182,13 @@ an unexpected file change.
   v0.9.0 automatically chooses the newest *complete* compiler+CRT toolset,
   and isolates the CMake cache by version. Avoid manually mixing a 14.31
   compiler with 14.44 libraries. Check `scripts/build.py --doctor` output.
+
+### Cross-platform Windows/Linux certification
+
+The CI workflow pins LLVM 19.1.7 and Python 3.13.7 on both operating
+systems, verifies the exact source and compiled PE hashes, and compares the
+**complete raw** runtime ZIPs. Only the cross-platform CI verification job
+issues `CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json` on a passing run.
+Local `BUILD_WINDOWS.cmd` deliberately cannot claim cross-host identity by
+itself. The deterministic runtime ZIP is now stored without DEFLATE compression
+and may be larger. See `Docs/CROSS_PLATFORM_REPRODUCIBILITY.md`.

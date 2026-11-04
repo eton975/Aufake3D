@@ -19,6 +19,8 @@ struct Source {
  WaveFmt format;
  DWORD has_format,locked,lock_at,lock_bytes;
  float pos[3],vel[3],angles[3],ori[6],cone[3],minmax[2],gain,pitch,doppler,distance,eq,priority,time,reflect_delay,reflect_gain;
+ /* Experimental SDK-style stereo pan, zero-effect until explicitly set. */
+ float pan_values[2]; DWORD pan_set;
  DWORD sample_id;
  DWORD staff_pcm_sig,staff_last_gain_milli;
  DWORD minmax_mode;
@@ -326,8 +328,35 @@ SR_SF(refgain,reflect_gain) SR_GF(refgain,reflect_gain)
 static HRESULT WINAPI sr_audibility(Source*s,float*x){(void)s;if(!x)return E_POINTER;*x=0;return E_NOTIMPL;}
 static HRESULT WINAPI sr_occlusion(Source*s,float*x){(void)s;if(!x)return E_POINTER;*x=0;return E_NOTIMPL;}
 static HRESULT WINAPI sr_status(Source*s,DWORD*x){if(!x)return E_POINTER;mix_enter();*x=(s->mix.active?1u:0u)|(s->mix.active&&s->mix.looping?4u:0u);mix_leave();return S_OK;}
-static HRESULT WINAPI sr_setpan(Source*s,DWORD n,const float*values){(void)s;(void)n;(void)values;return E_NOTIMPL;}
-static HRESULT WINAPI sr_getpan(Source*s,DWORD n,float*values){(void)s;(void)n;(void)values;return E_NOTIMPL;}
+/* V0.9.2 research: actual source pan values were previously E_NOTIMPL.
+ * Controlled generic opt-in preserves the bit-identical default Alice/Quake
+ * audio path while allowing historical 2D pan adapters to be investigated.
+ * Pan values are per-output-channel linear gains (no guessed game mapping).
+ * This is not yet certified against the original Descent 3 retail binary. */
+static int sr_pan_feature(void){
+ static int enabled=-1;
+ if(enabled<0){char flag[8]={0};DWORD n=GetEnvironmentVariableA("A3D_ENABLE_PAN_VALUES",flag,sizeof(flag));
+  enabled=(n==1u && flag[0]=='1')?1:0;
+ }
+ return enabled;
+}
+static HRESULT WINAPI sr_setpan(Source*s,DWORD n,const float*values){
+ if(!sr_pan_feature())return E_NOTIMPL;
+ if(!values)return E_POINTER;
+ if(n!=1u && n!=2u)return E_INVALIDARG;
+ float left=values[0],right=n==2u?values[1]:values[0];
+ if(!(left>=0.0f&&left<=1.0f&&right>=0.0f&&right<=1.0f))return E_INVALIDARG;
+ s->pan_values[0]=left;s->pan_values[1]=right;s->pan_set=1u;
+ mixer_update_voice(s);return S_OK;
+}
+static HRESULT WINAPI sr_getpan(Source*s,DWORD n,float*values){
+ if(!sr_pan_feature())return E_NOTIMPL;
+ if(!values)return E_POINTER;
+ if(n!=1u && n!=2u)return E_INVALIDARG;
+ values[0]=s->pan_set?s->pan_values[0]:1.0f;
+ if(n==2u)values[1]=s->pan_set?s->pan_values[1]:1.0f;
+ return S_OK;
+}
 /* The original Miles 6.0b A3D2 provider calls SetWaveEvent four times
  * during buffer creation (IDs 0x4000, 0x4001, 0, 1) and checks the last
  * HRESULT. The contract below stores registrations, but is NOT yet a

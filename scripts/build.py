@@ -233,10 +233,13 @@ Source repository: https://github.com/eton975/Aufake3D
         'kind':'unverified-local-runtime', 'sha256':checksums},indent=2,sort_keys=True)+'\n').encode()
     filename = DIST/f'Aufake3D_v{VERSION}_Local_Runtime.zip'
     DIST.mkdir(exist_ok=True)
-    with zipfile.ZipFile(filename, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=8) as archive:
+    # Uncompressed ZIP entries avoid host-dependent zlib/DEFLATE output.
+    # The release is larger, but the raw archive can be identical on Windows/Linux.
+    with zipfile.ZipFile(filename, 'w', compression=zipfile.ZIP_STORED) as archive:
         for rel,data in sorted(contents.items()):
             info = zipfile.ZipInfo('Aufake3D-v'+VERSION+'-Local/'+rel, date_time=(2026,1,1,0,0,0))
-            info.compress_type = zipfile.ZIP_DEFLATED
+            info.create_system = 3  # Explicit Unix ZIP metadata on both hosts.
+            info.compress_type = zipfile.ZIP_STORED
             info.external_attr = ((0o755 if rel.endswith('.sh') else 0o644) << 16)
             archive.writestr(info, data)
     with zipfile.ZipFile(filename) as archive:
@@ -347,7 +350,8 @@ def main():
         print('\nBUILD COMPLETED. Outputs under:',DIST)
         if not args.no_package and not args.skip_repro_check:
             print('REPRODUCIBILITY VERIFIED: current build matches two independent clean rebuilds.')
-            print('Host/toolchain-specific proof only; cross-platform checksum identity is not yet certified.')
+            print('LOCAL reproducibility verified. Cross-platform proof requires the independent CI')
+            print('Windows/Linux certificate; this single-host build cannot issue that certificate.')
         else:
             print('UNVERIFIED development build: do not publish as a reproducible release.')
         print('Game compatibility, safety and hardware fidelity remain separately unverified.')

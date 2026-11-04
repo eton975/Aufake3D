@@ -1170,6 +1170,8 @@ static HRESULT sr_audio_play(Source*s,int looping){
  v->rate=s->format.rate;v->channels=s->format.channels;v->bits=s->format.bits;
  for(int i=0;i<3;i++)v->pos[i]=s->pos[i];
  v->gain=s->gain;v->pitch=s->pitch;v->looping=looping?1:0;v->active=1;v->owner=s;
+ v->pan_values[0]=s->pan_values[0];v->pan_values[1]=s->pan_values[1];
+ v->pan_set=s->pan_set;
  v->weapon_protected=mixer.weapon_clarity && a3d_weapon_is_known(s->staff_pcm_sig);
  for(int i=0;i<3;i++)v->vel[i]=s->vel[i];
  v->min_dist=s->minmax[0];v->max_dist=s->minmax[1];v->max_distance_behavior=s->minmax_mode;
@@ -1213,6 +1215,8 @@ static void mixer_update_voice(Source*s){
  s->mix.min_dist=s->minmax[0];s->mix.max_dist=s->minmax[1];
  s->mix.max_distance_behavior=s->minmax_mode;
  s->mix.distance_scale=s->distance;s->mix.doppler_scale=s->doppler;
+ s->mix.pan_values[0]=s->pan_values[0];s->mix.pan_values[1]=s->pan_values[1];
+ s->mix.pan_set=s->pan_set;
  s->mix.head_relative=(s->transform_mode==1u);
  mix_leave();
 }

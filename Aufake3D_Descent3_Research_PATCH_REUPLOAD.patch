@@ -1,0 +1,1187 @@
+diff --git a/Docs/DESCENT3_A3D_API_PROBE.md b/Docs/DESCENT3_A3D_API_PROBE.md
+new file mode 100644
+--- /dev/null
++++ b/Docs/DESCENT3_A3D_API_PROBE.md
+@@ -0,0 +1,127 @@
++# Descent 3 original A3D2 backend: testable interface milestone
++
++**Development-only. Not a Descent 3 game patch, playable compatibility claim,
++or an authentic recreation of the missing game-side A3D helper implementation.**
++
++The historical `DescentDevelopers/Descent3` tree at **`07262f6`** declares
++`A3D_*` helper functions in `dd_sndlib/auddev.h`, but `SUPPORT_AUREAL` is
++**commented out** there. `dd_sndlib/CMakeLists.txt` lists no file implementing
++those helpers. The presence of conditional calls in `Ds3dlib.cpp`,
++`dsound3d.cpp`, and `geometry.cpp` consequently does **not** establish
++that the community source can build an Aureal backend, nor that the original
++retail executable uses the same path. The original retail `main.exe` is not
++available in this test environment.
++
++This milestone provides a **no-retail-assets, registration-free Win32 x86
++executable** to exercise the standard Aureal A3D2 COM operations that would be
++needed by a reconstructed Descent 3 helper layer. It directly loads the
++co-located `a3dapi.dll` and calls its actual `DllGetClassObject` export;
++no COM registry entries, injected DLLs or proprietary game files are needed.
++
++## What the test does
++
++1. Calls `DllGetClassObject(CLSID_A3dApi, IID_IClassFactory)` and creates
++   `IA3d4`; initializes scene features (`A3D_OCCLUSIONS|A3D_1ST_REFLECTIONS`).
++2. Obtains `IA3dListener`, sets position and two orientation vectors.
++3. Obtains `IA3dGeom`, enables geometry, creates and reads back three source-
++   accurate material presets in Descent 3's code: **rock, water, metal**.
++4. Records three A3D quads with distinct tags in an `IA3dList`, asserts the
++   **polygon-count** return semantics of both `End()` and `Call()`; calls
++   `IA3d4.Flush()` to commit the scene.
++5. Creates `IA3dSource`, negotiates PCM16 mono/22,050 Hz, allocates, locks,
++   fills and unlocks a deterministic synthetic waveform, then sets source
++   position, velocity and attenuation. **No audio is played by default**.
++6. With explicit `--audio`, plays a short, relatively quiet synthetic tone,
++   then stops and releases the source. This test remains a listening smoke
++   test; it does not prove original-game fidelity.
++
++## Build and use
++
++From the project root, with `clang` and `lld-link` on PATH:
++
++```shell
++python scripts/build_descent3_contract_probe.py
++```
++
++The script compiles two independent copies and requires byte-identical PE32
++output. The result is `dist/experimental-descent3/a3d-descent3-contract-probe.exe`.
++The executable requires the *real Aufake3D build* of `a3dapi.dll` beside it.
++Use the DLL supplied in the separate experimental test ZIP, or manually copy
++one from your own clean Aufake3D build. Do **not** copy Microsoft/Windows
++system DLLs, import-library stubs or original Aureal driver files.
++
++On Windows 10, in the directory containing both files:
++
++```powershell
++.\a3d-descent3-contract-probe.exe
++.\a3d-descent3-contract-probe.exe --audio
++```
++
++On Debian with Wine, if your prefix supports 32-bit Win32 executables:
++
++```shell
++wine ./a3d-descent3-contract-probe.exe
++wine ./a3d-descent3-contract-probe.exe --audio
++```
++
++Return code **0** and `PASS: Descent 3 A3D2 synthetic API contract` mean the
++probe completed. Failure codes identify the stage (10–17: load/activation,
++30–39: source audio, 50–76: geometry/material/list). The probe never inspects
++or changes the game installation. It cannot run here because Wine and retail
++Descent 3 are not installed in this builder environment.
++
++## Remaining compatibility work
++
++- Verify original retail `main.exe` A3D activation (static imports, dynamic
++  loads, COM, and any A3D SDK helper utility library).
++- Recover or independently reimplement the **full** Descent 3 `A3D_*`
++  utility adapter if source-building a GPL engine; link it to the standard
++  Aureal COM APIs and test on Windows. The historical tree lacks the helper
++  function definitions under the conditional code.
++- Verify source duplication, streaming and cursor/event semantics, geometry
++  list retention and material lifetime on a real running game.
++- Build and test the GPL game engine separately from the MIT Aufake3D DLL.
++  A source-built game is **not** an unmodified retail DLL drop-in.
++- Verify reference behaviour on period hardware and perform Alice/Quake
++  game regressions before labeling any new game supported.
++
++The existing WaveOut renderer, provider activation and stable game paths are
++**not modified** by this probe milestone.
++
++## Inspecting the retail executable without patching it
++
++A read-only local scanner is included, specifically to separate the likely
++retail activation mechanism from the reconstructed source-engine path:
++
++```powershell
++python Tools/inspect_descent3_executable.py "C:\Games\Descent 3\main.exe" --output "descent3-pe-evidence.json"
++```
++
++The path is illustrative, not an assertion about your installation layout.
++The scanner records a SHA-256, PE architecture, static Aureal imports and
++possible dynamic-loading/COM imports, plus conservative embedded ASCII/UTF-16
++markers. A result with no A3D static imports **does not** rule out a dynamic
++A3D path; strings and imports **do not** prove runtime behaviour. The original
++file is never modified, launched or included in any distribution.
++
++## Optional generic stereo-pan implementation (research build)
++
++The core now contains an **opt-in** implementation of `IA3dSource` vtable
++slots 57–58 (`SetPanValues` / `GetPanValues`). Prior builds returned
++`E_NOTIMPL`. By default, this remains exactly as before, preserving the
++Alice/Quake audio contract. Only with `A3D_ENABLE_PAN_VALUES=1` will callers
++be able to set one or two per-ear linear gains in the range 0–1. The gains
++are applied after per-voice direct+early-reflection rendering. Values are
++copied both on `Play()` initialization and when changed on an active voice.
++
++This is explicitly **not** a verified reconstruction of the original Aureal
++pan API semantics (particularly the meaning of the first DWORD argument or
++how the original game calculates channel gains). Do not enable it in a known-
++good game without controlled A/B testing. The wrapper's existing position
++and HRTF path has not been renamed or bypassed.
++
++The main renderer's **source-wave event logic already exists** in both legacy
++and snapshot modes; the original historical notes that described registrations
++as storage-only should not be interpreted as proof that events never fire.
++Event-offset corner cases and streaming behaviour nevertheless need real
++Descent 3 testing. This milestone does not modify WaveOut queue scheduling.
+diff --git a/Integrations/Descent3_Source/README.md b/Integrations/Descent3_Source/README.md
+new file mode 100644
+--- /dev/null
++++ b/Integrations/Descent3_Source/README.md
+@@ -0,0 +1,84 @@
++# Optional Descent 3 **source-engine** A3D2 adapter
++
++Status: **experimental / standalone-compiled / not game-built / not gameplay-tested**.
++
++This separately maintained, independently written implementation fills in
++Descent 3's missing `A3D_*` helper methods by converting the historical
++`auddev.h` function signatures into the **real A3D2 COM interfaces** supplied
++by the locally loaded Aufake3D `a3dapi.dll`.
++
++It's an optional **source integration for an engine built from the published
++Descent 3 GPL source**. It does not patch an original `main.exe` or imply that
++a source-built engine is an unmodified retail game. Its code is MIT licensed,
++but combining/distributing it with Descent 3 must respect the game source's
++GPL-3.0-or-later and all other applicable licenses.
++
++## Historical inputs
++
++`DescentDevelopers/Descent3` at `07262f6`, where `dd_sndlib/auddev.h`
++declares `A3D_*` functions under a commented `SUPPORT_AUREAL` switch and
++`dd_sndlib/CMakeLists.txt` includes the legacy geometry and sound sources.
++The available historical tree lacks a corresponding implementation for the
++helper layer. The adapter is based on the official A3D2 COM method contracts,
++not copied Aureal proprietary binaries.
++
++## Build integration
++
++First, on a copy of the historical Descent 3 *source checkout*, from the
++Aufake3D repository root, run a non-modifying check:
++
++```powershell
++python Integrations/Descent3_Source/install_into_checkout.py "C:\Src\Descent3"
++```
++
++Then explicitly apply to that *source* checkout:
++
++```powershell
++python Integrations/Descent3_Source/install_into_checkout.py "C:\Src\Descent3" --apply
++```
++
++The installer changes only `dd_sndlib/auddev.h`,
++`dd_sndlib/CMakeLists.txt` and creates
++`dd_sndlib/aufake3d_aureal.cpp`. It refuses unknown layouts or repeat
++installation, and saves `.aufake3d.bak` copies of the two original text files.
++It never modifies the user's retail game directory or builds/replaces EXEs.
++
++Then build the Descent 3 source project using its documented 32-bit Windows
++build toolchain. The actual historical game build is **not validated yet**:
++other game dependencies, launcher configuration and Windows source portability
++may need changes. Game files and original binaries are not distributed.
++
++## Implemented adapter API classes
++
++- `A3D_Init`, `A3D_Destroy`, `A3D_CreateListener` and listener position,
++  orientation, velocity, rolloff, Doppler and units-per-metre.
++- Static/dynamic PCM source allocation, sample copy using Lock/Unlock,
++  play/stop/duplicate, seek/query, positional properties, source lifecycle,
++  wave-event registration and gain/priority.
++- Geometry lists, triangles, quads, material creation and binding, scene clear
++  and flush. Descent 3's original rock/water/metal material values come from
++  the historical game source, not guessed in the adapter.
++
++## Unresolved before calling it game support
++
++- The exact original retail loader/API path has not been inspected. The
++  source-engine adapter intentionally does **not** attempt to load the
++  unmodified retail game itself.
++- Sample streaming/event timing and PCM wraparound under real game loads need
++  verification. The underlying wrapper implements cursor event signalling,
++  but this is not yet demonstrated in Descent 3.
++- `IA3dSource::SetPanValues` is now available only via experimental
++  `A3D_ENABLE_PAN_VALUES=1`. The original argument semantics are not fully
++  reverse-engineered; don't consider this historically exact.
++- Global environmental reverb is unimplemented (adapter returns false).
++  Geom.BindSource/BindListener are approximated by updating position/orientation
++  rather than associating geometry with discrete COM source objects.
++- Sound card selection, 3D initialization, 2D stereo mixing, Doppler, cursor
++  positions, per-level geometry, and release lifetimes have not been tested
++  in a built/played Descent 3 engine on Windows/Wine or the AU8830.
++- The built engine may require a genuine A3D provider selection setting that
++  the modern game launcher does not expose. Do not relabel non-Aureal providers.
++
++This module does not claim to restore the original, missing Aureal helper
++implementation byte-for-byte. It is intended to be a verifiable, independently
++written integration path to the existing general-purpose Aufake3D engine.
+diff --git a/Integrations/Descent3_Source/aufake3d_aureal.cpp b/Integrations/Descent3_Source/aufake3d_aureal.cpp
+new file mode 100644
+--- /dev/null
++++ b/Integrations/Descent3_Source/aufake3d_aureal.cpp
+@@ -0,0 +1,246 @@
++/* SPDX-License-Identifier: MIT
++ * Experimental replacement for the missing Descent 3 A3D_* helper layer.
++ * For source-built Descent 3 only. NOT part of original retail game or a
++ * drop-in retail executable compatibility claim. No vendor DLLs or SDK code.
++ * Link into GPL Descent 3 builds only under their applicable licence terms.
++ *
++ * Windows x86 only: loads the local a3dapi.dll by its genuine COM class
++ * factory and calls real IA3d4, IA3dSource, IA3dListener, IA3dGeom methods.
++ * No registry, patching, process injection or fake sound providers.
++ */
++#ifdef AUFAKE3D_ADAPTER_STANDALONE
++/* Only for syntax/ABI compilation in the project CI (without Descent 3). */
++typedef unsigned long DWORD;
++typedef unsigned short WORD;
++typedef void *HANDLE;
++typedef void *HWND;
++typedef void *HMODULE;
++typedef unsigned int uint;
++typedef unsigned short ushort;
++struct vector {float x,y,z;};
++struct matrix {vector rvec,uvec,fvec;};
++extern "C" __declspec(dllimport) HMODULE __stdcall LoadLibraryA(const char *);
++extern "C" __declspec(dllimport) void *__stdcall GetProcAddress(HMODULE,const char *);
++extern "C" __declspec(dllimport) int __stdcall FreeLibrary(HMODULE);
++#else
++#include "auddev.h"
++#ifndef SUPPORT_AUREAL
++#error "The Descent 3 source build must enable SUPPORT_AUREAL"
++#endif
++#endif
++
++typedef long A3dResult;
++typedef unsigned long A3dRefcount;
++typedef struct {DWORD d1;WORD d2,d3;unsigned char d4[8];} A3dGuid;
++#define AG(a,b,c,d,e,f,g,h,i,j,k) {a,b,c,{d,e,f,g,h,i,j,k}}
++static const A3dGuid CLS_A3dApi=AG(0x92fa2c24,0x253c,0x11d2,0x90,0xfb,0,0x60,0x08,0xa1,0xf4,0x41);
++static const A3dGuid IID_Factory=AG(1,0,0,0xc0,0,0,0,0,0,0,0x46);
++static const A3dGuid IID_A3d4=AG(0xe4c40280,0xccba,0x11d2,0x9d,0xcf,0,0x50,0x04,0x11,0x58,0x2f);
++static const A3dGuid IID_Geometry=AG(0xc398e561,0xd90b,0x11d1,0x90,0xfb,0,0x60,0x08,0xa1,0xf4,0x41);
++static const A3dGuid IID_Listener=AG(0xc398e563,0xd90b,0x11d1,0x90,0xfb,0,0x60,0x08,0xa1,0xf4,0x41);
++struct A3dObj {void **vt;};
++typedef A3dResult (__stdcall *A3dFactoryFn)(const A3dGuid*,const A3dGuid*,void**);
++typedef A3dResult (__stdcall *A3dCreateFn)(A3dObj*,void*,const A3dGuid*,void**);
++typedef A3dResult (__stdcall *A3dQueryFn)(A3dObj*,const A3dGuid*,void**);
++typedef A3dRefcount (__stdcall *A3dReleaseFn)(A3dObj*);
++typedef A3dResult (__stdcall *A3dNoargFn)(A3dObj*);
++typedef A3dResult (__stdcall *A3dUintFn)(A3dObj*,DWORD);
++typedef A3dResult (__stdcall *A3dUintOutFn)(A3dObj*,DWORD*);
++typedef A3dResult (__stdcall *A3dInitFn)(A3dObj*,A3dGuid*,DWORD,DWORD);
++typedef A3dResult (__stdcall *A3dNewSourceFn)(A3dObj*,DWORD,A3dObj**);
++typedef A3dResult (__stdcall *A3dDupSourceFn)(A3dObj*,A3dObj*,A3dObj**);
++typedef A3dResult (__stdcall *A3dOutFn)(A3dObj*,void**);
++typedef A3dResult (__stdcall *A3dFloatFn)(A3dObj*,float);
++typedef A3dResult (__stdcall *A3dGetFloatFn)(A3dObj*,float*);
++typedef A3dResult (__stdcall *A3dFloat2Fn)(A3dObj*,float,float);
++typedef A3dResult (__stdcall *A3dVec3Fn)(A3dObj*,float,float,float);
++typedef A3dResult (__stdcall *A3dVec3OutFn)(A3dObj*,float*,float*,float*);
++typedef A3dResult (__stdcall *A3dVec6Fn)(A3dObj*,float,float,float,float,float,float);
++typedef A3dResult (__stdcall *A3dVec6OutFn)(A3dObj*,float*,float*,float*,float*,float*,float*);
++typedef A3dResult (__stdcall *A3dDistanceFn)(A3dObj*,float,float,DWORD);
++typedef A3dResult (__stdcall *A3dWaveFmtFn)(A3dObj*,const void*);
++typedef A3dResult (__stdcall *A3dSizeFn)(A3dObj*,int);
++typedef A3dResult (__stdcall *A3dLockFn)(A3dObj*,DWORD,DWORD,void**,DWORD*,void**,DWORD*,DWORD);
++typedef A3dResult (__stdcall *A3dUnlockFn)(A3dObj*,void*,DWORD,void*,DWORD);
++typedef A3dResult (__stdcall *A3dPanFn)(A3dObj*,DWORD,float*);
++typedef A3dResult (__stdcall *A3dWaveEventFn)(A3dObj*,DWORD,HANDLE);
++typedef A3dResult (__stdcall *A3dBindFn)(A3dObj*,A3dObj*);
++#define ACALL(o,index,type) ((type)((o)->vt[index]))
++static A3dObj *d3root=0,*d3geom=0,*d3lis=0;
++static HMODULE d3module=0;
++#define D3_LIST_COUNT 512
++static A3dObj *d3lists[D3_LIST_COUNT];
++static A3dObj *d3temp=0;
++static A3dObj* obj(void*p){return (A3dObj*)p;}
++static int passed(A3dResult r){return r>=0;}
++static void release(A3dObj*&p){if(p){ACALL(p,2,A3dReleaseFn)(p);p=0;}}
++
++bool A3D_Init(HWND hwnd){
++ if(d3root)return true;
++ d3module=LoadLibraryA("a3dapi.dll");if(!d3module)return false;
++ A3dFactoryFn get=(A3dFactoryFn)GetProcAddress(d3module,"DllGetClassObject");
++ if(!get){FreeLibrary(d3module);d3module=0;return false;}
++ A3dObj *fac=0;
++ if(!passed(get(&CLS_A3dApi,&IID_Factory,(void**)&fac))||!fac){FreeLibrary(d3module);d3module=0;return false;}
++ A3dResult r=ACALL(fac,3,A3dCreateFn)(fac,0,&IID_A3d4,(void**)&d3root);
++ release(fac);
++ if(!passed(r)||!d3root){FreeLibrary(d3module);d3module=0;return false;}
++ /* 0x42 requests known A3D 2.0 geometry features, not a fake provider. */
++ r=ACALL(d3root,15,A3dInitFn)(d3root,0,0x42,0);
++ if(!passed(r)){release(d3root);FreeLibrary(d3module);d3module=0;return false;}
++ (void)hwnd; /* no stolen HWND, registry or DirectSound device */
++ return true;
++}
++void A3D_DestroyGeometryInterface();
++void A3D_Destroy(){
++ A3D_DestroyGeometryInterface();release(d3lis);
++ if(d3root){ACALL(d3root,40,A3dNoargFn)(d3root);release(d3root);}
++ if(d3module){FreeLibrary(d3module);d3module=0;}
++}
++void A3D_SetUnitsPerMeter(float value){if(d3root)ACALL(d3root,32,A3dFloatFn)(d3root,value);}
++void A3D_SetRolloffFactor(float value){if(d3root)ACALL(d3root,36,A3dFloatFn)(d3root,value);}
++void A3D_SetDopplerFactor(float value){if(d3root)ACALL(d3root,34,A3dFloatFn)(d3root,value);}
++bool A3D_CreateListener(){
++ if(d3lis)return true;if(!d3root)return false;
++ return passed(ACALL(d3root,0,A3dQueryFn)(d3root,&IID_Listener,(void**)&d3lis))&&d3lis;
++}
++void A3D_SetListenerVelocity(float x,float y,float z){if(d3lis)ACALL(d3lis,15,A3dVec3Fn)(d3lis,x,y,z);}
++void A3D_SetListenerPosition(float x,float y,float z){if(d3lis)ACALL(d3lis,3,A3dVec3Fn)(d3lis,x,y,z);}
++void A3D_SetListenerOrient(vector*f,vector*u){
++ if(d3lis&&f&&u)ACALL(d3lis,11,A3dVec6Fn)(d3lis,f->x,f->y,f->z,u->x,u->y,u->z);
++}
++
++struct D3WaveFormat {WORD tag,channels;DWORD rate,avg;WORD align,bits,extra;};
++void *A3D_CreateSSource(int size,int bps,bool stereo,bool streaming,ushort freq,bool is3d){
++ if(!d3root||size<=0||(bps!=8&&bps!=16)||!freq)return 0;
++ A3dObj*s=0;
++ if(!passed(ACALL(d3root,17,A3dNewSourceFn)(d3root,0,&s))||!s)return 0;
++ D3WaveFormat w={1,(WORD)(stereo?2:1),freq,0,0,(WORD)bps,0};
++ w.align=(WORD)(w.channels*(bps/8));w.avg=freq*w.align;
++ if(!passed(ACALL(s,7,A3dWaveFmtFn)(s,&w))||
++    !passed(ACALL(s,5,A3dSizeFn)(s,size))){release(s);return 0;}
++ /* Head-relative coordinates for menu/stereo sources. */
++ if(!is3d)ACALL(s,61,A3dUintFn)(s,1u);
++ (void)streaming; /* both types use bounded mutable PCM rings */
++ return s;
++}
++void *A3D_DuplicateSource(void*source){
++ if(!d3root||!source)return 0;A3dObj*out=0;
++ if(!passed(ACALL(d3root,18,A3dDupSourceFn)(d3root,obj(source),&out)))return 0;
++ return out;
++}
++void A3D_FreeSSource(void*p){A3dObj*s=obj(p);release(s);}
++bool A3D_LoadSample(void*p,void*data,int size){
++ if(!p||!data||size<=0)return false;
++ void*a=0,*b=0;DWORD na=0,nb=0;
++ A3dObj*s=obj(p);
++ if(!passed(ACALL(s,11,A3dLockFn)(s,0,(DWORD)size,&a,&na,&b,&nb,0)))return false;
++ unsigned char*in=(unsigned char*)data;
++ if(a)for(DWORD i=0;i<na;i++)((unsigned char*)a)[i]=in[i];
++ if(b)for(DWORD i=0;i<nb;i++)((unsigned char*)b)[i]=in[na+i];
++ return passed(ACALL(s,12,A3dUnlockFn)(s,a,na,b,nb));
++}
++void A3D_Play(void*p,bool looping){if(p)ACALL(obj(p),13,A3dUintFn)(obj(p),looping?1:0);}
++void A3D_Stop(void*p){if(p)ACALL(obj(p),14,A3dNoargFn)(obj(p));}
++void A3D_GetCurrentPosition(void*p,uint*at){
++ if(at)*at=0;
++ if(p&&at)ACALL(obj(p),19,A3dUintOutFn)(obj(p),(DWORD*)at);
++}
++void A3D_SetCurrentPosition(void*p,uint at){if(p)ACALL(obj(p),18,A3dUintFn)(obj(p),(DWORD)at);}
++void A3D_SetSourcePriority(void*p,float f){if(p)ACALL(obj(p),50,A3dFloatFn)(obj(p),f);}
++void A3D_SetSourcePan(void*p,float left,float right){
++ if(p){float vals[2]={left,right};ACALL(obj(p),57,A3dPanFn)(obj(p),2,vals);}
++}
++void A3D_GetSourcePan(void*p,float*left,float*right){
++ if(left)*left=1.0f;if(right)*right=1.0f;
++ if(!p||!left||!right)return;
++ float vals[2]={1.0f,1.0f};
++ if(passed(ACALL(obj(p),58,A3dPanFn)(obj(p),2,vals))){*left=vals[0];*right=vals[1];}
++}
++void A3D_SetSourceVolume(void*p,float value){if(p)ACALL(obj(p),40,A3dFloatFn)(obj(p),value);}
++float A3D_GetSourceVolume(void*p){float f=0.0f;
++ if(p)ACALL(obj(p),41,A3dGetFloatFn)(obj(p),&f);return f;}
++void A3D_SetSourceCone(void*p,float a,float b,float c){if(p)ACALL(obj(p),36,A3dVec3Fn)(obj(p),a,b,c);}
++void A3D_SetSourceVelocity(void*p,float a,float b,float c){if(p)ACALL(obj(p),32,A3dVec3Fn)(obj(p),a,b,c);}
++void A3D_GetSourceVelocity(void*p,vector*v){if(p&&v)ACALL(obj(p),33,A3dVec3OutFn)(obj(p),&v->x,&v->y,&v->z);}
++void A3D_SetSourcePosition(void*p,float a,float b,float c){if(p)ACALL(obj(p),20,A3dVec3Fn)(obj(p),a,b,c);}
++void A3D_GetSourcePosition(void*p,vector*v){if(p&&v)ACALL(obj(p),21,A3dVec3OutFn)(obj(p),&v->x,&v->y,&v->z);}
++void A3D_SetSourceOrientation(void*p,const vector*f,const vector*u){
++ if(p&&f&&u)ACALL(obj(p),28,A3dVec6Fn)(obj(p),f->x,f->y,f->z,u->x,u->y,u->z);
++}
++void A3D_GetSourceOrientation(void*p,matrix*out){
++ if(!p||!out)return;
++ ACALL(obj(p),29,A3dVec6OutFn)(obj(p),&out->fvec.x,&out->fvec.y,&out->fvec.z,
++   &out->uvec.x,&out->uvec.y,&out->uvec.z);
++ /* Right vector derived from forward x up. */
++ out->rvec.x=out->fvec.y*out->uvec.z-out->fvec.z*out->uvec.y;
++ out->rvec.y=out->fvec.z*out->uvec.x-out->fvec.x*out->uvec.z;
++ out->rvec.z=out->fvec.x*out->uvec.y-out->fvec.y*out->uvec.x;
++}
++void A3D_SetMinMaxDistance(void*p,float lo,float hi,bool mute_max){
++ if(p)ACALL(obj(p),38,A3dDistanceFn)(obj(p),lo,hi,mute_max?1:0);
++}
++bool A3D_SetSourceWaveEvent(void*p,DWORD point,HANDLE h){
++ return p&&passed(ACALL(obj(p),59,A3dWaveEventFn)(obj(p),point,h));
++}
++bool A3D_ClearSourceWaveEvents(void*p){return p&&passed(ACALL(obj(p),60,A3dNoargFn)(obj(p)));}
++int A3D_GetSourceStatus(void*p){DWORD status=0;
++ if(p)ACALL(obj(p),56,A3dUintOutFn)(obj(p),&status);return (int)status;}
++bool A3D_Lock(void*p,DWORD at,DWORD size,void**a,DWORD*na,void**b,DWORD*nb){
++ return p&&passed(ACALL(obj(p),11,A3dLockFn)(obj(p),at,size,a,na,b,nb,0));
++}
++bool A3D_Unlock(void*p,void*a,DWORD na,void*b,DWORD nb){
++ return p&&passed(ACALL(obj(p),12,A3dUnlockFn)(obj(p),a,na,b,nb));
++}
++bool A3D_SetEnvironmentalReverb(float volume,float damping,float decay){
++ (void)volume;(void)damping;(void)decay;return false; /* not emulated */
++}
++
++bool A3D_CreateGeometryInterface(){
++ if(d3geom)return true;if(!d3root)return false;
++ if(!passed(ACALL(d3root,0,A3dQueryFn)(d3root,&IID_Geometry,(void**)&d3geom))||!d3geom)return false;
++ ACALL(d3geom,3,A3dUintFn)(d3geom,0x42u);return true;
++}
++void A3D_DestroyGeometryInterface(){
++ for(int i=0;i<D3_LIST_COUNT;i++)release(d3lists[i]);
++ release(d3temp);release(d3geom);
++}
++static A3dObj*& list_slot(int id){return id>=0&&id<D3_LIST_COUNT?d3lists[id]:d3temp;}
++void A3D_GeomListStart(int id){
++ if(!d3geom)return;
++ A3dObj*&v=list_slot(id);release(v);
++ if(passed(ACALL(d3geom,37,A3dOutFn)(d3geom,(void**)&v))&&v)
++  ACALL(v,3,A3dNoargFn)(v);
++}
++void A3D_GeomListEnd(int id){A3dObj*v=list_slot(id);if(v)ACALL(v,4,A3dNoargFn)(v);}
++void A3D_GeomListExec(int id){A3dObj*v=list_slot(id);if(v)ACALL(v,5,A3dNoargFn)(v);}
++void A3D_Clear(){if(d3root)ACALL(d3root,12,A3dNoargFn)(d3root);}
++void A3D_Flush(){if(d3root)ACALL(d3root,13,A3dNoargFn)(d3root);}
++void A3D_StartFrame(){} /* root A3D2 COM has no StartFrame operation */
++void A3D_EndFrame(){A3D_Flush();}
++void A3D_GeomAddListener(vector*pos,matrix*orient){
++ if(pos)A3D_SetListenerPosition(pos->x,pos->y,pos->z);
++ if(orient)A3D_SetListenerOrient(&orient->fvec,&orient->uvec);
++}
++void A3D_GeomAddSource(void*p,vector*pos,matrix*orient){
++ if(p&&pos)A3D_SetSourcePosition(p,pos->x,pos->y,pos->z);
++ if(p&&orient)A3D_SetSourceOrientation(p,&orient->fvec,&orient->uvec);
++}
++void A3D_GeomBindMaterial(void*p){if(d3geom)ACALL(d3geom,36,A3dBindFn)(d3geom,obj(p));}
++static void add_poly(unsigned tag,vector**vs,int count){
++ if(!d3geom||!vs)return;
++ ACALL(d3geom,32,A3dUintFn)(d3geom,tag);
++ if(!passed(ACALL(d3geom,26,A3dUintFn)(d3geom,(DWORD)count)))return;
++ for(int i=0;i<count;i++)if(vs[i])ACALL(d3geom,28,A3dVec3Fn)(d3geom,vs[i]->x,vs[i]->y,vs[i]->z);
++ ACALL(d3geom,27,A3dNoargFn)(d3geom);
++}
++void A3D_GeomAddTriangle(unsigned tag,vector**v){add_poly(tag,v,3);}
++void A3D_GeomAddQuad(unsigned tag,vector**v){add_poly(tag,v,4);}
++void* A3D_CreateMaterial(float tg,float th,float rg,float rh){
++ if(!d3geom)return 0;A3dObj*m=0;
++ if(!passed(ACALL(d3geom,35,A3dOutFn)(d3geom,(void**)&m))||!m)return 0;
++ if(!passed(ACALL(m,14,A3dFloat2Fn)(m,tg,th))||
++    !passed(ACALL(m,12,A3dFloat2Fn)(m,rg,rh))){release(m);return 0;}
++ return m;
++}
++void A3D_DestroyMaterial(void*p){A3dObj*m=obj(p);release(m);}
+diff --git a/Integrations/Descent3_Source/install_into_checkout.py b/Integrations/Descent3_Source/install_into_checkout.py
+new file mode 100644
+--- /dev/null
++++ b/Integrations/Descent3_Source/install_into_checkout.py
+@@ -0,0 +1,53 @@
++#!/usr/bin/env python3
++"""Safely integrate the experimental A3D helper into a Descent 3 *source* tree.
++
++Never modifies or patches retail game executables. Requires explicit --apply;
++by default only verifies exact expected old-source anchors. The source tree
++must have the conditional A3D code (e.g. revision 07262f6 before PR #345).
++"""
++from __future__ import annotations
++import argparse
++from pathlib import Path
++import shutil
++
++HERE=Path(__file__).resolve().parent
++HELPER=HERE/'aufake3d_aureal.cpp'
++FLAG='// #define SUPPORT_AUREAL'
++CPPS='  ssl_lib.cpp)'
++
++def plan(checkout:Path)->tuple[Path,Path,Path,str,str]:
++    checkout=checkout.resolve()
++    header=checkout/'dd_sndlib/auddev.h'
++    cmake=checkout/'dd_sndlib/CMakeLists.txt'
++    dest=checkout/'dd_sndlib/aufake3d_aureal.cpp'
++    if not header.is_file() or not cmake.is_file():
++        raise ValueError('Not a historical Descent 3 Windows audio source tree')
++    h=header.read_text(encoding='utf-8')
++    c=cmake.read_text(encoding='utf-8')
++    if h.count(FLAG)!=1 or c.count(CPPS)!=1 or dest.exists():
++        raise ValueError('Source layout changed or adapter already installed; leaving untouched')
++    # Never silently alter a modern tree from which the legacy backend was removed.
++    if not (checkout/'dd_sndlib/geometry.cpp').is_file() or 'Ds3dlib.cpp' not in c:
++        raise ValueError('Missing historical geometry/mixer source; refusing integration')
++    return header,cmake,dest,h.replace(FLAG,'#define SUPPORT_AUREAL'),c.replace(CPPS,'  ssl_lib.cpp\n  aufake3d_aureal.cpp)')
++
++def main()->int:
++    a=argparse.ArgumentParser(description=__doc__)
++    a.add_argument('checkout',type=Path,help='historical Descent 3 source checkout, never the retail game folder')
++    a.add_argument('--apply',action='store_true',help='modify the source checkout, with backup copies')
++    ns=a.parse_args()
++    try:header,cmake,dest,h,c=plan(ns.checkout)
++    except (OSError,ValueError) as e:a.exit(2,f'REFUSED: {e}\n')
++    if not ns.apply:
++        print('CHECK PASS: found expected historical auddev.h and CMake source anchors; no files modified')
++        print('Use --apply to install the adapter into this source checkout.')
++        return 0
++    shutil.copy2(header,header.with_name(header.name+'.aufake3d.bak'))
++    shutil.copy2(cmake,cmake.with_name(cmake.name+'.aufake3d.bak'))
++    header.write_text(h,encoding='utf-8',newline='')
++    cmake.write_text(c,encoding='utf-8',newline='')
++    shutil.copy2(HELPER,dest)
++    print('Installed source-only experimental adapter; original header and CMake backed up.')
++    print('This has not built, altered, launched or certified the retail game.')
++    return 0
++if __name__=='__main__':raise SystemExit(main())
+diff --git a/Source/Engine/win32/descent3_contract_probe.c b/Source/Engine/win32/descent3_contract_probe.c
+new file mode 100644
+--- /dev/null
++++ b/Source/Engine/win32/descent3_contract_probe.c
+@@ -0,0 +1,212 @@
++/* Aufake3D independent Descent 3 A3D2 contract smoke probe.
++ * Does NOT execute Descent 3 or reproduce its missing SUPPORT_AUREAL glue.
++ * Exercises the documented A3D2 COM calls underlying its historical sources.
++ * Load a game-local a3dapi.dll without COM registration or machine changes.
++ * Optional --audio explicitly enables a brief, moderate-volume synthesized tone.
++ * Windows x86 / freestanding clang, no CRT, no third-party/game binaries.
++ */
++int _fltused=0;
++typedef unsigned long DWORD;
++typedef unsigned short WORD;
++typedef long HRESULT;
++typedef unsigned long ULONG;
++typedef void *HMODULE;
++typedef void *HANDLE;
++#define WINAPI __attribute__((stdcall))
++#define IMPORT __declspec(dllimport)
++IMPORT HMODULE WINAPI LoadLibraryA(const char *);
++IMPORT void *WINAPI GetProcAddress(HMODULE,const char *);
++IMPORT int WINAPI FreeLibrary(HMODULE);
++IMPORT void WINAPI ExitProcess(DWORD);
++IMPORT void *WINAPI GetStdHandle(DWORD);
++IMPORT int WINAPI WriteFile(void*,const void*,DWORD,DWORD*,void*);
++IMPORT void WINAPI Sleep(DWORD);
++IMPORT char *WINAPI GetCommandLineA(void);
++
++typedef struct { DWORD d1; WORD d2,d3; unsigned char d4[8]; } GUID;
++#define G(a,b,c,d,e,f,g,h,i,j,k) {a,b,c,{d,e,f,g,h,i,j,k}}
++static const GUID cls=G(0x92fa2c24,0x253c,0x11d2,0x90,0xfb,0,0x60,0x08,0xa1,0xf4,0x41);
++static const GUID iid_factory=G(0x00000001,0,0,0xc0,0,0,0,0,0,0,0x46);
++static const GUID iid_root=G(0xe4c40280,0xccba,0x11d2,0x9d,0xcf,0x00,0x50,0x04,0x11,0x58,0x2f);
++static const GUID iid_geom=G(0xc398e561,0xd90b,0x11d1,0x90,0xfb,0,0x60,0x08,0xa1,0xf4,0x41);
++static const GUID iid_listener=G(0xc398e563,0xd90b,0x11d1,0x90,0xfb,0,0x60,0x08,0xa1,0xf4,0x41);
++
++typedef struct Obj { void **vt; } Obj;
++typedef HRESULT (WINAPI *DllGetClassObjectFn)(const GUID*,const GUID*,void**);
++typedef HRESULT (WINAPI *CreateFn)(Obj*,void*,const GUID*,void**);
++typedef HRESULT (WINAPI *QueryFn)(Obj*,const GUID*,void**);
++typedef ULONG (WINAPI *ReleaseFn)(Obj*);
++typedef HRESULT (WINAPI *NoArgFn)(Obj*);
++typedef HRESULT (WINAPI *U32Fn)(Obj*,DWORD);
++typedef HRESULT (WINAPI *OutFn)(Obj*,void**);
++typedef HRESULT (WINAPI *NewSourceFn)(Obj*,DWORD,Obj**);
++typedef HRESULT (WINAPI *GetCoeffFn)(Obj*,float*,float*);
++typedef HRESULT (WINAPI *InitFn)(Obj*,GUID*,DWORD,DWORD);
++typedef HRESULT (WINAPI *Vec3Fn)(Obj*,float,float,float);
++typedef HRESULT (WINAPI *Vec6Fn)(Obj*,float,float,float,float,float,float);
++typedef HRESULT (WINAPI *CoeffFn)(Obj*,float,float);
++typedef HRESULT (WINAPI *BindFn)(Obj*,Obj*);
++typedef HRESULT (WINAPI *FormatFn)(Obj*,const void*);
++typedef HRESULT (WINAPI *AllocateFn)(Obj*,int);
++typedef HRESULT (WINAPI *LockFn)(Obj*,DWORD,DWORD,void**,DWORD*,void**,DWORD*,DWORD);
++typedef HRESULT (WINAPI *UnlockFn)(Obj*,void*,DWORD,void*,DWORD);
++typedef HRESULT (WINAPI *PlayFn)(Obj*,int);
++typedef HRESULT (WINAPI *DistanceFn)(Obj*,float,float,DWORD);
++#define CALL(o,n,T) ((T)((o)->vt[n]))
++static DWORD count(const char*s){DWORD n=0;while(s[n])n++;return n;}
++static void say(const char*s){DWORD n=0;void*h=GetStdHandle((DWORD)-11);if(h)WriteFile(h,s,count(s),&n,0);}
++static void sayhr(const char*s,HRESULT h){const char*x="0123456789ABCDEF";char b[]=" 0x00000000\r\n";
++ for(int j=0;j<8;j++)b[j+3]=x[((DWORD)h>>(28-4*j))&15];say(s);say(b);}
++static int ok(const char*name,HRESULT hr){sayhr(name,hr);return hr>=0;}
++static int flag_audio(void){const char*p=GetCommandLineA();const char*needle="--audio";
++ while(*p){int k=0;while(needle[k]&&p[k]==needle[k])k++;if(!needle[k]&&(p[k]==0||p[k]==' '||p[k]=='\t'||p[k]=='\"'))return 1;p++;}
++ return 0;
++}
++
++typedef struct {WORD tag,channels;DWORD rate,avg;WORD align,bits,extra;} WaveFmt;
++static int source_test(Obj*root,int audio){
++ Obj*src=0;
++ HRESULT r=CALL(root,17,NewSourceFn)(root,0,&src);
++ if(!ok("NewSource",r)||!src)return 30;
++ int rc=0;
++ /* Original Descent 3 Aureal mixer creates both 8-bit/16-bit static and
++  * streaming buffers at 22050 Hz. This fixture exercises 16-bit mono. */
++ WaveFmt fmt={1,1,22050,44100,2,16,0};
++ r=CALL(src,7,FormatFn)(src,&fmt);
++ if(!ok("Source.SetWaveFormat",r)){rc=31;goto done;}
++ const DWORD samples=5512u,bytes=samples*2u;
++ r=CALL(src,5,AllocateFn)(src,(int)bytes);
++ if(!ok("Source.AllocateWaveData",r)){rc=32;goto done;}
++ void*pa=0,*pb=0;DWORD na=0,nb=0;
++ r=CALL(src,11,LockFn)(src,0,bytes,&pa,&na,&pb,&nb,0);
++ if(!ok("Source.Lock",r)||!pa||na!=bytes||pb||nb){rc=33;goto done;}
++ unsigned char*b=(unsigned char*)pa;
++ for(DWORD i=0;i<samples;i++){
++  /* 440 Hz gentle triangle: no math library / no prerecorded samples. */
++  DWORD phase=(i*440u)%22050u;
++  long amp=(long)(phase<11025u?phase:22050u-phase);
++  int v=(int)((amp*7000L)/11025L)-3500;
++  b[2*i]=(unsigned char)v;
++  b[2*i+1]=(unsigned char)((unsigned short)v>>8);
++ }
++ r=CALL(src,12,UnlockFn)(src,pa,na,pb,nb);
++ if(!ok("Source.Unlock",r)){rc=34;goto done;}
++ r=CALL(src,20,Vec3Fn)(src,3.0f,0.0f,2.0f);
++ if(!ok("Source.SetPosition3f",r)){rc=35;goto done;}
++ r=CALL(src,32,Vec3Fn)(src,0.0f,0.0f,0.0f);
++ if(!ok("Source.SetVelocity3f",r)){rc=36;goto done;}
++ r=CALL(src,38,DistanceFn)(src,1.0f,100.0f,0);
++ if(!ok("Source.SetMinMaxDistance",r)){rc=37;goto done;}
++ if(audio){
++  say("Audio opt-in: short low-level tone from +X position\r\n");
++  r=CALL(src,13,PlayFn)(src,0);
++  if(!ok("Source.Play",r)){rc=38;goto done;}
++  Sleep(350);
++  r=CALL(src,14,NoArgFn)(src);
++  if(!ok("Source.Stop",r)){rc=39;goto done;}
++ }else say("Source playback skipped (use --audio to enable)\r\n");
++ done:
++ CALL(src,2,ReleaseFn)(src);
++ return rc;
++}
++static int submit_quad(Obj*geom,Obj*mat,DWORD tag,float z){
++ HRESULT r=CALL(geom,36,BindFn)(geom,mat);
++ if(!ok("Geom.BindMaterial",r))return 50;
++ r=CALL(geom,32,U32Fn)(geom,tag);
++ if(!ok("Geom.Tag",r))return 51;
++ r=CALL(geom,26,U32Fn)(geom,4); /* A3D_QUADS */
++ if(!ok("Geom.Begin(A3D_QUADS)",r))return 52;
++ const float xyz[4][3]={{-2.0f,-2.0f,0.0f},{2.0f,-2.0f,0.0f},{2.0f,2.0f,0.0f},{-2.0f,2.0f,0.0f}};
++ for(unsigned i=0;i<4;i++){
++  r=CALL(geom,28,Vec3Fn)(geom,xyz[i][0],xyz[i][1],z);
++  if(!ok("Geom.Vertex3f",r))return 53;
++ }
++ r=CALL(geom,27,NoArgFn)(geom);
++ if(!ok("Geom.End",r))return 54;
++ return 0;
++}
++static int material_test(Obj*geom,const char*name,float tg,float th,float rg,float rh,Obj**out){
++ *out=0;
++ HRESULT r=CALL(geom,35,OutFn)(geom,(void**)out);
++ if(!ok(name,r)||!*out)return 60;
++ r=CALL(*out,14,CoeffFn)(*out,tg,th);
++ if(!ok("Material.SetTransmittance",r))return 61;
++ r=CALL(*out,12,CoeffFn)(*out,rg,rh);
++ if(!ok("Material.SetReflectance",r))return 62;
++ float a=0,b=0;
++ r=CALL(*out,15,GetCoeffFn)(*out,&a,&b);
++ if(!ok("Material.GetTransmittance",r)||a!=tg||b!=th)return 63;
++ r=CALL(*out,13,GetCoeffFn)(*out,&a,&b);
++ if(!ok("Material.GetReflectance",r)||a!=rg||b!=rh)return 64;
++ return 0;
++}
++static int geometry_test(Obj*root){
++ Obj*geom=0,*list=0,*mat[3]={0,0,0};int rc=0;
++ HRESULT r=CALL(root,0,QueryFn)(root,&iid_geom,(void**)&geom);
++ if(!ok("QueryInterface(IA3dGeom)",r)||!geom)return 70;
++ r=CALL(geom,3,U32Fn)(geom,0x42u); /* occlusion and first reflections */
++ if(!ok("Geom.Enable(occlusion|reflection)",r)){rc=71;goto done;}
++ const struct {const char *name;float tg,th,rg,rh;} preset[3]={
++  {"Material.CreateRock",0.2f,0.5f,0.9f,0.8f},
++  {"Material.CreateWater",1.0f,0.3f,0.8f,0.7f},
++  {"Material.CreateMetal",0.1f,0.1f,0.95f,0.85f}};
++ for(unsigned i=0;i<3;i++){
++  rc=material_test(geom,preset[i].name,preset[i].tg,preset[i].th,preset[i].rg,preset[i].rh,&mat[i]);
++  if(rc)goto done;
++ }
++ r=CALL(geom,37,OutFn)(geom,(void**)&list);
++ if(!ok("Geom.NewList",r)||!list){rc=72;goto done;}
++ r=CALL(list,3,NoArgFn)(list);
++ if(!ok("List.Begin",r)){rc=73;goto done;}
++ /* Historical Descent3 batches static triangles and quads into cached
++  * polygon groups. Preserve polygon counting rather than HRESULT==S_OK. */
++ for(unsigned i=0;i<3;i++){
++  rc=submit_quad(geom,mat[i],0xD300u+i,(float)i);
++  if(rc)goto done;
++ }
++ r=CALL(list,4,NoArgFn)(list);
++ if(!ok("List.End",r)||r!=3){rc=74;goto done;}
++ r=CALL(list,5,NoArgFn)(list);
++ if(!ok("List.Call",r)||r!=3){rc=75;goto done;}
++ r=CALL(root,13,NoArgFn)(root);
++ if(!ok("Root.Flush",r)){rc=76;goto done;}
++ say("3 geometry polygons committed; 3 historical material presets verified\r\n");
++ done:
++ if(list)CALL(list,2,ReleaseFn)(list);
++ for(unsigned i=0;i<3;i++)if(mat[i])CALL(mat[i],2,ReleaseFn)(mat[i]);
++ if(geom)CALL(geom,2,ReleaseFn)(geom);
++ return rc;
++}
++static DWORD run(void){
++ say("Aufake3D Descent 3 source-contract probe; NOT the retail game\r\n");
++ HMODULE h=LoadLibraryA("a3dapi.dll");
++ if(!h){say("FAIL: cannot load local a3dapi.dll\r\n");return 10;}
++ DllGetClassObjectFn get=(DllGetClassObjectFn)GetProcAddress(h,"DllGetClassObject");
++ if(!get){say("FAIL: missing DllGetClassObject\r\n");FreeLibrary(h);return 11;}
++ Obj*fac=0,*root=0,*lis=0;int rc=0;
++ HRESULT r=get(&cls,&iid_factory,(void**)&fac);
++ if(!ok("DllGetClassObject",r)||!fac){rc=12;goto done;}
++ r=CALL(fac,3,CreateFn)(fac,0,&iid_root,(void**)&root);
++ if(!ok("Factory.CreateInstance(IA3d4)",r)||!root){rc=13;goto done;}
++ r=CALL(root,15,InitFn)(root,0,0x42u,0);
++ if(!ok("Root.Init",r)){rc=14;goto done;}
++ r=CALL(root,0,QueryFn)(root,&iid_listener,(void**)&lis);
++ if(!ok("QueryInterface(IA3dListener)",r)||!lis){rc=15;goto done;}
++ r=CALL(lis,3,Vec3Fn)(lis,0.0f,0.0f,0.0f);
++ if(!ok("Listener.SetPosition3f",r)){rc=16;goto done;}
++ r=CALL(lis,11,Vec6Fn)(lis,0.0f,0.0f,-1.0f,0.0f,1.0f,0.0f);
++ if(!ok("Listener.SetOrientation6f",r)){rc=17;goto done;}
++ rc=geometry_test(root);
++ if(rc)goto done;
++ rc=source_test(root,flag_audio());
++ if(rc)goto done;
++ say("PASS: Descent 3 A3D2 synthetic API contract\r\n");
++ done:
++ if(lis)CALL(lis,2,ReleaseFn)(lis);
++ if(root){CALL(root,40,NoArgFn)(root);CALL(root,2,ReleaseFn)(root);}
++ if(fac)CALL(fac,2,ReleaseFn)(fac);
++ FreeLibrary(h);
++ if(rc)say("FAIL: a synthetic contract step failed\r\n");
++ return (DWORD)rc;
++}
++void WINAPI start(void){ExitProcess(run());}
+diff --git a/Source/Engine/win32/descent3_probe_kernel32.def b/Source/Engine/win32/descent3_probe_kernel32.def
+new file mode 100644
+--- /dev/null
++++ b/Source/Engine/win32/descent3_probe_kernel32.def
+@@ -0,0 +1,10 @@
++LIBRARY KERNEL32.dll
++EXPORTS
++ LoadLibraryA
++ GetProcAddress
++ FreeLibrary
++ ExitProcess
++ GetStdHandle
++ WriteFile
++ Sleep
++ GetCommandLineA
+diff --git a/Source/Engine/win32/source_probe.inc b/Source/Engine/win32/source_probe.inc
+--- a/Source/Engine/win32/source_probe.inc
++++ b/Source/Engine/win32/source_probe.inc
+@@ -19,6 +19,8 @@
+  WaveFmt format;
+  DWORD has_format,locked,lock_at,lock_bytes;
+  float pos[3],vel[3],angles[3],ori[6],cone[3],minmax[2],gain,pitch,doppler,distance,eq,priority,time,reflect_delay,reflect_gain;
++ /* Experimental SDK-style stereo pan, zero-effect until explicitly set. */
++ float pan_values[2]; DWORD pan_set;
+  DWORD sample_id;
+  DWORD staff_pcm_sig,staff_last_gain_milli;
+  DWORD minmax_mode;
+@@ -326,8 +328,35 @@
+ static HRESULT WINAPI sr_audibility(Source*s,float*x){(void)s;if(!x)return E_POINTER;*x=0;return E_NOTIMPL;}
+ static HRESULT WINAPI sr_occlusion(Source*s,float*x){(void)s;if(!x)return E_POINTER;*x=0;return E_NOTIMPL;}
+ static HRESULT WINAPI sr_status(Source*s,DWORD*x){if(!x)return E_POINTER;mix_enter();*x=(s->mix.active?1u:0u)|(s->mix.active&&s->mix.looping?4u:0u);mix_leave();return S_OK;}
+-static HRESULT WINAPI sr_setpan(Source*s,DWORD n,const float*values){(void)s;(void)n;(void)values;return E_NOTIMPL;}
+-static HRESULT WINAPI sr_getpan(Source*s,DWORD n,float*values){(void)s;(void)n;(void)values;return E_NOTIMPL;}
++/* V0.9.2 research: actual source pan values were previously E_NOTIMPL.
++ * Controlled generic opt-in preserves the bit-identical default Alice/Quake
++ * audio path while allowing historical 2D pan adapters to be investigated.
++ * Pan values are per-output-channel linear gains (no guessed game mapping).
++ * This is not yet certified against the original Descent 3 retail binary. */
++static int sr_pan_feature(void){
++ static int enabled=-1;
++ if(enabled<0){char flag[8]={0};DWORD n=GetEnvironmentVariableA("A3D_ENABLE_PAN_VALUES",flag,sizeof(flag));
++  enabled=(n==1u && flag[0]=='1')?1:0;
++ }
++ return enabled;
++}
++static HRESULT WINAPI sr_setpan(Source*s,DWORD n,const float*values){
++ if(!sr_pan_feature())return E_NOTIMPL;
++ if(!values)return E_POINTER;
++ if(n!=1u && n!=2u)return E_INVALIDARG;
++ float left=values[0],right=n==2u?values[1]:values[0];
++ if(!(left>=0.0f&&left<=1.0f&&right>=0.0f&&right<=1.0f))return E_INVALIDARG;
++ s->pan_values[0]=left;s->pan_values[1]=right;s->pan_set=1u;
++ mixer_update_voice(s);return S_OK;
++}
++static HRESULT WINAPI sr_getpan(Source*s,DWORD n,float*values){
++ if(!sr_pan_feature())return E_NOTIMPL;
++ if(!values)return E_POINTER;
++ if(n!=1u && n!=2u)return E_INVALIDARG;
++ values[0]=s->pan_set?s->pan_values[0]:1.0f;
++ if(n==2u)values[1]=s->pan_set?s->pan_values[1]:1.0f;
++ return S_OK;
++}
+ /* The original Miles 6.0b A3D2 provider calls SetWaveEvent four times
+  * during buffer creation (IDs 0x4000, 0x4001, 0, 1) and checks the last
+  * HRESULT. The contract below stores registrations, but is NOT yet a
+diff --git a/Source/Engine/win32/stream_core.h b/Source/Engine/win32/stream_core.h
+--- a/Source/Engine/win32/stream_core.h
++++ b/Source/Engine/win32/stream_core.h
+@@ -40,6 +40,7 @@
+  const unsigned char *pcm;
+  unsigned bytes,rate,channels,bits;
+  float pos[3],vel[3],gain,pitch;
++ float pan_values[2]; unsigned pan_set;
+  float min_dist,max_dist,distance_scale,doppler_scale,doppler_factor;
+  unsigned max_distance_behavior,head_relative;
+  double cursor;
+@@ -457,6 +458,8 @@
+     float q=v->early[idx];l+=q*rg[k][0];r+=q*rg[k][1];
+    }
+    v->early_cursor=(v->early_cursor+1)&(A3DMIX_EARLY_RING-1u);
++   /* Only explicit opt-in per-source pan changes the ear gains. */
++   if(v->pan_set){l*=v->pan_values[0];r*=v->pan_values[1];}
+    if(m->weapon_clarity && v->weapon_protected){weapon_l[n]+=l;weapon_r[n]+=r;}
+    else {left[n]+=l;right[n]+=r;}
+   }
+diff --git a/Source/Engine/win32/stream_winmm.inc b/Source/Engine/win32/stream_winmm.inc
+--- a/Source/Engine/win32/stream_winmm.inc
++++ b/Source/Engine/win32/stream_winmm.inc
+@@ -1170,6 +1170,8 @@
+  v->rate=s->format.rate;v->channels=s->format.channels;v->bits=s->format.bits;
+  for(int i=0;i<3;i++)v->pos[i]=s->pos[i];
+  v->gain=s->gain;v->pitch=s->pitch;v->looping=looping?1:0;v->active=1;v->owner=s;
++ v->pan_values[0]=s->pan_values[0];v->pan_values[1]=s->pan_values[1];
++ v->pan_set=s->pan_set;
+  v->weapon_protected=mixer.weapon_clarity && a3d_weapon_is_known(s->staff_pcm_sig);
+  for(int i=0;i<3;i++)v->vel[i]=s->vel[i];
+  v->min_dist=s->minmax[0];v->max_dist=s->minmax[1];v->max_distance_behavior=s->minmax_mode;
+@@ -1213,6 +1215,8 @@
+  s->mix.min_dist=s->minmax[0];s->mix.max_dist=s->minmax[1];
+  s->mix.max_distance_behavior=s->minmax_mode;
+  s->mix.distance_scale=s->distance;s->mix.doppler_scale=s->doppler;
++ s->mix.pan_values[0]=s->pan_values[0];s->mix.pan_values[1]=s->pan_values[1];
++ s->mix.pan_set=s->pan_set;
+  s->mix.head_relative=(s->transform_mode==1u);
+  mix_leave();
+ }
+diff --git a/Tools/inspect_descent3_executable.py b/Tools/inspect_descent3_executable.py
+new file mode 100644
+--- /dev/null
++++ b/Tools/inspect_descent3_executable.py
+@@ -0,0 +1,57 @@
++#!/usr/bin/env python3
++"""Read-only PE import/marker inspection for an owner-provided Descent 3 EXE.
++
++This is evidence collection, not proof of executed A3D calls, compatibility,
++malware safety, or an instruction to patch the retail executable.
++"""
++from __future__ import annotations
++import argparse
++import hashlib
++import json
++import sys
++from pathlib import Path
++
++ROOT=Path(__file__).resolve().parents[1]
++sys.path.insert(0,str(ROOT/'Source/Engine/tools'))
++from security_audit_v072 import PEError,import_table  # noqa: E402
++
++TOKENS=("a3d.dll","a3dapi.dll","a3d2","aureal","sound_mixer_aureal",
++        "mssa3d2.m3d","directsound","dsound.dll","a3d_init", "co_createinstance")
++LIMIT=128*1024*1024
++
++def inspect(path:Path)->dict:
++    if not path.is_file():raise ValueError('expected an existing EXE file')
++    size=path.stat().st_size
++    if size>LIMIT:raise ValueError('input exceeds 128 MiB inspection limit')
++    data=path.read_bytes()
++    arch,imports=import_table(data)
++    # Preserve name matching in single-byte and UTF-16LE; these are only clues.
++    lo=data.lower()
++    markers=[t for t in TOKENS if t.encode() in lo or t.encode('utf-16le') in lo]
++    a3d_imports=[s for s in imports if s.partition('!')[0].lower() in ('a3d.dll','a3dapi.dll')]
++    relevant=[s for s in imports if s.partition('!')[2].lower() in
++              ('cocreateinstance','cogetclassobject','loadlibrarya','loadlibraryw',
++               'getprocaddress','directsoundcreate','directsoundcreate8')]
++    return {
++        'filename':path.name,'sha256':hashlib.sha256(data).hexdigest(),
++        'size':size,'architecture':arch,'aureal_static_imports':a3d_imports,
++        'possible_activation_imports':relevant,'static_text_markers':markers,
++        'a3d_path_confirmed':False,'gameplay_verified':False,
++        'interpretation':('Imports and strings are leads only. A game may resolve A3D '
++          'dynamically, use a utility wrapper, or never execute a referenced branch. '
++          'Only a runtime trace of original-game A3D calls confirms activation.'),
++    }
++
++def main()->int:
++    a=argparse.ArgumentParser(description=__doc__)
++    a.add_argument('exe',type=Path)
++    a.add_argument('--output',type=Path,help='write JSON locally (does not modify EXE)')
++    ns=a.parse_args()
++    try:result=inspect(ns.exe)
++    except (OSError,ValueError,PEError) as e:
++        a.exit(2,f'ERROR: {e}\n')
++    out=json.dumps(result,indent=2,sort_keys=True)+'\n'
++    if ns.output:ns.output.write_text(out,encoding='utf-8')
++    else:print(out,end='')
++    return 0
++if __name__=='__main__':raise SystemExit(main())
+diff --git a/scripts/build_descent3_contract_probe.py b/scripts/build_descent3_contract_probe.py
+new file mode 100644
+--- /dev/null
++++ b/scripts/build_descent3_contract_probe.py
+@@ -0,0 +1,90 @@
++#!/usr/bin/env python3
++"""Build the stand-alone, game-free Win32 Descent 3 A3D2 COM probe.
++
++Uses Clang/lld-link only. No retail files, game patches, registry writes,
++original Aureal binaries or GPL sources are included or modified. Creates
++exactly one console PE32 in dist/experimental-descent3. The A3D2 DLL itself is
++built by the existing main build system and deliberately left untouched.
++"""
++from __future__ import annotations
++
++import argparse
++import hashlib
++import os
++from pathlib import Path
++import shutil
++import struct
++import subprocess
++import tempfile
++
++ROOT = Path(__file__).resolve().parents[1]
++SRC = ROOT / "Source" / "Engine" / "win32"
++DEST = ROOT / "dist" / "experimental-descent3"
++NAME = "a3d-descent3-contract-probe.exe"
++IMPORTS = (
++    "LoadLibraryA@4", "GetProcAddress@8", "FreeLibrary@4",
++    "ExitProcess@4", "GetStdHandle@4", "WriteFile@20",
++    "Sleep@4", "GetCommandLineA@0",
++)
++
++
++def build(tempdir: Path, clang: str, linker: str) -> bytes:
++    def run(cmd: list[str]) -> None:
++        subprocess.run(cmd, cwd=SRC, check=True)
++
++    lib = tempdir / "kernel32-probe.lib"
++    run([
++        linker, "/dll", "/noentry", "/machine:x86",
++        "/def:" + str(SRC / "descent3_probe_kernel32.def"),
++        "/out:" + str(tempdir / "kernel32-stub.dll"),
++        "/implib:" + str(lib),
++    ])
++    obj = tempdir / "descent3-probe.obj"
++    run([
++        clang, "-target", "i686-pc-windows-msvc", "-ffreestanding",
++        "-fno-stack-protector", "-fno-builtin", "-O2", "-Wall",
++        "-Wextra", "-Werror", "-c", "descent3_contract_probe.c",
++        "-o", str(obj),
++    ])
++    exe = tempdir / NAME
++    run([
++        linker, "/subsystem:console", "/machine:x86", "/nodefaultlib",
++        "/entry:start@0", "/timestamp:0", "/out:" + str(exe),
++        str(obj), str(lib),
++        *[f"/alternatename:__imp__{name}=__imp__{name.split('@')[0]}"
++          for name in IMPORTS],
++    ])
++    data = exe.read_bytes()
++    if data[:2] != b"MZ" or len(data) < 256:
++        raise RuntimeError("not a PE executable")
++    off = struct.unpack_from("<I", data, 0x3C)[0]
++    if data[off:off+4] != b"PE\x00\x00" or struct.unpack_from("<H", data, off+4)[0] != 0x14c:
++        raise RuntimeError("not a Windows PE32/x86 executable")
++    return data
++
++
++def main() -> int:
++    ap = argparse.ArgumentParser(description=__doc__)
++    ap.add_argument("--clang", default=os.environ.get("CC", "clang"))
++    ap.add_argument("--linker", default=os.environ.get("LINK", "lld-link"))
++    ap.add_argument("--out", type=Path, default=DEST / NAME)
++    args = ap.parse_args()
++    for tool in (args.clang, args.linker):
++        if not shutil.which(tool) and not Path(tool).is_file():
++            ap.error(f"missing compiler/linker: {tool}")
++    with tempfile.TemporaryDirectory(prefix="aufake3d-descent3-a-") as aa, \
++         tempfile.TemporaryDirectory(prefix="aufake3d-descent3-b-") as bb:
++        a = build(Path(aa), args.clang, args.linker)
++        b = build(Path(bb), args.clang, args.linker)
++    if a != b:
++        raise RuntimeError("probe builds differ byte-for-byte")
++    args.out.parent.mkdir(parents=True, exist_ok=True)
++    args.out.write_bytes(a)
++    print("PASS: two independent PE32/i386 probe builds are identical")
++    print(f"{hashlib.sha256(a).hexdigest()}  {args.out}")
++    print("NOTE: this proves neither Wine runtime success nor Descent 3 gameplay compatibility")
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/tests/test_descent3_contract_probe.py b/tests/test_descent3_contract_probe.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_descent3_contract_probe.py
+@@ -0,0 +1,55 @@
++"""Structure/ABI regressions for the game-free A3D2 Descent 3 probe."""
++import re
++import sys
++import unittest
++from pathlib import Path
++
++ROOT=Path(__file__).resolve().parents[1]
++SRC=ROOT/'Source/Engine/win32'
++
++class Descent3ContractProbe(unittest.TestCase):
++    def test_direct_factory_no_registry_or_binary_patch(self):
++        s=(SRC/'descent3_contract_probe.c').read_text()
++        self.assertIn('DllGetClassObject',s)
++        self.assertIn('LoadLibraryA("a3dapi.dll")',s)
++        self.assertIn('Factory.CreateInstance(IA3d4)',s)
++        self.assertNotIn('CoCreateInstance(',s)
++        for forbidden in ('WriteProcessMemory','VirtualProtectEx','RegSetValue','CreateRemoteThread'):
++            self.assertNotIn(forbidden,s)
++
++    def test_source_abi_slots_from_real_vtable(self):
++        game=(SRC/'descent3_contract_probe.c').read_text()
++        engine=(SRC/'source_probe.inc').read_text()
++        names={int(slot):name for name,slot in re.findall(r'\(void\*\)(sr_\w+)\s*/\*\s*(\d+)\s',engine)}
++        expected={5:'sr_allocwave',7:'sr_setformat',11:'sr_lock',12:'sr_unlock',
++                  13:'sr_play',14:'sr_stop',20:'sr_setpos',32:'sr_setvel',38:'sr_setminmax'}
++        for slot,name in expected.items():
++            self.assertEqual(names[slot],name)
++            self.assertRegex(game,rf'CALL\(src,{slot},')
++
++    def test_geometry_and_material_abi(self):
++        probe=(SRC/'descent3_contract_probe.c').read_text()
++        geom=(SRC/'geom_trace.inc').read_text()
++        self.assertIn('A3D_QUADS',probe)
++        self.assertIn('A3D_1ST_REFLECTIONS', (ROOT/'Docs/DESCENT3_A3D_API_PROBE.md').read_text())
++        for symbol in ('g_NewMaterial','g_BindMaterial','g_NewList','g_Begin','g_Vertex3f','g_End'):
++            self.assertIn('(void*)'+symbol,geom)
++        for val in ('0.2f,0.5f,0.9f,0.8f','1.0f,0.3f,0.8f,0.7f','0.1f,0.1f,0.95f,0.85f'):
++            self.assertIn(val,probe)
++        self.assertIn('r!=3',probe)
++
++    def test_audio_not_automatic(self):
++        s=(SRC/'descent3_contract_probe.c').read_text()
++        self.assertIn('if(audio)',s)
++        self.assertIn('flag_audio()',s)
++        self.assertIn('Source playback skipped',s)
++
++    def test_build_is_separate_and_double_verified(self):
++        s=(ROOT/'scripts/build_descent3_contract_probe.py').read_text()
++        self.assertIn('if a != b',s)
++        self.assertIn('i686-pc-windows-msvc',s)
++        self.assertIn('experimental-descent3',s)
++        self.assertIn('/timestamp:0',s)
++        self.assertNotIn('scripts/build.py',s)
++
++if __name__=='__main__': unittest.main()
+diff --git a/tests/test_descent3_pan_optin.py b/tests/test_descent3_pan_optin.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_descent3_pan_optin.py
+@@ -0,0 +1,23 @@
++"""Opt-in generic 2-channel pan must not change existing release defaults."""
++from pathlib import Path
++import unittest
++ROOT=Path(__file__).resolve().parents[1]/'Source/Engine/win32'
++
++class SourcePan(unittest.TestCase):
++ def test_gated_and_abi_indices_retained(self):
++  s=(ROOT/'source_probe.inc').read_text()
++  self.assertIn('A3D_ENABLE_PAN_VALUES',s)
++  self.assertIn('if(!sr_pan_feature())return E_NOTIMPL',s)
++  self.assertIn('sr_setpan /* 57 SetPanValues */',s)
++  self.assertIn('sr_getpan /* 58 GetPanValues */',s)
++  self.assertIn('if(n!=1u && n!=2u)return E_INVALIDARG',s)
++ def test_source_voice_copy_on_play_and_live_updates(self):
++  s=(ROOT/'stream_winmm.inc').read_text()
++  self.assertGreaterEqual(s.count('s->mix.pan_set=s->pan_set'),1)
++  self.assertIn('v->pan_set=s->pan_set;',s)
++  self.assertIn('v->pan_values[0]=s->pan_values[0]',s)
++ def test_audio_path_only_changes_if_set(self):
++  s=(ROOT/'stream_core.h').read_text()
++  self.assertIn('if(v->pan_set){l*=v->pan_values[0];r*=v->pan_values[1];}',s)
++
++if __name__=='__main__':unittest.main()
+diff --git a/tests/test_descent3_pe_inspection.py b/tests/test_descent3_pe_inspection.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_descent3_pe_inspection.py
+@@ -0,0 +1,36 @@
++"""Tests binary scanner without inspecting or distributing any commercial file."""
++import importlib.util
++from pathlib import Path
++import tempfile
++import unittest
++ROOT=Path(__file__).resolve().parents[1]
++spec=importlib.util.spec_from_file_location('d3scanner',ROOT/'Tools/inspect_descent3_executable.py')
++m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
++
++class Descent3PEInventory(unittest.TestCase):
++    def test_rejects_garbage_and_missing(self):
++        with tempfile.TemporaryDirectory() as d:
++            p=Path(d)/'main.exe'
++            with self.assertRaises(ValueError):m.inspect(p)
++            p.write_bytes(b'not a PE')
++            with self.assertRaises(ValueError):m.inspect(p)
++
++    def test_own_synthetic_pe(self):
++        p=ROOT/'dist/experimental-descent3/a3d-descent3-contract-probe.exe'
++        if not p.exists(): self.skipTest('probe build not present')
++        r=m.inspect(p)
++        self.assertEqual(r['architecture'],'x86')
++        self.assertFalse(r['a3d_path_confirmed'])
++        self.assertFalse(r['gameplay_verified'])
++        self.assertTrue(any('LoadLibraryA' in s for s in r['possible_activation_imports']))
++        self.assertIn('a3dapi.dll',r['static_text_markers'])
++        self.assertEqual(r['aureal_static_imports'],[])
++
++    def test_deterministic_report_and_no_executable_writes(self):
++        p=ROOT/'dist/experimental-descent3/a3d-descent3-contract-probe.exe'
++        if not p.exists(): self.skipTest('probe build not present')
++        before=p.read_bytes()
++        self.assertEqual(m.inspect(p),m.inspect(p))
++        self.assertEqual(p.read_bytes(),before)
++
++if __name__=='__main__':unittest.main()
+diff --git a/tests/test_descent3_source_adapter.py b/tests/test_descent3_source_adapter.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_descent3_source_adapter.py
+@@ -0,0 +1,43 @@
++"""Source-only Descent 3 adapter gating; no retail assets are needed."""
++import subprocess
++import tempfile
++import shutil
++from pathlib import Path
++import unittest
++ROOT=Path(__file__).resolve().parents[1]
++INT=ROOT/'Integrations/Descent3_Source'
++
++class SourceAdapter(unittest.TestCase):
++ def test_compiles_against_standalone_abi_shim(self):
++  cc=shutil.which('clang++')
++  if not cc:self.skipTest('clang++ unavailable')
++  with tempfile.TemporaryDirectory() as td:
++   subprocess.run([cc,'-target','i686-pc-windows-msvc','-std=c++11',
++      '-fno-exceptions','-fno-rtti','-ffreestanding',
++      '-fno-stack-protector','-fno-builtin','-Wall','-Wextra','-Werror',
++      '-DAUFAKE3D_ADAPTER_STANDALONE','-c',str(INT/'aufake3d_aureal.cpp'),
++      '-o',str(Path(td)/'adapter.obj')],check=True,capture_output=True)
++ def test_installer_refuses_unrecognised_and_is_dry_run_first(self):
++  spec=__import__('importlib.util',fromlist=['spec_from_file_location'])
++  sp=spec.spec_from_file_location('adapter_installer',INT/'install_into_checkout.py')
++  m=spec.module_from_spec(sp);sp.loader.exec_module(m)
++  with tempfile.TemporaryDirectory() as td:
++   t=Path(td);p=t/'dd_sndlib';p.mkdir()
++   with self.assertRaises(ValueError):m.plan(t)
++   (p/'geometry.cpp').write_text('// historical geometry')
++   (p/'auddev.h').write_text('header\n// #define SUPPORT_AUREAL\n')
++   (p/'CMakeLists.txt').write_text('set(CPPS\n  Ds3dlib.cpp\n  ssl_lib.cpp)\n')
++   paths=m.plan(t)
++   self.assertEqual(len(paths),5)
++   self.assertIn('#define SUPPORT_AUREAL',paths[3])
++   self.assertIn('  aufake3d_aureal.cpp)',paths[4])
++   self.assertNotIn('aufake3d_aureal.cpp', (p/'CMakeLists.txt').read_text())
++   self.assertFalse((p/'aufake3d_aureal.cpp').exists())
++ def test_adapter_does_not_declare_fake_provider_names(self):
++  s=(INT/'aufake3d_aureal.cpp').read_text()
++  self.assertIn('DllGetClassObject',s)
++  self.assertIn('IA3d4',s)
++  self.assertNotIn('WriteProcessMemory',s)
++  self.assertNotIn('CreateRemoteThread',s)
++  self.assertNotIn('RegSetValue',s)
++if __name__=='__main__':unittest.main()
