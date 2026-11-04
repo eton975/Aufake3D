@@ -1,0 +1,37 @@
+name: Verify independent upstream LLVM fallback (one-time large download)
+
+on:
+  push:
+    branches:
+      - fix/llvm-upstream-download-fallback-20261104
+    paths:
+      - scripts/build_pinned.py
+      - scripts/llvm_upstream_fallback.py
+      - scripts/verify_upstream_fallback_ci.py
+      - tests/test_llvm_upstream_fallback.py
+      - .github/workflows/verify-upstream-llvm-fallback.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-full-upstream-archives:
+    name: Verify official LLVM full-archive fallback on ${{ matrix.host }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - host: windows
+            os: windows-2022
+          - host: linux
+            os: ubuntu-24.04
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13.7'
+      - name: Verify upstream full-archive SHA, compiler-file SHA and PE32 link
+        run: python scripts/verify_upstream_fallback_ci.py --host ${{ matrix.host }}

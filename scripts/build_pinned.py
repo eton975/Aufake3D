@@ -24,6 +24,8 @@ import subprocess
 import sys
 import tempfile
 import urllib.request
+import urllib.error
+import http.client
 
 ROOT = Path(__file__).resolve().parents[1]
 # Direct execution (python scripts/build_pinned.py) must import sibling modules.
@@ -135,42 +137,80 @@ def extract_llvm(archive: Path, dest: Path) -> None:
 
 
 def pinned_llvm(cache: Path, host: str) -> Path:
+    """Prefer slim release, then official upstream LLVM on download failure.
+
+    Checksums (including compiler executables) and the final independent
+    reference-byte certification remain mandatory in both cases. Never fall
+    back from a SHA-256 mismatch, an invalid provenance, or a compiler that
+    merely reports the expected version.
+    """
+    from scripts.llvm_upstream_fallback import (
+        CI_COMPILER_SHA256, UPSTREAM_ASSETS, extract_upstream_llvm
+    )
     url, sha = ASSETS[host]['llvm']
+    upstream_url, upstream_sha = UPSTREAM_ASSETS[host]
     target = cache / 'llvm-19.1.7' / host
     bin_dir = target / 'bin'
-    suffix = '.exe' if host == 'windows' else ''
-    executables = [bin_dir / ('clang' + suffix), bin_dir / ('lld-link' + suffix)]
+    tool_names = tuple(CI_COMPILER_SHA256[host])
+    executables = [target / name for name in tool_names]
     stamp = target / '.aufake3d-checked.json'
     if stamp.is_file() and all(p.is_file() for p in executables):
         try:
             record = json.loads(stamp.read_text(encoding='utf-8'))
-            if record == {
-                'archive_sha256': sha,
-                'clang_sha256': sha_file(executables[0]),
-                'lld_sha256': sha_file(executables[1]),
-            }:
+            actual = {name: sha_file(target / name) for name in tool_names}
+            if (record.get('archive_sha256') in (sha, upstream_sha) and
+                    actual == CI_COMPILER_SHA256[host] and
+                    record.get('clang_sha256') == actual[tool_names[0]] and
+                    record.get('lld_sha256') == actual[tool_names[1]]):
                 return bin_dir
         except (OSError, ValueError, KeyError):
             pass
     if target.exists():
         shutil.rmtree(target)
-    filename = url.rsplit('/', 1)[-1]
-    archive = download_verified(url, sha, cache / 'downloads' / filename)
+
+    use_upstream = os.environ.get('A3D_PINNED_FORCE_UPSTREAM') == '1'
+    archive: Path | None = None
+    if not use_upstream:
+        try:
+            archive = download_verified(url, sha, cache / 'downloads' / url.rsplit('/', 1)[-1])
+        except (urllib.error.URLError, TimeoutError, http.client.IncompleteRead) as exc:
+            # Unavailable release, temporary network/HTTP error: independent
+            # upstream LLVM can recover without trusting an unpinned mirror.
+            print('Slim LLVM unavailable:', str(exc), flush=True)
+            use_upstream = True
+        except RuntimeError as exc:
+            # Offline mode can recover from a previously cached *full* LLVM
+            # archive. Never swallow a checksum mismatch or other integrity
+            # failure from the slim release.
+            if (os.environ.get('A3D_PINNED_OFFLINE') == '1' and
+                    str(exc).startswith('Offline and pinned archive is missing or corrupt:')):
+                print('Slim LLVM not cached; checking pinned upstream fallback cache.', flush=True)
+                use_upstream = True
+            else:
+                raise
+    chosen_sha = upstream_sha if use_upstream else sha
+    if use_upstream:
+        print('FALLBACK: fetching official LLVM 19.1.7 source archive '
+              '(larger one-time download, no eton975 release dependency).', flush=True)
+        archive = download_verified(upstream_url, upstream_sha,
+                                    cache / 'downloads' / upstream_url.rsplit('/', 1)[-1])
+    assert archive is not None
+
     staging = target.with_name(target.name + '-unpacked')
     if staging.exists():
         shutil.rmtree(staging)
     try:
-        extract_llvm(archive, staging)
-        # The public slim release records hashes of the exact CI-installed
-        # compiler and every packaged dependency. Verify that unpacking did
-        # not omit, rename or change any of those bytes.
+        if use_upstream:
+            extract_upstream_llvm(archive, staging, host)
+        else:
+            extract_llvm(archive, staging)
         manifest_file = staging / 'AUFAKE3D_LLVM_PROVENANCE.json'
         manifest = json.loads(manifest_file.read_text(encoding='utf-8'))
         files = manifest.get('files_sha256')
         if (manifest.get('llvm_version') != LLVM_VERSION or
                 manifest.get('host') != host or
                 not isinstance(files, dict) or not files):
-            raise RuntimeError('Invalid LLVM 19.1.7 slim provenance')
+            raise RuntimeError('Invalid LLVM 19.1.7 toolchain provenance')
         for name, expected in files.items():
             relative = Path(name)
             if (relative.is_absolute() or '..' in relative.parts or
@@ -178,23 +218,26 @@ def pinned_llvm(cache: Path, host: str) -> Path:
                     not re.fullmatch(r'[0-9a-f]{64}', str(expected)) or
                     sha_file(staging / relative) != expected):
                 raise RuntimeError('Pinned LLVM extraction differs from provenance: ' + name)
-        bins = [staging / 'bin' / p.name for p in executables]
-        if not all(p.is_file() for p in bins):
-            raise RuntimeError('Verified LLVM archive did not contain clang and lld-link')
+        actual = {name: sha_file(staging / name) for name in tool_names}
+        if actual != CI_COMPILER_SHA256[host]:
+            raise RuntimeError('LLVM compiler/linker bytes do not match the '
+                               'certified minimal-toolchain build; refusing substitution')
         metadata = {
-            'archive_sha256': sha,
-            'clang_sha256': sha_file(bins[0]),
-            'lld_sha256': sha_file(bins[1]),
+            'archive_sha256': chosen_sha,
+            'clang_sha256': actual[tool_names[0]],
+            'lld_sha256': actual[tool_names[1]],
         }
-        (staging / '.aufake3d-checked.json').write_text(json.dumps(metadata, sort_keys=True) + '\n', encoding='utf-8')
+        (staging / '.aufake3d-checked.json').write_text(
+            json.dumps(metadata, sort_keys=True) + '\n', encoding='utf-8'
+        )
         staging.rename(target)
     finally:
         if staging.exists():
             shutil.rmtree(staging)
-        # Avoid retaining the downloaded archive as well as the extracted tools.
+        # The verified binaries remain in the cache. Don't retain a 1.65GB
+        # archive beside them after successful extraction.
         archive.unlink(missing_ok=True)
     return bin_dir
-
 
 def uv_version_matches(output: str) -> bool:
     """Match exactly pinned semver while accepting uv's official build annotation."""
@@ -357,7 +400,10 @@ def main(argv: list[str] | None = None) -> int:
         reference = load_reference(opts.reference_file)
         cache = cache_root()
         if opts.doctor:
-            print('Pinned LLVM:', LLVM_VERSION, 'upstream,', ASSETS['windows' if os.name == 'nt' else 'linux']['llvm'][0])
+            from scripts.llvm_upstream_fallback import UPSTREAM_ASSETS
+            host = 'windows' if os.name == 'nt' else 'linux'
+            print('Pinned LLVM:', LLVM_VERSION, 'slim:', ASSETS[host]['llvm'][0])
+            print('Fallback LLVM:', UPSTREAM_ASSETS[host][0], '(full official archive; SHA-256 pinned)')
             print('Pinned uv:', UV_VERSION, '| managed CPython:', PYTHON_VERSION)
             print('Toolchain cache (outside checkout):', cache)
             print('CI reference: commit', reference['source_commit'], 'ZIP SHA-256', reference['runtime_zip_sha256'])

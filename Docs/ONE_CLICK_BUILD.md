@@ -6,10 +6,11 @@ Both now launch `scripts/build_pinned.py`, which provisions an isolated,
 **SHA-256-verified upstream LLVM 19.1.7** toolchain and **uv 0.10.0** from
 locked release archive bytes, plus managed **Python 3.13.7**. The toolchain
 lives under the current user's cache, *outside* the checkout. It leaves
-system Clang, system Python, PATH and the registry unchanged. The first build
-needs internet access and potentially multiple gigabytes of free disk space
-(the upstream Linux LLVM archive alone is about 1.65 GB). Subsequent builds
-reuse the checked toolchain. Nothing is installed with administrator access.
+system Clang, system Python, PATH and the registry unchanged. The usual
+download is the small 114.1 MB Windows or 163.3 MB Linux slim toolchain; it
+is verified before extraction. Subsequent builds reuse the checked toolchain.
+A full upstream fallback needs substantially more temporary disk space.
+Nothing is installed with administrator access.
 
 The pinned wrapper runs the same cross-platform Python orchestrator
 (`scripts/build.py`) and
@@ -35,6 +36,38 @@ For a newly certified source revision, pass `--reference-file PATH_TO_CERTIFIED_
 to the pinned wrapper, containing the independently verified CI runtime ZIP
 SHA-256 **and every generated PE file SHA-256**. Merely passing a claimed ZIP
 hash is not enough; all executables and DLLs must match the CI evidence.
+
+### Independent fallback if the slim LLVM release disappears
+
+The normal one-click build first downloads a *fixed-SHA-256* 114.1 MB Windows
+or 163.3 MB Linux minimal LLVM 19.1.7 archive from the project's separate
+build-toolchain release. If that asset becomes unavailable (HTTP failure,
+network timeout, or an offline cache miss), the builder can recover from
+the **independently hosted, official LLVM 19.1.7 release archives** at
+[llvm/llvm-project](https://github.com/llvm/llvm-project/releases/tag/llvmorg-19.1.7).
+The full downloads are larger: approximately 845 MB for Windows and 1.65 GB
+for Linux. The builder extracts only the required compiler, linker, runtime
+libraries and Clang resource files, without running an installer or changing
+your system compiler.
+
+**Integrity is not optional:** both full-archive SHA-256 digests are pinned in
+scripts/llvm_upstream_fallback.py, together with the independently recorded
+SHA-256 hashes of the exact Clang and LLD executables from CI. If the
+upstream distribution's executable differs, the fallback **fails closed**
+rather than accepting a substitute based on its version number. All resulting
+PE files and the full runtime ZIP must still pass the original CI reference
+comparison and mandatory three-build check.
+
+An invalid/mismatched *slim* download is also a hard failure; it must never
+silently trigger an alternative source. The fallback is for **availability**
+failures, not integrity failures. Correctly verified extracted toolchains are
+cached for later offline use. You can explicitly exercise the upstream path
+with A3D_PINNED_FORCE_UPSTREAM=1, but ordinary builds use the smaller asset.
+
+This avoids making Aufake3D's own release asset the only place from which
+the original compiler can be recovered. If the pinned upstream distribution
+also disappears or is incompatible, the build reports a clear failure rather
+than claiming reproducible output.
 
 The **Python/LLVM archives are verified by SHA-256** before installing. The
 managed CPython interpreter is verified as exactly 3.13.7, and the pinned `uv`
