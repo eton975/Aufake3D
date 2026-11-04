@@ -39,13 +39,8 @@ jobs:
         run: bash scripts/ci_install_pinned_python.sh
       - name: Verify the active Python is exactly 3.13.7
         run: python -c "import sys; assert sys.version_info[:3] == (3, 13, 7), sys.version; print(sys.version)"
-      - name: Install pinned LLVM on both platforms
-        uses: KyleMayes/install-llvm-action@ebc0426251bc40c7cd31162802432c68818ab8f0 # v2.0.9
-        with:
-          version: '19.1.7'
-          # Keep the 19.1.7 toolchain OUTSIDE the source checkout. The
-          # three-build proof copies project source; LLVM is a build input.
-          directory: ${{ runner.temp }}/aufake3d-llvm
+      - name: Install SHA-256-pinned LLVM 19.1.7 (no Node.js 20 action)
+        run: python scripts/ci_install_pinned_llvm.py
       - name: Install CMake/Ninja/C++ test dependencies (Linux)
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y cmake ninja-build g++ curl xz-utils
@@ -110,13 +105,8 @@ jobs:
         run: bash scripts/ci_install_pinned_python.sh
       - name: Verify the active Python is exactly 3.13.7
         run: python -c "import sys; assert sys.version_info[:3] == (3, 13, 7), sys.version; print(sys.version)"
-      - name: Install pinned LLVM on Ubuntu 26.10
-        uses: KyleMayes/install-llvm-action@ebc0426251bc40c7cd31162802432c68818ab8f0 # v2.0.9
-        with:
-          version: '19.1.7'
-          # Keep the 19.1.7 toolchain OUTSIDE the source checkout. The
-          # three-build proof copies project source; LLVM is a build input.
-          directory: ${{ runner.temp }}/aufake3d-llvm
+      - name: Install SHA-256-pinned LLVM 19.1.7 inside Ubuntu 26.10
+        run: python scripts/ci_install_pinned_llvm.py
       - name: Prepare pinned legacy libxml2 for LLVM inside Ubuntu 26.10
         shell: bash
         run: bash scripts/ci_prepare_llvm_compat.sh "$RUNNER_TEMP/aufake3d-libxml2-legacy"

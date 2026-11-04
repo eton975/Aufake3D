@@ -15,11 +15,14 @@ spec.loader.exec_module(repro)
 class LLVMStorageIsolation(unittest.TestCase):
     def test_every_installer_places_llvm_outside_checkout(self):
         workflow = (ROOT / '.github/workflows/source-ci.yml').read_text(encoding='utf-8')
-        # One installer serves the three native matrix targets; one serves
-        # the isolated Ubuntu 26.10 container. Both must explicitly move LLVM.
-        installer = 'uses: KyleMayes/install-llvm-action@'
+        # Both LLVM installs now use the SHA-256-verified, node-independent
+        # bootstrap. It keeps the compiler under RUNNER_TEMP, not the checkout.
+        installer = 'run: python scripts/ci_install_pinned_llvm.py'
         self.assertEqual(workflow.count(installer), 2)
-        self.assertEqual(workflow.count('directory: ${{ runner.temp }}/aufake3d-llvm'), 2)
+        self.assertNotIn('KyleMayes/install-llvm-action@', workflow)
+        bootstrap = (ROOT/'scripts/ci_install_pinned_llvm.py').read_text(encoding='utf-8')
+        self.assertIn("Path(e['RUNNER_TEMP']).resolve() / 'aufake3d-pinned-ci-llvm'", bootstrap)
+        self.assertIn('pinned_llvm(cache_root(e), host)', bootstrap)
         self.assertIn('ubuntu-24.04, ubuntu-26.04, windows-2022', workflow)
         self.assertIn('ubuntu-2610-container:', workflow)
         self.assertIn('cross-platform-byte-identity:', workflow)

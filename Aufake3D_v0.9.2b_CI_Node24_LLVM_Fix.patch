@@ -1,0 +1,239 @@
+diff --git a/.github/workflows/source-ci.yml b/.github/workflows/source-ci.yml
+index 2d0d14d..87a2022 100644
+--- a/.github/workflows/source-ci.yml
++++ b/.github/workflows/source-ci.yml
+@@ -39,13 +39,8 @@ jobs:
+         run: bash scripts/ci_install_pinned_python.sh
+       - name: Verify the active Python is exactly 3.13.7
+         run: python -c "import sys; assert sys.version_info[:3] == (3, 13, 7), sys.version; print(sys.version)"
+-      - name: Install pinned LLVM on both platforms
+-        uses: KyleMayes/install-llvm-action@ebc0426251bc40c7cd31162802432c68818ab8f0 # v2.0.9
+-        with:
+-          version: '19.1.7'
+-          # Keep the 19.1.7 toolchain OUTSIDE the source checkout. The
+-          # three-build proof copies project source; LLVM is a build input.
+-          directory: ${{ runner.temp }}/aufake3d-llvm
++      - name: Install SHA-256-pinned LLVM 19.1.7 (no Node.js 20 action)
++        run: python scripts/ci_install_pinned_llvm.py
+       - name: Install CMake/Ninja/C++ test dependencies (Linux)
+         if: runner.os == 'Linux'
+         run: sudo apt-get update && sudo apt-get install -y cmake ninja-build g++ curl xz-utils
+@@ -109,13 +104,8 @@ jobs:
+         run: bash scripts/ci_install_pinned_python.sh
+       - name: Verify the active Python is exactly 3.13.7
+         run: python -c "import sys; assert sys.version_info[:3] == (3, 13, 7), sys.version; print(sys.version)"
+-      - name: Install pinned LLVM on Ubuntu 26.10
+-        uses: KyleMayes/install-llvm-action@ebc0426251bc40c7cd31162802432c68818ab8f0 # v2.0.9
+-        with:
+-          version: '19.1.7'
+-          # Keep the 19.1.7 toolchain OUTSIDE the source checkout. The
+-          # three-build proof copies project source; LLVM is a build input.
+-          directory: ${{ runner.temp }}/aufake3d-llvm
++      - name: Install SHA-256-pinned LLVM 19.1.7 inside Ubuntu 26.10
++        run: python scripts/ci_install_pinned_llvm.py
+       - name: Prepare pinned legacy libxml2 for LLVM inside Ubuntu 26.10
+         shell: bash
+         run: bash scripts/ci_prepare_llvm_compat.sh "$RUNNER_TEMP/aufake3d-libxml2-legacy"
+diff --git a/Docs/CI_NODE24_LLVM_INSTALL.md b/Docs/CI_NODE24_LLVM_INSTALL.md
+new file mode 100644
+index 0000000..9461906
+--- /dev/null
++++ b/Docs/CI_NODE24_LLVM_INSTALL.md
+@@ -0,0 +1,28 @@
++# v0.9.2b: LLVM installation without deprecated Node.js 20 actions
++
++The four GitHub Actions warnings in the `ubuntu-24.04`, `ubuntu-26.04`,
++`windows-2022`, and pinned `ubuntu-26.10` container jobs came from the pinned
++`KyleMayes/install-llvm-action@ebc0426251bc40c7cd31162802432c68818ab8f0`
++(v2.0.9), whose action metadata specifies `runs.using: node20`.
++
++The two shared workflow installer steps now invoke
++`python scripts/ci_install_pinned_llvm.py` after installing Python 3.13.7.
++This script calls the project's existing `scripts/build_pinned.py` LLVM
++installer, so each target downloads its **official upstream LLVM/Clang+LLD
++19.1.7 archive**, verifies its **pinned SHA-256 before extraction**, and adds
++its binaries to the GitHub Actions PATH. It publishes `LLVM_PATH` and, on
++Linux, `LD_LIBRARY_PATH`. Downloads/extracted files live below `RUNNER_TEMP`,
++not inside the Git checkout, to prevent clean rebuilds from copying gigabytes
++of compiler files. No Node.js-based third-party LLVM installer remains in the
++CI build jobs; this is not a warning-suppression environment variable.
++
++Ubuntu 26.04 and 26.10 retain their dedicated pinned `libxml2.so.2`
++compatibility preparation steps. The Debian 13 container retains its existing
++checksum-verified LLVM installation. All OS identity checks, pinned Python
++checks, compilation, local independent clean rebuilds, generated PE hashes,
++and cross-OS byte-identical release gate remain mandatory.
++
++**Validation limit:** Repository-level smoke tests and static workflow checks
++can validate the removal and helper's exports. A GitHub Actions run is still
++necessary to confirm that all remote compiler downloads, Linux shared-library
++compatibility, and cross-platform reproducibility checks actually pass.
+diff --git a/Docs/CROSS_PLATFORM_REPRODUCIBILITY.md b/Docs/CROSS_PLATFORM_REPRODUCIBILITY.md
+--- a/Docs/CROSS_PLATFORM_REPRODUCIBILITY.md
++++ b/Docs/CROSS_PLATFORM_REPRODUCIBILITY.md
+@@ -20,5 +20,8 @@
+-2. All five builds use byte-identical **LLVM/Clang+LLD 19.1.7** inputs.
+-   Windows and Ubuntu use the pinned upstream installer action commit
+-   (`ebc0426251bc40c7cd31162802432c68818ab8f0`). Debian 13 uses
+-   the much smaller checksum-pinned compiler with identical CI bytes.
++2. All five builds use **LLVM/Clang+LLD 19.1.7** with release-archive
++   SHA-256 verification. Windows and Ubuntu install LLVM through
++   `scripts/ci_install_pinned_llvm.py`, reusing the upstream pinned assets
++   in `scripts/build_pinned.py` without the obsolete Node.js 20 action.
++   Debian 13 retains its checksum-pinned compiler provisioning. Each build
++   must still pass the full binary-identity gate; a matching version number
++   by itself is not a reproducibility certificate.
+    The Python interpreter is pinned to **3.13.7**. On Windows, the workflow
+diff --git a/scripts/ci_install_pinned_llvm.py b/scripts/ci_install_pinned_llvm.py
+new file mode 100644
+index 0000000..0e62303
+--- /dev/null
++++ b/scripts/ci_install_pinned_llvm.py
+@@ -0,0 +1,61 @@
++#!/usr/bin/env python3
++"""Provision checked LLVM 19.1.7 for Actions without a Node.js 20 action.
++
++Reuses the exact official LLVM release archive URLs and hardcoded SHA-256s
++of the existing local reproducible-build toolchain. Never installs under the
++Git checkout; the two clean-build copies must not include compiler binaries.
++"""
++from __future__ import annotations
++
++import os
++from pathlib import Path
++import platform
++import sys
++
++from build_pinned import LLVM_VERSION, cache_root, pinned_llvm
++
++
++def provision(env: dict[str, str] | None = None) -> Path:
++    """Export LLVM to future Actions steps, after verifying archive SHA-256."""
++    e = os.environ if env is None else env
++    required = ('RUNNER_TEMP', 'GITHUB_PATH', 'GITHUB_ENV')
++    missing = [name for name in required if not e.get(name)]
++    if missing:
++        raise RuntimeError('Required GitHub Actions environment missing: ' + ', '.join(missing))
++    if platform.machine().lower() not in ('x86_64', 'amd64'):
++        raise RuntimeError('The pinned LLVM 19.1.7 assets require x86-64')
++    host = 'windows' if os.name == 'nt' else 'linux'
++    # Select a transient compiler cache outside the workspace for the three
++    # independent-build test. This is NOT a fallback to the host LLVM.
++    cache = (Path(e['RUNNER_TEMP']).resolve() / 'aufake3d-pinned-ci-llvm')
++    e['A3D_PINNED_CACHE'] = str(cache)
++    bin_dir = pinned_llvm(cache_root(e), host)
++    suffix = '.exe' if host == 'windows' else ''
++    for tool in ('clang', 'lld-link'):
++        if not (bin_dir / (tool + suffix)).is_file():
++            raise RuntimeError('Pinned LLVM missing required binary: ' + tool)
++
++    with Path(e['GITHUB_PATH']).open('a', encoding='utf-8', newline='\n') as handle:
++        handle.write(str(bin_dir) + '\n')
++    with Path(e['GITHUB_ENV']).open('a', encoding='utf-8', newline='\n') as handle:
++        handle.write('LLVM_PATH=' + str(bin_dir.parent) + '\n')
++        if host == 'linux':
++            library_path = str(bin_dir.parent / 'lib')
++            previous = e.get('LD_LIBRARY_PATH', '')
++            handle.write('LD_LIBRARY_PATH=' + library_path + (os.pathsep + previous if previous else '') + '\n')
++    print('Installed SHA-256-pinned official LLVM', LLVM_VERSION, 'at', bin_dir)
++    print('LLVM binaries are outside the Git checkout; no Node.js action required.')
++    return bin_dir
++
++
++def main() -> int:
++    try:
++        provision()
++        return 0
++    except (OSError, ValueError, RuntimeError) as exc:
++        print('CI PINNED LLVM INSTALL FAILED:', exc, file=sys.stderr)
++        return 1
++
++
++if __name__ == '__main__':
++    raise SystemExit(main())
+diff --git a/tests/test_ci_llvm_node24.py b/tests/test_ci_llvm_node24.py
+new file mode 100644
+index 0000000..3bbcf86
+--- /dev/null
++++ b/tests/test_ci_llvm_node24.py
+@@ -0,0 +1,57 @@
++"""Prevent reintroduction of the deprecated Node 20 LLVM installer in CI."""
++from __future__ import annotations
++
++import os
++from pathlib import Path
++import sys
++import tempfile
++import unittest
++from unittest.mock import patch
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT/'scripts'))
++import ci_install_pinned_llvm as installer
++
++
++class Node24LLVMWorkflow(unittest.TestCase):
++    def test_workflow_no_longer_invokes_deprecated_action(self):
++        workflow = (ROOT/'.github/workflows/source-ci.yml').read_text(encoding='utf-8')
++        self.assertNotIn('KyleMayes/install-llvm-action', workflow)
++        self.assertEqual(workflow.count('run: python scripts/ci_install_pinned_llvm.py'), 2)
++        self.assertIn('ubuntu-24.04, ubuntu-26.04, windows-2022', workflow)
++        self.assertIn('ubuntu-2610-container:', workflow)
++        # This fix must not weaken or remove the cross-platform certificate.
++        self.assertIn('cross-platform-byte-identity:', workflow)
++        self.assertIn('debian-13-container:', workflow)
++        self.assertIn('needs: [windows-and-linux, ubuntu-2610-container, debian-13-container]', workflow)
++
++    def test_pinned_download_and_exports_use_temporary_directory(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            root = Path(tmp)
++            host = 'windows' if os.name == 'nt' else 'linux'
++            fake_bin = root/'aufake3d-pinned-ci-llvm'/'llvm-19.1.7'/host/'bin'
++            fake_bin.mkdir(parents=True)
++            suffix = '.exe' if os.name == 'nt' else ''
++            for name in ('clang', 'lld-link'):
++                (fake_bin/(name + suffix)).write_bytes(b'not an actual compiler')
++            exports = {'RUNNER_TEMP': tmp,
++                       'GITHUB_PATH': str(root/'path.txt'),
++                       'GITHUB_ENV': str(root/'env.txt')}
++            with patch.object(installer, 'pinned_llvm', return_value=fake_bin), \
++                 patch.object(installer.platform, 'machine', return_value='x86_64'):
++                got = installer.provision(exports)
++            self.assertEqual(got, fake_bin)
++            self.assertEqual((root/'path.txt').read_text().strip(), str(fake_bin))
++            output = (root/'env.txt').read_text()
++            self.assertIn('LLVM_PATH=' + str(fake_bin.parent), output)
++            if os.name != 'nt':
++                self.assertIn('LD_LIBRARY_PATH=' + str(fake_bin.parent/'lib'), output)
++            self.assertEqual(exports['A3D_PINNED_CACHE'], str(root/'aufake3d-pinned-ci-llvm'))
++
++    def test_missing_actions_environment_fails_closed(self):
++        with self.assertRaisesRegex(RuntimeError, 'RUNNER_TEMP'):
++            installer.provision({})
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/tests/test_ci_llvm_storage.py b/tests/test_ci_llvm_storage.py
+index de42586..c846fcf 100644
+--- a/tests/test_ci_llvm_storage.py
++++ b/tests/test_ci_llvm_storage.py
+@@ -15,11 +15,14 @@ spec.loader.exec_module(repro)
+ class LLVMStorageIsolation(unittest.TestCase):
+     def test_every_installer_places_llvm_outside_checkout(self):
+         workflow = (ROOT / '.github/workflows/source-ci.yml').read_text(encoding='utf-8')
+-        # One installer serves the three native matrix targets; one serves
+-        # the isolated Ubuntu 26.10 container. Both must explicitly move LLVM.
+-        installer = 'uses: KyleMayes/install-llvm-action@'
++        # Both LLVM installs now use the SHA-256-verified, node-independent
++        # bootstrap. It keeps the compiler under RUNNER_TEMP, not the checkout.
++        installer = 'run: python scripts/ci_install_pinned_llvm.py'
+         self.assertEqual(workflow.count(installer), 2)
+-        self.assertEqual(workflow.count('directory: ${{ runner.temp }}/aufake3d-llvm'), 2)
++        self.assertNotIn('KyleMayes/install-llvm-action@', workflow)
++        bootstrap = (ROOT/'scripts/ci_install_pinned_llvm.py').read_text(encoding='utf-8')
++        self.assertIn("Path(e['RUNNER_TEMP']).resolve() / 'aufake3d-pinned-ci-llvm'", bootstrap)
++        self.assertIn('pinned_llvm(cache_root(e), host)', bootstrap)
+         self.assertIn('ubuntu-24.04, ubuntu-26.04, windows-2022', workflow)
+         self.assertIn('ubuntu-2610-container:', workflow)
+         self.assertIn('cross-platform-byte-identity:', workflow)

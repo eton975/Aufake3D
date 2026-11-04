@@ -18,10 +18,13 @@ The independent release gate:
 1. Builds the **same checkout** on `windows-2022`, `ubuntu-24.04`,
    `ubuntu-26.04`, the pinned Ubuntu 26.10 container, and the pinned Debian 13
    container, running the existing local verification and tests in every build environment.
-2. All five builds use byte-identical **LLVM/Clang+LLD 19.1.7** inputs.
-   Windows and Ubuntu use the pinned upstream installer action commit
-   (`ebc0426251bc40c7cd31162802432c68818ab8f0`). Debian 13 uses
-   the much smaller checksum-pinned compiler with identical CI bytes.
+2. All five builds use **LLVM/Clang+LLD 19.1.7** with release-archive
+   SHA-256 verification. Windows and Ubuntu install LLVM through
+   `scripts/ci_install_pinned_llvm.py`, reusing the upstream pinned assets
+   in `scripts/build_pinned.py` without the obsolete Node.js 20 action.
+   Debian 13 retains its checksum-pinned compiler provisioning. Each build
+   must still pass the full binary-identity gate; a matching version number
+   by itself is not a reproducibility certificate.
    The Python interpreter is pinned to **3.13.7**. On Windows, the workflow
    uses `actions/setup-python`; on all four Linux builds and the final
    comparison job it uses pinned `astral-sh/setup-uv` (v9.0.0 at a full commit
