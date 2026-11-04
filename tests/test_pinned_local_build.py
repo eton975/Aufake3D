@@ -73,7 +73,22 @@ class PinnedBuild(unittest.TestCase):
             url, expected = pin.ASSETS[host]['llvm']
             self.assertIn('llvm19.1.7-a3d-slim-v1/', url)
             self.assertTrue(url.endswith('-slim.tar.xz'))
-            self.assertRegex(expected, r'^[0-9a-f]{64}
+            self.assertEqual(len(expected), 64)
+            self.assertTrue(all(c in '0123456789abcdef' for c in expected))
+        with tempfile.TemporaryDirectory() as tmp:
+            import io
+            import tarfile
+            root = Path(tmp)
+            archive, dest = root / 'small.tar.xz', root / 'unpacked'
+            with tarfile.open(archive, 'w:xz') as z:
+                payload = b'fake-compiler'
+                info = tarfile.TarInfo('bin/clang')
+                info.size = len(payload)
+                z.addfile(info, io.BytesIO(payload))
+            pin.extract_llvm(archive, dest)
+            self.assertEqual((dest / 'bin' / 'clang').read_bytes(), b'fake-compiler')
+
+    def test_cached_tool_directory_must_be_outside_repo(self):
         with self.assertRaisesRegex(RuntimeError, 'outside'):
             pin.cache_root({'A3D_PINNED_CACHE': str(pin.ROOT / 'llvm')})
         with tempfile.TemporaryDirectory() as tmp:
