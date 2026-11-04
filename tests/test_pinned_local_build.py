@@ -52,10 +52,10 @@ class PinnedBuild(unittest.TestCase):
         self.assertIn('dist/miles-local/mss32.dll',ref['generated_pe_sha256'])
 
     def test_upstream_uv_version_metadata_is_accepted_but_not_a_different_release(self):
-        self.assertTrue(pin.uv_version_matches('uv 0.10.0 (0ba432459 2026-02-05)\\n'))
+        self.assertTrue(pin.uv_version_matches('uv 0.10.0 (0ba432459 2026-02-05)\n'))
         self.assertTrue(pin.uv_version_matches('uv 0.10.0'))
         for output in ('uv 0.10.1', 'uv 0.10.0.1', 'uv 0.10.0-malicious',
-                       'uv 0.10.0\\nuv 0.10.1', 'uv 0.9.99'):
+                       'uv 0.10.0\nuv 0.10.1', 'uv 0.9.99'):
             with self.subTest(output=output):
                 self.assertFalse(pin.uv_version_matches(output))
 
