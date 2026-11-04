@@ -44,8 +44,11 @@ class SlimLLVM(unittest.TestCase):
             root=Path(temp)
             self.fixture(root)
             (root/'LICENSE.TXT').unlink()
-            with self.assertRaisesRegex(RuntimeError,'licence'):
-                slim.source_files(root,'linux')
+            # NSIS and Linux full distributions may omit top-level licence;
+            # the packager must use the exact vendored upstream-tagged copy.
+            selected = slim.source_files(root,'linux')
+            self.assertEqual(selected['LLVM_LICENSE.TXT'].name,'LLVM-19.1.7-LICENSE.TXT')
+            self.assertTrue(selected['LLVM_LICENSE.TXT'].is_file())
             (root/'LICENSE.TXT').write_bytes(b'license')
             (root/'bin/lld-link').unlink()
             with self.assertRaisesRegex(RuntimeError,'lld-link'):
