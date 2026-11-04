@@ -26,6 +26,9 @@ import tempfile
 import urllib.request
 
 ROOT = Path(__file__).resolve().parents[1]
+# Direct execution (python scripts/build_pinned.py) must import sibling modules.
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 LLVM_VERSION = '19.1.7'
 UV_VERSION = '0.10.0'
 PYTHON_VERSION = '3.13.7'
@@ -159,6 +162,11 @@ def pinned_llvm(cache: Path, host: str) -> Path:
     return bin_dir
 
 
+def uv_version_matches(output: str) -> bool:
+    """Match exactly pinned semver while accepting uv's official build annotation."""
+    return re.fullmatch(r'uv ' + re.escape(UV_VERSION) + r'(?:\s+\([^()\n]+\))?', output.strip()) is not None
+
+
 def pinned_uv(cache: Path, host: str) -> Path:
     import tarfile
     import zipfile
@@ -168,7 +176,7 @@ def pinned_uv(cache: Path, host: str) -> Path:
     stamp = target.parent / '.aufake3d-uv-sha256'
     if target.is_file() and stamp.is_file() and stamp.read_text().strip() == sha_file(target):
         proc = subprocess.run([str(target), '--version'], capture_output=True, text=True, check=True)
-        if proc.stdout.strip() == f'uv {UV_VERSION}':
+        if uv_version_matches(proc.stdout):
             return target
     target.parent.mkdir(parents=True, exist_ok=True)
     archive = download_verified(url, sha, cache / 'downloads' / url.rsplit('/', 1)[-1])
@@ -190,7 +198,7 @@ def pinned_uv(cache: Path, host: str) -> Path:
     stamp.write_text(sha_file(target) + '\n', encoding='ascii')
     archive.unlink(missing_ok=True)
     proc = subprocess.run([str(target), '--version'], capture_output=True, text=True, check=True)
-    if proc.stdout.strip() != f'uv {UV_VERSION}':
+    if not uv_version_matches(proc.stdout):
         raise RuntimeError(f'Expected uv {UV_VERSION}: {proc.stdout!r}')
     return target
 
