@@ -20,7 +20,16 @@ The independent release gate:
    the existing local verification and tests in every build environment.
 2. All four builds install **LLVM/Clang+LLD 19.1.7** through the same pinned
    third-party installer action commit (`ebc0426251bc40c7cd31162802432c68818ab8f0`).
-   The Python interpreter is pinned to **3.13.7**. The emitter checks that
+   The Python interpreter is pinned to **3.13.7**. On Windows, the workflow
+   uses `actions/setup-python`; on all three Ubuntu builds and the final
+   comparison job it uses pinned `astral-sh/setup-uv` (v9.0.0 at a full commit
+   SHA) installing pinned `uv` 0.10.0 and the exact managed CPython 3.13.7.
+   This avoids `setup-python`'s missing Ubuntu 26.04/26.10 archive entries.
+   `scripts/ci_install_pinned_python.sh` verifies the interpreter's three-part
+   version, activates it in `GITHUB_PATH`, and installs it under `RUNNER_TEMP`,
+   outside the checkout. No system-Python or version-3.13 floating fallback is
+   permitted. `setup-python` is still used on Windows, where the exact archive
+   exists. The emitter checks that
    the `clang` and `lld-link` executables really identify as 19.1.7 before producing
    build evidence. CI has fixed `PYTHONHASHSEED` and `SOURCE_DATE_EPOCH`.
    The LLVM installer is explicitly directed to `${{ runner.temp }}/aufake3d-llvm`
@@ -47,6 +56,30 @@ The independent release gate:
    `CROSS_PLATFORM_REPRODUCIBILITY_VERIFIED.json` and publishes it as a
    separate artifact. The success certificate states an exact checked commit
    and runtime SHA-256. Any missing, failed or mismatching Ubuntu job blocks the certificate.
+
+## LLVM 19.1.7 on Ubuntu 26.04 and 26.10 (v6)
+
+The pinned upstream Linux LLVM 19.1.7 release requires the pre-2.14
+`libxml2.so.2` ELF ABI. Ubuntu 26.04/26.10 instead use `libxml2.so.16` and
+cannot load `lld-link` directly. This is an **LLVM host dependency**, not a
+Windows DLL dependency. The CI jobs build the official GNOME libxml2 2.13.9
+source archive with its published SHA-256 pin, with ICU/zlib/lzma disabled,
+under the runner's temporary directory, then copy the real, verified `.so.2`
+shared object into the mounted LLVM installation's private `lib/` directory.
+This avoids the different host/container spellings of `runner.temp` across
+GitHub job steps. The build exports `LLVM_PATH/lib` on `LD_LIBRARY_PATH`.
+No system library is replaced, no
+unverified `.so.16`-to-`.so.2` compatibility symlink is used, and no extra
+shared object is distributed in any Aufake3D game kit. The script fails
+immediately on a source checksum mismatch, unresolved ELF dependency, or if
+LLD does not load the checked private library. This workaround is intentionally
+not run on Ubuntu 24.04 or Windows.
+
+**Reproducibility stays fail-closed:** the library is a pinned build input,
+not a claimed cross-platform result. Every target still must produce the same
+compiled PE files and byte-for-byte identical runtime ZIP before the CI
+certificate can be issued. The library's locally built ELF bytes themselves
+are not an Aufake3D release artifact.
 
 ## Why the release ZIP packaging changed
 

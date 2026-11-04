@@ -37,6 +37,16 @@ def command_stdout(args: list[str], *, cwd: Path | None = None) -> str:
     return subprocess.run(args, cwd=cwd, capture_output=True, text=True, check=True).stdout.strip()
 
 
+def checked_out_git(root: Path, *args: str) -> list[str]:
+    """Trust only the exact CI checkout for Git's ownership safety check.
+
+    GitHub container jobs can run as a different UID from actions/checkout.
+    Setting this scoped Git config on *each* read avoids changing global
+    trusted directories and leaves dirty-tree/commit verification mandatory.
+    """
+    return ['git', '-c', f'safe.directory={root.resolve().as_posix()}', *args]
+
+
 def llvm_versions() -> dict[str, str]:
     versions = {}
     for name in ('clang', 'lld-link'):
@@ -52,8 +62,8 @@ def llvm_versions() -> dict[str, str]:
 
 def clean_checkout_commit(root: Path) -> str:
     """A certificate must name the exact committed source, never dirty files."""
-    commit = command_stdout(['git', 'rev-parse', 'HEAD'], cwd=root)
-    dirty = command_stdout(['git', 'status', '--porcelain', '--untracked-files=all'], cwd=root)
+    commit = command_stdout(checked_out_git(root, 'rev-parse', 'HEAD'), cwd=root)
+    dirty = command_stdout(checked_out_git(root, 'status', '--porcelain', '--untracked-files=all'), cwd=root)
     if dirty:
         raise ValueError('Cannot certify a dirty checkout; commit all source changes first')
     if not re.fullmatch(r'[0-9a-f]{40}', commit):
@@ -64,7 +74,7 @@ def clean_checkout_commit(root: Path) -> str:
 def tracked_source_hashes(root: Path) -> dict[str, str]:
     # Do not use git's index object IDs: a checkout may contain CRLF-modified
     # file bytes while the git blob IDs still agree across hosts.
-    paths = subprocess.run(['git', 'ls-files', '-z'], cwd=root,
+    paths = subprocess.run(checked_out_git(root, 'ls-files', '-z'), cwd=root,
                            check=True, capture_output=True).stdout.split(b'\0')
     result: dict[str, str] = {}
     for raw in paths:
