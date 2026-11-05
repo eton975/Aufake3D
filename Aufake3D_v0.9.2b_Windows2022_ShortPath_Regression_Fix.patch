@@ -1,0 +1,17 @@
+diff --git a/tests/test_ci_llvm_node24.py b/tests/test_ci_llvm_node24.py
+index 3bbcf86..33d18c1 100644
+--- a/tests/test_ci_llvm_node24.py
++++ b/tests/test_ci_llvm_node24.py
+@@ -46,7 +46,11 @@ class Node24LLVMWorkflow(unittest.TestCase):
+             self.assertIn('LLVM_PATH=' + str(fake_bin.parent), output)
+             if os.name != 'nt':
+                 self.assertIn('LD_LIBRARY_PATH=' + str(fake_bin.parent/'lib'), output)
+-            self.assertEqual(exports['A3D_PINNED_CACHE'], str(root/'aufake3d-pinned-ci-llvm'))
++            # Windows can expand RUNNER~1 (8.3 short name) to runneradmin
++            # when RUNNER_TEMP is resolved. Compare filesystem identities,
++            # not the spelling of two paths to the same temporary directory.
++            self.assertEqual(Path(exports['A3D_PINNED_CACHE']).resolve(),
++                             (root/'aufake3d-pinned-ci-llvm').resolve())
+ 
+     def test_missing_actions_environment_fails_closed(self):
+         with self.assertRaisesRegex(RuntimeError, 'RUNNER_TEMP'):
